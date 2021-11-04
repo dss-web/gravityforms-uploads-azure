@@ -1,0 +1,28 @@
+<documentation title="Compound Namespace Depth">
+    <standard>
+    <![CDATA[
+    Compound namespaces with a depth of more than two MUST NOT be used.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Max depth of 2.">
+        <![CDATA[
+use Dekode\GravityForms\Vendor\Vendor\Package\SomeNamespace\{
+    Dekode\GravityForms\Vendor\SubnamespaceOne\ClassA,
+    Dekode\GravityForms\Vendor\SubnamespaceOne\ClassB,
+    Dekode\GravityForms\Vendor\SubnamespaceTwo\ClassY,
+    ClassZ,
+};
+        ]]>
+        </code>
+        <code title="Invalid: Max depth of 3.">
+        <![CDATA[
+use Dekode\GravityForms\Vendor\Vendor\Package\SomeNamespace\{
+    <em>Dekode\GravityForms\Vendor\SubnamespaceOne\AnotherNamespace\ClassA,</em>
+    Dekode\GravityForms\Vendor\SubnamespaceOne\ClassB,
+    ClassZ,
+};
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>
