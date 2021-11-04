@@ -199,9 +199,9 @@ class AddOn extends \GFAddOn {
 	 * Processes uploading to Azure and removes files from host.
 	 *
 	 * @param array $file_info Meta info about file.
-	 * @return string
+	 * @return string|bool
 	 */
-	public function upload_one( array $file_info ): string {
+	public function upload_one( array $file_info ) { // phpcs:ignore NeutronStandard.Functions.TypeHint.NoReturnType
 		try {
 			$result = $this->controller->upload_file( $file_info['file_name'], $file_info['file_path'] );
 		} catch ( \Exception $e ) {
