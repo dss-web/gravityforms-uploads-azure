@@ -22,7 +22,12 @@ if ( file_exists( __DIR__ . '/vendor-prefixed/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor-prefixed/autoload.php';
 }
 
-add_action( 'gform_loaded', function() {
+/**
+ * Bootstrap plugin, load it using gform_loaded hook.
+ *
+ * @return void
+ */
+function gform_loaded() {
 	// Check that te GravityForms File Upload plugin is loaded before we try extending it.
 	if ( ! method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
 		return;
@@ -38,4 +43,6 @@ add_action( 'gform_loaded', function() {
 	add_filter( 'gform_secure_file_download_is_https', '__return_false', 200 );
 
 	\GFAddOn::register( __NAMESPACE__ . '\\AddOn' );
-}, 10 );
+}
+
+add_action( 'gform_loaded', __NAMESPACE__ . '\\gform_loaded', 10 );
