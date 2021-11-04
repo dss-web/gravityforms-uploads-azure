@@ -1,0 +1,8 @@
+{
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "humbug/php-scoper": "~0.14.1",
+        "pxlrbt/php-scoper-prefix-remover": "~0.1.0"
+    }
+}

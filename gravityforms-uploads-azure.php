@@ -18,8 +18,8 @@ namespace Dekode\GravityForms\Azure;
 define( 'DEKODE_GRAVITYFORMS_AZURE_VERSION', '1.1.0' );
 define( 'DEKODE_GRAVITYFORMS_AZURE_DIR_PATH', plugin_dir_path( __FILE__ ) );
 
-if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-	require_once __DIR__ . '/vendor/autoload.php';
+if ( file_exists( __DIR__ . '/vendor-prefixed/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor-prefixed/autoload.php';
 }
 
 add_action( 'gform_loaded', function() {

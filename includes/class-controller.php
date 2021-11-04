@@ -9,11 +9,11 @@ declare( strict_types=1 );
 
 namespace Dekode\GravityForms\Azure;
 
-use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
-use MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions;
-use MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
-use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
+use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
+use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\BlobRestProxy;
+use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions;
+use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
+use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
 
 /**
  * Controller to process all requests to work with Azure Storage

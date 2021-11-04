@@ -6,6 +6,7 @@
 	"license": "GPL-3.0-or-later",
 	"prefer-stable": true,
 	"minimum-stability": "dev",
+	"autoloader-suffix": "GravityFormsUploadAzure",
 	"require": {
 		"php": ">=7.2",
 		"microsoft/azure-storage-file": "~1.2.4",
@@ -23,7 +24,15 @@
 			"./vendor/bin/phpcs ."
 		],
 		"build": [
-			"@composer install"
+			"@composer install",
+			"@composer dump-autoload --no-scripts --optimize --classmap-authoritative"
+		],
+		"scoper": [
+			"cd php-scoper && composer install",
+			"rm -rf ./vendor-prefixed/",
+			"./php-scoper/vendor/bin/php-scoper add-prefix --config ./php-scoper/scoper.inc.php --force --output-dir ./vendor-prefixed/",
+			"@putenv COMPOSER_VENDOR_DIR=./vendor-prefixed/",
+			"@composer dump-autoload --no-scripts --optimize --classmap-authoritative"
 		]
 	}
 }
