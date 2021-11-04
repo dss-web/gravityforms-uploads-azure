@@ -1,0 +1,29 @@
+{
+	"name": "dss-web/gravityforms-uploads-azure",
+	"description": "Add support for offloading Gravity Forms Uploads to the Microsoft Azure cloud.",
+	"type": "wordpress-plugin",
+	"version": "1.0.0",
+	"license": "GPL-3.0-or-later",
+	"prefer-stable": true,
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">=7.2",
+		"microsoft/azure-storage-file": "~1.2.4",
+		"microsoft/azure-storage-blob": "~1.5.2",
+		"guzzlehttp/psr7": "~1.8"
+	},
+	"require-dev": {
+		"dekode/coding-standards": "4.0.0"
+	},
+	"scripts": {
+		"post-install-cmd": [
+
+		],
+		"lint": [
+			"./vendor/bin/phpcs ."
+		],
+		"build": [
+			"@composer install"
+		]
+	}
+}

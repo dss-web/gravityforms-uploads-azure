@@ -1,0 +1,17 @@
+{
+	"name": "@dekode/dekode-plugin-gravityforms-azure",
+	"private": true,
+	"engines": {
+		"node": "16",
+		"npm": "7",
+		"yarn": "Please use npm"
+	},
+	"devDependencies": {
+		"axios": ">=0.22.0",
+		"azurite": "^3.14.2"
+	},
+	"scripts": {
+		"postinstall": "mkdir ./azurite",
+		"azurite": "azurite --silent --location ./azurite --debug ./azurite/debug.log"
+	}
+}
