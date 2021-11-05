@@ -4,6 +4,9 @@
 	<arg name="extensions" value="php" />
 	<config name="testVersion" value="7.2-" />
 
+	<exclude-pattern>vendor-prefixed</exclude-pattern>
+	<exclude-pattern>php-scoper</exclude-pattern>
+
 	<rule ref="Dekode">
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
 		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />

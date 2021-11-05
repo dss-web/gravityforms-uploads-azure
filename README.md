@@ -26,6 +26,12 @@ Use local settings:
 -   Account Key: `Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==`
 -   Blob Service Endpoint: `http://127.0.0.1:10000/devstoreaccount1`
 
+## Vendor Scoping
+
+We use php-scoper to add prefixes to all vendor files, to avoid risks of fatal errors if you activate two plugins that use the same packages.
+
+You need to run the command: `composer scoper` to upgrade the vendor-prefixed folder when the vendor folder is updated.
+
 ## Credits
 
 Developed by [Dekode](https://en.dekode.no/?noredirect=en_US) for [DSS](https://www.dss.dep.no/about-us/).
