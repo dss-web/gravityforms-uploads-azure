@@ -15,7 +15,7 @@ declare( strict_types=1 );
 
 namespace Dekode\GravityForms\Azure;
 
-define( 'DEKODE_GRAVITYFORMS_AZURE_VERSION', '1.1.0' );
+define( 'DEKODE_GRAVITYFORMS_AZURE_VERSION', '1.0.0' );
 define( 'DEKODE_GRAVITYFORMS_AZURE_DIR_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( file_exists( __DIR__ . '/vendor-prefixed/autoload.php' ) ) {
