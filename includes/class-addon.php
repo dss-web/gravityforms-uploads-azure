@@ -106,7 +106,17 @@ class AddOn extends \GFAddOn {
 	public function init() {
 		parent::init();
 
-		$this->controller = new Controller( $this->get_plugin_settings() );
+		/**
+		 * Fallback handling of settings, as the base `GFAddOn` function `get_plugin_settings`
+		 * does not provide a default array value for its settings, so we need to do it, thus
+		 * avoiding our own fatal error when we expect settings to be in the form of an array in the Controller.
+		 */
+		$plugin_settings = $this->get_plugin_settings();
+		if ( false === $plugin_settings ) {
+			$plugin_settings = [];
+		}
+
+		$this->controller = new Controller( $plugin_settings );
 
 		add_action( 'gform_after_submission', [ $this, 'after_submission' ], 10, 2 );
 	}
