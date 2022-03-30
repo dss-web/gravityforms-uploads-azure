@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4bfe32cb05405a4c763de96c3d726da3",
+    "content-hash": "0989c11afb9d89d1abc90f56dba2fc5a",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -50,12 +50,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -153,12 +153,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Promise\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\Promise\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -208,16 +208,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.8.3",
+            "version": "1.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "1afdd860a2566ed3c2b0b4a3de6e23434a79ec85"
+                "reference": "902db15a551a4a415e732b622282e21ce1b508b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/1afdd860a2566ed3c2b0b4a3de6e23434a79ec85",
-                "reference": "1afdd860a2566ed3c2b0b4a3de6e23434a79ec85",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/902db15a551a4a415e732b622282e21ce1b508b4",
+                "reference": "902db15a551a4a415e732b622282e21ce1b508b4",
                 "shasum": ""
             },
             "require": {
@@ -242,12 +242,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Psr7\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\Psr7\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -310,7 +310,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-05T13:56:00+00:00"
+            "time": "2022-03-20T13:44:44+00:00"
         },
         {
             "name": "microsoft/azure-storage-blob",
@@ -491,9 +491,6 @@
                 "psr",
                 "psr-18"
             ],
-            "support": {
-                "source": "https://github.com/php-fig/http-client/tree/master"
-            },
             "time": "2020-06-29T06:28:15+00:00"
         },
         {
@@ -544,9 +541,6 @@
                 "request",
                 "response"
             ],
-            "support": {
-                "source": "https://github.com/php-fig/http-message/tree/master"
-            },
             "time": "2016-08-06T14:39:51+00:00"
         },
         {
@@ -587,10 +581,6 @@
                 }
             ],
             "description": "A polyfill for getallheaders.",
-            "support": {
-                "issues": "https://github.com/ralouphie/getallheaders/issues",
-                "source": "https://github.com/ralouphie/getallheaders/tree/develop"
-            },
             "time": "2019-03-08T08:55:37+00:00"
         },
         {
@@ -699,11 +689,6 @@
                 }
             ],
             "description": "A set of phpcs sniffs for modern php development.",
-            "support": {
-                "issues": "https://github.com/sirbrillig/phpcs-neutron-standard/issues",
-                "source": "https://github.com/sirbrillig/phpcs-neutron-standard",
-                "wiki": "https://github.com/sirbrillig/phpcs-neutron-standard/wiki"
-            },
             "time": "2021-02-15T22:42:03+00:00"
         },
         {
@@ -770,10 +755,6 @@
                 "stylecheck",
                 "tests"
             ],
-            "support": {
-                "issues": "https://github.com/dealerdirect/phpcodesniffer-composer-installer/issues",
-                "source": "https://github.com/dealerdirect/phpcodesniffer-composer-installer"
-            },
             "time": "2020-12-07T18:04:37+00:00"
         },
         {
@@ -802,10 +783,6 @@
                 "MIT"
             ],
             "description": "Dekode Coding Standards",
-            "support": {
-                "issues": "https://github.com/DekodeInteraktiv/coding-standards/issues",
-                "source": "https://github.com/DekodeInteraktiv/coding-standards/tree/4.0.0"
-            },
             "time": "2020-10-26T06:30:57+00:00"
         },
         {
@@ -864,10 +841,6 @@
                 "phpcs",
                 "standards"
             ],
-            "support": {
-                "issues": "https://github.com/PHPCompatibility/PHPCompatibility/issues",
-                "source": "https://github.com/PHPCompatibility/PHPCompatibility"
-            },
             "time": "2019-12-27T09:44:58+00:00"
         },
         {
@@ -920,10 +893,6 @@
                 "polyfill",
                 "standards"
             ],
-            "support": {
-                "issues": "https://github.com/PHPCompatibility/PHPCompatibilityParagonie/issues",
-                "source": "https://github.com/PHPCompatibility/PHPCompatibilityParagonie"
-            },
             "time": "2021-02-15T10:24:51+00:00"
         },
         {
@@ -974,10 +943,6 @@
                 "standards",
                 "wordpress"
             ],
-            "support": {
-                "issues": "https://github.com/PHPCompatibility/PHPCompatibilityWP/issues",
-                "source": "https://github.com/PHPCompatibility/PHPCompatibilityWP"
-            },
             "time": "2021-07-21T11:09:57+00:00"
         },
         {
@@ -1075,11 +1040,6 @@
                 "standards",
                 "wordpress"
             ],
-            "support": {
-                "issues": "https://github.com/WordPress/WordPress-Coding-Standards/issues",
-                "source": "https://github.com/WordPress/WordPress-Coding-Standards",
-                "wiki": "https://github.com/WordPress/WordPress-Coding-Standards/wiki"
-            },
             "time": "2020-05-13T23:57:56+00:00"
         }
     ],
