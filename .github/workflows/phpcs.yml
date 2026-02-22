@@ -1,0 +1,68 @@
+name: PHP Code Standards
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  phpcs:
+    name: PHPCS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run PHPCS and convert to SARIF
+        if: always()
+        run: |
+          # Generate both checkstyle (for logs) and JSON (for SARIF conversion)
+          ./vendor/bin/phpcs . --report=json --report-file=phpcs-results.json || true
+
+          # Convert PHPCS JSON to SARIF
+          php -r '
+          $input = json_decode(file_get_contents("phpcs-results.json"), true);
+          $results = [];
+          foreach ($input["files"] ?? [] as $file => $data) {
+            foreach ($data["messages"] ?? [] as $msg) {
+              $results[] = [
+                "ruleId" => $msg["source"],
+                "level" => $msg["type"] === "ERROR" ? "error" : "warning",
+                "message" => ["text" => $msg["message"]],
+                "locations" => [[
+                  "physicalLocation" => [
+                    "artifactLocation" => ["uri" => ltrim(str_replace(getcwd(), "", $file), "/")],
+                    "region" => ["startLine" => $msg["line"], "startColumn" => $msg["column"]]
+                  ]
+                ]]
+              ];
+            }
+          }
+          $sarif = [
+            "\$schema" => "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+            "version" => "2.1.0",
+            "runs" => [[
+              "tool" => ["driver" => ["name" => "PHP_CodeSniffer", "informationUri" => "https://github.com/PHPCSStandards/PHP_CodeSniffer"]],
+              "results" => $results
+            ]]
+          ];
+          file_put_contents("phpcs-results.sarif", json_encode($sarif, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+          '
+
+      - name: Upload SARIF results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: phpcs-results.sarif
+          category: phpcs
