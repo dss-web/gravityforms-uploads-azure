@@ -2,7 +2,6 @@
 
 Add support for offloading Gravity Forms Uploads to the Microsoft Azure cloud.
 
-
 ## How to use
 
 - Define connection settings (https://site.com/wp-admin/admin.php?page=gf_settings&subview=gravityforms-uploads-azure)
