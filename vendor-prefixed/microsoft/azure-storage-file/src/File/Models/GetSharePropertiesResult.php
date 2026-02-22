@@ -72,7 +72,7 @@ class GetSharePropertiesResult
     public static function create(array $responseHeaders)
     {
         $result = static::createMetadataResult($responseHeaders);
-        $result->setQuota(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_SHARE_QUOTA, $responseHeaders)));
+        $result->setQuota(\intval(Utilities::tryGetValueInsensitive(Resources::X_MS_SHARE_QUOTA, $responseHeaders)));
         return $result;
     }
 }

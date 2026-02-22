@@ -70,7 +70,7 @@ class GetBlobPropertiesResult
     public static function create(array $headers)
     {
         $result = static::createMetadataResult($headers);
-        $result->setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties::createFromHttpHeaders($headers));
+        $result->setProperties(BlobProperties::createFromHttpHeaders($headers));
         return $result;
     }
 }

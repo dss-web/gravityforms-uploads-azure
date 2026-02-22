@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ListBlobBlocksOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class ListBlobBlocksOptions extends BlobServiceOptions
 {
     private $_snapshot;
     private $_includeUncommittedBlobs;
@@ -82,7 +82,7 @@ class ListBlobBlocksOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\S
      */
     public function setIncludeUncommittedBlobs($includeUncommittedBlobs)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeUncommittedBlobs);
+        Validate::isBoolean($includeUncommittedBlobs);
         $this->_includeUncommittedBlobs = $includeUncommittedBlobs;
     }
     /**
@@ -103,7 +103,7 @@ class ListBlobBlocksOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\S
      */
     public function setIncludeCommittedBlobs($includeCommittedBlobs)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeCommittedBlobs);
+        Validate::isBoolean($includeCommittedBlobs);
         $this->_includeCommittedBlobs = $includeCommittedBlobs;
     }
     /**

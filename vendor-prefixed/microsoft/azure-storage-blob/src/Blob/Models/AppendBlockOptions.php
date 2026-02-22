@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class AppendBlockOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class AppendBlockOptions extends BlobServiceOptions
 {
     private $contentMD5;
     private $maxBlobSize;

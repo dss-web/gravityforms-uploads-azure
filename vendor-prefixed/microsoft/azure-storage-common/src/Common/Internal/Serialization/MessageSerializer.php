@@ -54,20 +54,20 @@ class MessageSerializer
     {
         //if the object is of exception type, serialize it using the methods
         //without checking the methods.
-        if ($targetObject instanceof \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\RequestException) {
+        if ($targetObject instanceof RequestException) {
             return self::serializeRequestException($targetObject);
         } elseif ($targetObject instanceof \Exception) {
             return self::serializeException($targetObject);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::methodExists($targetObject, 'getHeaders', 'targetObject');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::methodExists($targetObject, 'getProtocolVersion', 'targetObject');
+        Validate::methodExists($targetObject, 'getHeaders', 'targetObject');
+        Validate::methodExists($targetObject, 'getProtocolVersion', 'targetObject');
         // Serialize according to the implemented method.
         if (\method_exists($targetObject, 'getUri') && \method_exists($targetObject, 'getMethod')) {
             return self::serializeRequest($targetObject);
         } elseif (\method_exists($targetObject, 'getStatusCode') && \method_exists($targetObject, 'getReasonPhrase')) {
             return self::serializeResponse($targetObject);
         } else {
-            throw new \InvalidArgumentException(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_MESSAGE_OBJECT_TO_SERIALIZE);
+            throw new \InvalidArgumentException(Resources::INVALID_MESSAGE_OBJECT_TO_SERIALIZE);
         }
     }
     /**
@@ -137,7 +137,7 @@ class MessageSerializer
      *
      * @return string
      */
-    private static function serializeRequestException(\Dekode\GravityForms\Vendor\GuzzleHttp\Exception\RequestException $e)
+    private static function serializeRequestException(RequestException $e)
     {
         $resultString = \sprintf("Reason:\n%s\n", $e);
         if ($e->hasResponse()) {

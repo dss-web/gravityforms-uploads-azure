@@ -49,10 +49,10 @@ class SharedAccessSignatureHelper
      */
     public function __construct($accountName, $accountKey)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($accountName, 'accountName');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($accountName, 'accountName');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($accountKey, 'accountKey');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($accountKey, 'accountKey');
+        Validate::canCastAsString($accountName, 'accountName');
+        Validate::notNullOrEmpty($accountName, 'accountName');
+        Validate::canCastAsString($accountKey, 'accountKey');
+        Validate::notNullOrEmpty($accountKey, 'accountKey');
         $this->accountName = \urldecode($accountName);
         $this->accountKey = $accountKey;
     }
@@ -86,9 +86,9 @@ class SharedAccessSignatureHelper
     public function generateAccountSharedAccessSignatureToken($signedVersion, $signedPermissions, $signedService, $signedResourceType, $signedExpiry, $signedStart = "", $signedIP = "", $signedProtocol = "")
     {
         // check that version is valid
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedVersion, 'signedVersion');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedVersion, 'signedVersion');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDateString($signedVersion, 'signedVersion');
+        Validate::canCastAsString($signedVersion, 'signedVersion');
+        Validate::notNullOrEmpty($signedVersion, 'signedVersion');
+        Validate::isDateString($signedVersion, 'signedVersion');
         // validate and sanitize signed service
         $signedService = $this->validateAndSanitizeSignedService($signedService);
         // validate and sanitize signed resource type
@@ -96,22 +96,22 @@ class SharedAccessSignatureHelper
         // validate and sanitize signed permissions
         $signedPermissions = $this->validateAndSanitizeSignedPermissions($signedPermissions);
         // check that expiracy is valid
-        if ($signedExpiry instanceof \Dekode\GravityForms\Vendor\Datetime) {
-            $signedExpiry = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::isoDate($signedExpiry);
+        if ($signedExpiry instanceof \Datetime) {
+            $signedExpiry = Utilities::isoDate($signedExpiry);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedExpiry, 'signedExpiry');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedExpiry, 'signedExpiry');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDateString($signedExpiry, 'signedExpiry');
+        Validate::canCastAsString($signedExpiry, 'signedExpiry');
+        Validate::notNullOrEmpty($signedExpiry, 'signedExpiry');
+        Validate::isDateString($signedExpiry, 'signedExpiry');
         // check that signed start is valid
-        if ($signedStart instanceof \Dekode\GravityForms\Vendor\Datetime) {
-            $signedStart = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::isoDate($signedStart);
+        if ($signedStart instanceof \Datetime) {
+            $signedStart = Utilities::isoDate($signedStart);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedStart, 'signedStart');
+        Validate::canCastAsString($signedStart, 'signedStart');
         if (\strlen($signedStart) > 0) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDateString($signedStart, 'signedStart');
+            Validate::isDateString($signedStart, 'signedStart');
         }
         // check that signed IP is valid
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedIP, 'signedIP');
+        Validate::canCastAsString($signedIP, 'signedIP');
         // validate and sanitize signed protocol
         $signedProtocol = $this->validateAndSanitizeSignedProtocol($signedProtocol);
         // construct an array with the parameters to generate the shared access signature at the account level
@@ -157,8 +157,8 @@ class SharedAccessSignatureHelper
     protected function validateAndSanitizeSignedService($signedService)
     {
         // validate signed service is not null or empty
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedService, 'signedService');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedService, 'signedService');
+        Validate::canCastAsString($signedService, 'signedService');
+        Validate::notNullOrEmpty($signedService, 'signedService');
         // The signed service should only be a combination of the letters b(lob) q(ueue) t(able) or f(ile)
         $validServices = ['b', 'q', 't', 'f'];
         return $this->validateAndSanitizeStringWithArray(\strtolower($signedService), $validServices);
@@ -175,8 +175,8 @@ class SharedAccessSignatureHelper
     protected function validateAndSanitizeSignedResourceType($signedResourceType)
     {
         // validate signed resource type is not null or empty
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedResourceType, 'signedResourceType');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedResourceType, 'signedResourceType');
+        Validate::canCastAsString($signedResourceType, 'signedResourceType');
+        Validate::notNullOrEmpty($signedResourceType, 'signedResourceType');
         // The signed resource type should only be a combination of the letters s(ervice) c(container) or o(bject)
         $validResourceTypes = ['s', 'c', 'o'];
         return $this->validateAndSanitizeStringWithArray(\strtolower($signedResourceType), $validResourceTypes);
@@ -192,8 +192,8 @@ class SharedAccessSignatureHelper
     protected function validateAndSanitizeSignedPermissions($signedPermissions)
     {
         // validate signed permissions are not null or empty
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedPermissions, 'signedPermissions');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedPermissions, 'signedPermissions');
+        Validate::canCastAsString($signedPermissions, 'signedPermissions');
+        Validate::notNullOrEmpty($signedPermissions, 'signedPermissions');
         $validPermissions = ['r', 'w', 'd', 'l', 'a', 'c', 'u', 'p'];
         return $this->validateAndSanitizeStringWithArray(\strtolower($signedPermissions), $validPermissions);
     }
@@ -206,12 +206,12 @@ class SharedAccessSignatureHelper
      */
     protected function validateAndSanitizeSignedProtocol($signedProtocol)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedProtocol, 'signedProtocol');
+        Validate::canCastAsString($signedProtocol, 'signedProtocol');
         // sanitize string
         $sanitizedSignedProtocol = \strtolower($signedProtocol);
         if (\strlen($sanitizedSignedProtocol) > 0) {
             if (\strcmp($sanitizedSignedProtocol, "https") != 0 && \strcmp($sanitizedSignedProtocol, "https,http") != 0) {
-                throw new \InvalidArgumentException(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SIGNED_PROTOCOL_INVALID_VALIDATION_MSG);
+                throw new \InvalidArgumentException(Resources::SIGNED_PROTOCOL_INVALID_VALIDATION_MSG);
             }
         }
         return $sanitizedSignedProtocol;
@@ -233,7 +233,7 @@ class SharedAccessSignatureHelper
                 $input = \str_replace($value, '', $input);
             }
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\strlen($input) == 0, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::STRING_NOT_WITH_GIVEN_COMBINATION, \implode(', ', $array)));
+        Validate::isTrue(\strlen($input) == 0, \sprintf(Resources::STRING_NOT_WITH_GIVEN_COMBINATION, \implode(', ', $array)));
         return $result;
     }
     /**
@@ -248,9 +248,9 @@ class SharedAccessSignatureHelper
      */
     protected static function generateCanonicalResource($accountName, $service, $resource)
     {
-        static $serviceMap = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_BLOB => 'blob', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_FILE => 'file', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_QUEUE => 'queue', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_TABLE => 'table');
+        static $serviceMap = array(Resources::RESOURCE_TYPE_BLOB => 'blob', Resources::RESOURCE_TYPE_FILE => 'file', Resources::RESOURCE_TYPE_QUEUE => 'queue', Resources::RESOURCE_TYPE_TABLE => 'table');
         $serviceName = $serviceMap[$service];
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::startsWith($resource, '/')) {
+        if (Utilities::startsWith($resource, '/')) {
             $resource = \substr($resource, 1);
         }
         return \urldecode(\sprintf('/%s/%s/%s', $serviceName, $accountName, $resource));

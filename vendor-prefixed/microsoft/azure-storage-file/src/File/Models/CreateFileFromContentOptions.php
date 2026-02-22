@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Transactiona
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateFileFromContentOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileOptions
+class CreateFileFromContentOptions extends CreateFileOptions
 {
     use TransactionalMD5Trait;
 }

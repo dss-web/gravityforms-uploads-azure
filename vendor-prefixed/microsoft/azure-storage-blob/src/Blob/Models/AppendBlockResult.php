@@ -54,17 +54,17 @@ class AppendBlockResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockResult();
-        $result->setAppendOffset(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_APPEND_OFFSET, $headers)));
-        $result->setCommittedBlockCount(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_COMMITTED_BLOCK_COUNT, $headers)));
-        $result->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $headers));
-        $result->setEtag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG, $headers));
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::arrayKeyExistsInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED, $headers)) {
-            $lastModified = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED, $headers);
-            $lastModified = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($lastModified);
+        $result = new AppendBlockResult();
+        $result->setAppendOffset(\intval(Utilities::tryGetValueInsensitive(Resources::X_MS_BLOB_APPEND_OFFSET, $headers)));
+        $result->setCommittedBlockCount(\intval(Utilities::tryGetValueInsensitive(Resources::X_MS_BLOB_COMMITTED_BLOCK_COUNT, $headers)));
+        $result->setContentMD5(Utilities::tryGetValueInsensitive(Resources::CONTENT_MD5, $headers));
+        $result->setEtag(Utilities::tryGetValueInsensitive(Resources::ETAG, $headers));
+        if (Utilities::arrayKeyExistsInsensitive(Resources::LAST_MODIFIED, $headers)) {
+            $lastModified = Utilities::tryGetValueInsensitive(Resources::LAST_MODIFIED, $headers);
+            $lastModified = Utilities::rfc1123ToDateTime($lastModified);
             $result->setLastModified($lastModified);
         }
-        $result->setRequestServerEncrypted(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
+        $result->setRequestServerEncrypted(Utilities::toBoolean(Utilities::tryGetValueInsensitive(Resources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
         return $result;
     }
     /**

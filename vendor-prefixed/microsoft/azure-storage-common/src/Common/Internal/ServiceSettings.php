@@ -57,7 +57,7 @@ abstract class ServiceSettings
      */
     protected static function noMatch($connectionString)
     {
-        throw new \RuntimeException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::MISSING_CONNECTION_STRING_SETTINGS, $connectionString));
+        throw new \RuntimeException(\sprintf(Resources::MISSING_CONNECTION_STRING_SETTINGS, $connectionString));
     }
     /**
      * Parses the connection string and then validate that the parsed keys belong to
@@ -76,11 +76,11 @@ abstract class ServiceSettings
             static::init();
             static::$isInitialized = \true;
         }
-        $tokenizedSettings = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::parseConnectionString('connectionString', $connectionString);
+        $tokenizedSettings = ConnectionStringParser::parseConnectionString('connectionString', $connectionString);
         // Assure that all given keys are valid.
         foreach ($tokenizedSettings as $key => $value) {
-            if (!\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::inArrayInsensitive($key, static::$validSettingKeys)) {
-                throw new \RuntimeException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_CONNECTION_STRING_SETTING_KEY, $key, \implode("\n", static::$validSettingKeys)));
+            if (!Utilities::inArrayInsensitive($key, static::$validSettingKeys)) {
+                throw new \RuntimeException(\sprintf(Resources::INVALID_CONNECTION_STRING_SETTING_KEY, $key, \implode("\n", static::$validSettingKeys)));
             }
         }
         return $tokenizedSettings;
@@ -103,11 +103,11 @@ abstract class ServiceSettings
             $oneFound = \false;
             $result = \array_change_key_case($userSettings);
             foreach ($requirements as $requirement) {
-                $settingName = \strtolower($requirement[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SETTING_NAME]);
+                $settingName = \strtolower($requirement[Resources::SETTING_NAME]);
                 // Check if the setting name exists in the provided user settings.
                 if (\array_key_exists($settingName, $result)) {
                     // Check if the provided user setting value is valid.
-                    $validationFunc = $requirement[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SETTING_CONSTRAINT];
+                    $validationFunc = $requirement[Resources::SETTING_CONSTRAINT];
                     $isValid = $validationFunc($result[$settingName]);
                     if ($isValid) {
                         // Remove the setting as indicator for successful validation.
@@ -171,8 +171,8 @@ abstract class ServiceSettings
     protected static function settingWithFunc($name, $predicate)
     {
         $requirement = array();
-        $requirement[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SETTING_NAME] = $name;
-        $requirement[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SETTING_CONSTRAINT] = $predicate;
+        $requirement[Resources::SETTING_NAME] = $name;
+        $requirement[Resources::SETTING_CONSTRAINT] = $predicate;
         return $requirement;
     }
     /**
@@ -203,7 +203,7 @@ abstract class ServiceSettings
                     return \true;
                 }
             }
-            throw new \RuntimeException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_CONFIG_VALUE, $settingValue, \implode("\n", $validValues)));
+            throw new \RuntimeException(\sprintf(Resources::INVALID_CONFIG_VALUE, $settingValue, \implode("\n", $validValues)));
             // $settingValue is missing in valid values set, fail.
             return \false;
         };

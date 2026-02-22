@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class GetFileOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions
+class GetFileOptions extends FileServiceOptions
 {
     private $range = null;
     private $rangeGetContentMD5 = \false;
@@ -55,7 +55,7 @@ class GetFileOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\
      *
      * @return void
      */
-    public function setRange(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range)
+    public function setRange(Range $range)
     {
         $this->range = $range;
     }
@@ -77,7 +77,7 @@ class GetFileOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\
      */
     public function setRangeGetContentMD5($rangeGetContentMD5)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($rangeGetContentMD5);
+        Validate::isBoolean($rangeGetContentMD5);
         $this->rangeGetContentMD5 = (bool) $rangeGetContentMD5;
     }
     public function getRangeString()

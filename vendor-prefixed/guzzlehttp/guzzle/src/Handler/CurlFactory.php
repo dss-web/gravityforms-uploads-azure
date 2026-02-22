@@ -16,7 +16,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface;
  *
  * @final
  */
-class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\CurlFactoryInterface
+class CurlFactory implements CurlFactoryInterface
 {
     public const CURL_VERSION_STR = 'curl_version';
     /**
@@ -38,13 +38,13 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
     {
         $this->maxHandles = $maxHandles;
     }
-    public function create(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options) : \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle
+    public function create(RequestInterface $request, array $options) : EasyHandle
     {
         if (isset($options['curl']['body_as_string'])) {
             $options['_body_as_string'] = $options['curl']['body_as_string'];
             unset($options['curl']['body_as_string']);
         }
-        $easy = new \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle();
+        $easy = new EasyHandle();
         $easy->request = $request;
         $easy->options = $options;
         $conf = $this->getDefaultConf($easy);
@@ -61,7 +61,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
         \curl_setopt_array($easy->handle, $conf);
         return $easy;
     }
-    public function release(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy) : void
+    public function release(EasyHandle $easy) : void
     {
         $resource = $easy->handle;
         unset($easy->handle);
@@ -87,7 +87,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
      * @param callable(RequestInterface, array): PromiseInterface $handler
      * @param CurlFactoryInterface                                $factory Dictates how the handle is released
      */
-    public static function finish(callable $handler, \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\CurlFactoryInterface $factory) : \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\PromiseInterface
+    public static function finish(callable $handler, EasyHandle $easy, CurlFactoryInterface $factory) : PromiseInterface
     {
         if (isset($easy->options['on_stats'])) {
             self::invokeStats($easy);
@@ -102,19 +102,19 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
         if ($body->isSeekable()) {
             $body->rewind();
         }
-        return new \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\FulfilledPromise($easy->response);
+        return new FulfilledPromise($easy->response);
     }
-    private static function invokeStats(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy) : void
+    private static function invokeStats(EasyHandle $easy) : void
     {
         $curlStats = \curl_getinfo($easy->handle);
         $curlStats['appconnect_time'] = \curl_getinfo($easy->handle, \CURLINFO_APPCONNECT_TIME);
-        $stats = new \Dekode\GravityForms\Vendor\GuzzleHttp\TransferStats($easy->request, $easy->response, $curlStats['total_time'], $easy->errno, $curlStats);
+        $stats = new TransferStats($easy->request, $easy->response, $curlStats['total_time'], $easy->errno, $curlStats);
         $easy->options['on_stats']($stats);
     }
     /**
      * @param callable(RequestInterface, array): PromiseInterface $handler
      */
-    private static function finishError(callable $handler, \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\CurlFactoryInterface $factory) : \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\PromiseInterface
+    private static function finishError(callable $handler, EasyHandle $easy, CurlFactoryInterface $factory) : PromiseInterface
     {
         // Get error information and release the handle to the factory.
         $ctx = ['errno' => $easy->errno, 'error' => \curl_error($easy->handle), 'appconnect_time' => \curl_getinfo($easy->handle, \CURLINFO_APPCONNECT_TIME)] + \curl_getinfo($easy->handle);
@@ -126,16 +126,16 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
         }
         return self::createRejection($easy, $ctx);
     }
-    private static function createRejection(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, array $ctx) : \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\PromiseInterface
+    private static function createRejection(EasyHandle $easy, array $ctx) : PromiseInterface
     {
         static $connectionErrors = [\CURLE_OPERATION_TIMEOUTED => \true, \CURLE_COULDNT_RESOLVE_HOST => \true, \CURLE_COULDNT_CONNECT => \true, \CURLE_SSL_CONNECT_ERROR => \true, \CURLE_GOT_NOTHING => \true];
         if ($easy->createResponseException) {
-            return \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\Create::rejectionFor(new \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\RequestException('An error was encountered while creating the response', $easy->request, $easy->response, $easy->createResponseException, $ctx));
+            return P\Create::rejectionFor(new RequestException('An error was encountered while creating the response', $easy->request, $easy->response, $easy->createResponseException, $ctx));
         }
         // If an exception was encountered during the onHeaders event, then
         // return a rejected promise that wraps that exception.
         if ($easy->onHeadersException) {
-            return \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\Create::rejectionFor(new \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\RequestException('An error was encountered during the on_headers event', $easy->request, $easy->response, $easy->onHeadersException, $ctx));
+            return P\Create::rejectionFor(new RequestException('An error was encountered during the on_headers event', $easy->request, $easy->response, $easy->onHeadersException, $ctx));
         }
         $message = \sprintf('cURL error %s: %s (%s)', $ctx['errno'], $ctx['error'], 'see https://curl.haxx.se/libcurl/c/libcurl-errors.html');
         $uriString = (string) $easy->request->getUri();
@@ -143,15 +143,15 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             $message .= \sprintf(' for %s', $uriString);
         }
         // Create a connection exception if it was a specific error code.
-        $error = isset($connectionErrors[$easy->errno]) ? new \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\ConnectException($message, $easy->request, null, $ctx) : new \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\RequestException($message, $easy->request, $easy->response, null, $ctx);
-        return \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\Create::rejectionFor($error);
+        $error = isset($connectionErrors[$easy->errno]) ? new ConnectException($message, $easy->request, null, $ctx) : new RequestException($message, $easy->request, $easy->response, null, $ctx);
+        return P\Create::rejectionFor($error);
     }
     /**
      * @return array<int|string, mixed>
      */
-    private function getDefaultConf(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy) : array
+    private function getDefaultConf(EasyHandle $easy) : array
     {
-        $conf = ['_headers' => $easy->request->getHeaders(), \CURLOPT_CUSTOMREQUEST => $easy->request->getMethod(), \CURLOPT_URL => (string) $easy->request->getUri()->withFragment(''), \CURLOPT_RETURNTRANSFER => \false, \CURLOPT_HEADER => \false, \CURLOPT_CONNECTTIMEOUT => 150];
+        $conf = ['_headers' => $easy->request->getHeaders(), \CURLOPT_CUSTOMREQUEST => $easy->request->getMethod(), \CURLOPT_URL => (string) $easy->request->getUri()->withFragment(''), \CURLOPT_RETURNTRANSFER => \false, \CURLOPT_HEADER => \false, \CURLOPT_CONNECTTIMEOUT => 300];
         if (\defined('CURLOPT_PROTOCOLS')) {
             $conf[\CURLOPT_PROTOCOLS] = \CURLPROTO_HTTP | \CURLPROTO_HTTPS;
         }
@@ -165,7 +165,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
         }
         return $conf;
     }
-    private function applyMethod(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, array &$conf) : void
+    private function applyMethod(EasyHandle $easy, array &$conf) : void
     {
         $body = $easy->request->getBody();
         $size = $body->getSize();
@@ -175,7 +175,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
         }
         $method = $easy->request->getMethod();
         if ($method === 'PUT' || $method === 'POST') {
-            // See https://tools.ietf.org/html/rfc7230#section-3.3.2
+            // See https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2
             if (!$easy->request->hasHeader('Content-Length')) {
                 $conf[\CURLOPT_HTTPHEADER][] = 'Content-Length: 0';
             }
@@ -184,7 +184,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             unset($conf[\CURLOPT_WRITEFUNCTION], $conf[\CURLOPT_READFUNCTION], $conf[\CURLOPT_FILE], $conf[\CURLOPT_INFILE]);
         }
     }
-    private function applyBody(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options, array &$conf) : void
+    private function applyBody(RequestInterface $request, array $options, array &$conf) : void
     {
         $size = $request->hasHeader('Content-Length') ? (int) $request->getHeaderLine('Content-Length') : null;
         // Send the body as a string if the size is less than 1MB OR if the
@@ -217,7 +217,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             $conf[\CURLOPT_HTTPHEADER][] = 'Content-Type:';
         }
     }
-    private function applyHeaders(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, array &$conf) : void
+    private function applyHeaders(EasyHandle $easy, array &$conf) : void
     {
         foreach ($conf['_headers'] as $name => $values) {
             foreach ($values as $value) {
@@ -251,7 +251,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             }
         }
     }
-    private function applyHandlerOptions(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, array &$conf) : void
+    private function applyHandlerOptions(EasyHandle $easy, array &$conf) : void
     {
         $options = $easy->options;
         if (isset($options['verify'])) {
@@ -301,7 +301,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             // Ensure that the directory exists before failing in curl.
             throw new \RuntimeException(\sprintf('Directory %s does not exist for sink value of %s', \dirname($sink), $sink));
         } else {
-            $sink = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\LazyOpenStream($sink, 'w+');
+            $sink = new LazyOpenStream($sink, 'w+');
         }
         $easy->sink = $sink;
         $conf[\CURLOPT_WRITEFUNCTION] = static function ($ch, $write) use($sink) : int {
@@ -334,10 +334,37 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
                 $scheme = $easy->request->getUri()->getScheme();
                 if (isset($options['proxy'][$scheme])) {
                     $host = $easy->request->getUri()->getHost();
-                    if (!isset($options['proxy']['no']) || !\Dekode\GravityForms\Vendor\GuzzleHttp\Utils::isHostInNoProxy($host, $options['proxy']['no'])) {
+                    if (isset($options['proxy']['no']) && Utils::isHostInNoProxy($host, $options['proxy']['no'])) {
+                        unset($conf[\CURLOPT_PROXY]);
+                    } else {
                         $conf[\CURLOPT_PROXY] = $options['proxy'][$scheme];
                     }
                 }
+            }
+        }
+        if (isset($options['crypto_method'])) {
+            if (\STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT === $options['crypto_method']) {
+                if (!\defined('CURL_SSLVERSION_TLSv1_0')) {
+                    throw new \InvalidArgumentException('Invalid crypto_method request option: TLS 1.0 not supported by your version of cURL');
+                }
+                $conf[\CURLOPT_SSLVERSION] = \CURL_SSLVERSION_TLSv1_0;
+            } elseif (\STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT === $options['crypto_method']) {
+                if (!\defined('CURL_SSLVERSION_TLSv1_1')) {
+                    throw new \InvalidArgumentException('Invalid crypto_method request option: TLS 1.1 not supported by your version of cURL');
+                }
+                $conf[\CURLOPT_SSLVERSION] = \CURL_SSLVERSION_TLSv1_1;
+            } elseif (\STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT === $options['crypto_method']) {
+                if (!\defined('CURL_SSLVERSION_TLSv1_2')) {
+                    throw new \InvalidArgumentException('Invalid crypto_method request option: TLS 1.2 not supported by your version of cURL');
+                }
+                $conf[\CURLOPT_SSLVERSION] = \CURL_SSLVERSION_TLSv1_2;
+            } elseif (\defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT') && \STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT === $options['crypto_method']) {
+                if (!\defined('CURL_SSLVERSION_TLSv1_3')) {
+                    throw new \InvalidArgumentException('Invalid crypto_method request option: TLS 1.3 not supported by your version of cURL');
+                }
+                $conf[\CURLOPT_SSLVERSION] = \CURL_SSLVERSION_TLSv1_3;
+            } else {
+                throw new \InvalidArgumentException('Invalid crypto_method request option: unknown version provided');
             }
         }
         if (isset($options['cert'])) {
@@ -349,8 +376,8 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             if (!\file_exists($cert)) {
                 throw new \InvalidArgumentException("SSL certificate not found: {$cert}");
             }
-            # OpenSSL (versions 0.9.3 and later) also support "P12" for PKCS#12-encoded files.
-            # see https://curl.se/libcurl/c/CURLOPT_SSLCERTTYPE.html
+            // OpenSSL (versions 0.9.3 and later) also support "P12" for PKCS#12-encoded files.
+            // see https://curl.se/libcurl/c/CURLOPT_SSLCERTTYPE.html
             $ext = \pathinfo($cert, \PATHINFO_EXTENSION);
             if (\preg_match('#^(der|p12)$#i', $ext)) {
                 $conf[\CURLOPT_SSLCERTTYPE] = \strtoupper($ext);
@@ -382,7 +409,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             };
         }
         if (!empty($options['debug'])) {
-            $conf[\CURLOPT_STDERR] = \Dekode\GravityForms\Vendor\GuzzleHttp\Utils::debugResource($options['debug']);
+            $conf[\CURLOPT_STDERR] = Utils::debugResource($options['debug']);
             $conf[\CURLOPT_VERBOSE] = \true;
         }
     }
@@ -397,7 +424,7 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
      *
      * @param callable(RequestInterface, array): PromiseInterface $handler
      */
-    private static function retryFailedRewind(callable $handler, \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy, array $ctx) : \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\PromiseInterface
+    private static function retryFailedRewind(callable $handler, EasyHandle $easy, array $ctx) : PromiseInterface
     {
         try {
             // Only rewind if the body has been read from.
@@ -416,11 +443,11 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             $ctx['error'] = 'The cURL request was retried 3 times ' . 'and did not succeed. The most likely reason for the failure ' . 'is that cURL was unable to rewind the body of the request ' . 'and subsequent retries resulted in the same error. Turn on ' . 'the debug option to see what went wrong. See ' . 'https://bugs.php.net/bug.php?id=47204 for more information.';
             return self::createRejection($easy, $ctx);
         } else {
-            $easy->options['_curl_retries']++;
+            ++$easy->options['_curl_retries'];
         }
         return $handler($easy->request, $easy->options);
     }
-    private function createHeaderFn(\Dekode\GravityForms\Vendor\GuzzleHttp\Handler\EasyHandle $easy) : callable
+    private function createHeaderFn(EasyHandle $easy) : callable
     {
         if (isset($easy->options['on_headers'])) {
             $onHeaders = $easy->options['on_headers'];
@@ -458,5 +485,12 @@ class CurlFactory implements \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\Curl
             }
             return \strlen($h);
         };
+    }
+    public function __destruct()
+    {
+        foreach ($this->handles as $id => $handle) {
+            \curl_close($handle);
+            unset($this->handles[$id]);
+        }
     }
 }

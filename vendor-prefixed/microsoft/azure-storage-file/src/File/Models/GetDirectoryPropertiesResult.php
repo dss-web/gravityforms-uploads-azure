@@ -115,11 +115,11 @@ class GetDirectoryPropertiesResult
      */
     public static function create(array $responseHeaders)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetDirectoryPropertiesResult();
-        $metadata = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getMetadataArray($responseHeaders);
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::LAST_MODIFIED, $responseHeaders);
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::ETAG, $responseHeaders));
+        $result = new GetDirectoryPropertiesResult();
+        $metadata = Utilities::getMetadataArray($responseHeaders);
+        $date = Utilities::tryGetValueInsensitive(Resources::LAST_MODIFIED, $responseHeaders);
+        $date = Utilities::rfc1123ToDateTime($date);
+        $result->setETag(Utilities::tryGetValueInsensitive(Resources::ETAG, $responseHeaders));
         $result->setMetadata($metadata);
         $result->setLastModified($date);
         return $result;

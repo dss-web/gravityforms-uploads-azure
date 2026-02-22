@@ -56,22 +56,22 @@ class ListFileRangesResult
      */
     public static function create(array $headers, array $parsed = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListFileRangesResult();
+        $result = new ListFileRangesResult();
         $headers = \array_change_key_case($headers);
-        $date = $headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::LAST_MODIFIED];
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $fileLength = \intval($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_LENGTH]);
+        $date = $headers[Resources::LAST_MODIFIED];
+        $date = Utilities::rfc1123ToDateTime($date);
+        $fileLength = \intval($headers[Resources::X_MS_CONTENT_LENGTH]);
         $rawRanges = array();
         if (!empty($parsed['Range'])) {
-            $rawRanges = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed['Range']);
+            $rawRanges = Utilities::getArray($parsed['Range']);
         }
         $ranges = array();
         foreach ($rawRanges as $value) {
-            $ranges[] = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range(\intval($value['Start']), \intval($value['End']));
+            $ranges[] = new Range(\intval($value['Start']), \intval($value['End']));
         }
         $result->setRanges($ranges);
         $result->setContentLength($fileLength);
-        $result->setETag($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::ETAG]);
+        $result->setETag($headers[Resources::ETAG]);
         $result->setLastModified($date);
         return $result;
     }
@@ -93,7 +93,7 @@ class ListFileRangesResult
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -114,7 +114,7 @@ class ListFileRangesResult
      */
     protected function setETag($etag)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($etag, 'etag');
+        Validate::canCastAsString($etag, 'etag');
         $this->etag = $etag;
     }
     /**
@@ -135,7 +135,7 @@ class ListFileRangesResult
      */
     protected function setContentLength($contentLength)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($contentLength, 'contentLength');
+        Validate::isInteger($contentLength, 'contentLength');
         $this->contentLength = $contentLength;
     }
     /**

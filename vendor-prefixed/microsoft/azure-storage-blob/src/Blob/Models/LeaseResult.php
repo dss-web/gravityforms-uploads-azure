@@ -49,8 +49,8 @@ class LeaseResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseResult();
-        $result->setLeaseId(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID));
+        $result = new LeaseResult();
+        $result->setLeaseId(Utilities::tryGetValue($headers, Resources::X_MS_LEASE_ID));
         return $result;
     }
     /**

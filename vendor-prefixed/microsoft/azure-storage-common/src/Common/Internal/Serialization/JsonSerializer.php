@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class JsonSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\ISerializer
+class JsonSerializer implements ISerializer
 {
     /**
      * Serialize an object with specified root element name.
@@ -47,8 +47,8 @@ class JsonSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public static function objectSerialize($targetObject, $rootName)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($targetObject, 'targetObject');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($rootName, 'rootName');
+        Validate::notNull($targetObject, 'targetObject');
+        Validate::canCastAsString($rootName, 'rootName');
         $contianer = new \stdClass();
         $contianer->{$rootName} = $targetObject;
         return \json_encode($contianer);
@@ -64,7 +64,7 @@ class JsonSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function serialize(array $array = null, array $properties = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($array, 'array');
+        Validate::isArray($array, 'array');
         return \json_encode($array);
     }
     /**
@@ -76,7 +76,7 @@ class JsonSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function unserialize($serialized)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($serialized, 'serialized');
+        Validate::canCastAsString($serialized, 'serialized');
         $json = \json_decode($serialized);
         if ($json && !\is_array($json)) {
             return \get_object_vars($json);

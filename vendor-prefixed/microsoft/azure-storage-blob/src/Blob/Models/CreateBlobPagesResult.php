@@ -55,15 +55,15 @@ class CreateBlobPagesResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesResult();
+        $result = new CreateBlobPagesResult();
         $clean = \array_change_key_case($headers);
-        $date = $clean[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED];
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $result->setETag($clean[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG]);
+        $date = $clean[Resources::LAST_MODIFIED];
+        $date = Utilities::rfc1123ToDateTime($date);
+        $result->setETag($clean[Resources::ETAG]);
         $result->setLastModified($date);
-        $result->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5));
-        $result->setRequestServerEncrypted(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
-        $result->setSequenceNumber(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_SEQUENCE_NUMBER)));
+        $result->setContentMD5(Utilities::tryGetValue($clean, Resources::CONTENT_MD5));
+        $result->setRequestServerEncrypted(Utilities::toBoolean(Utilities::tryGetValueInsensitive(Resources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
+        $result->setSequenceNumber(\intval(Utilities::tryGetValue($clean, Resources::X_MS_BLOB_SEQUENCE_NUMBER)));
         return $result;
     }
     /**
@@ -84,7 +84,7 @@ class CreateBlobPagesResult
      */
     protected function setLastModified($lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -105,7 +105,7 @@ class CreateBlobPagesResult
      */
     protected function setETag($etag)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($etag, 'etag');
+        Validate::canCastAsString($etag, 'etag');
         $this->etag = $etag;
     }
     /**
@@ -166,7 +166,7 @@ class CreateBlobPagesResult
      */
     protected function setSequenceNumber($sequenceNumber)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($sequenceNumber, 'sequenceNumber');
+        Validate::isInteger($sequenceNumber, 'sequenceNumber');
         $this->sequenceNumber = $sequenceNumber;
     }
 }

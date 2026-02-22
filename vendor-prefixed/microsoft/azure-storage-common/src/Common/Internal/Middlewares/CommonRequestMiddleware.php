@@ -40,7 +40,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CommonRequestMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\MiddlewareBase
+class CommonRequestMiddleware extends MiddlewareBase
 {
     private $authenticationScheme;
     private $headers;
@@ -56,7 +56,7 @@ class CommonRequestMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure
      * @param string      $serviceSDKVersion    Like '1.0.1' or '1.2.0'.
      * @param array       $headers              The headers to be added.
      */
-    public function __construct(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\IAuthScheme $authenticationScheme = null, $storageAPIVersion, $serviceSDKVersion, array $headers = array())
+    public function __construct(IAuthScheme $authenticationScheme = null, $storageAPIVersion, $serviceSDKVersion, array $headers = array())
     {
         $this->authenticationScheme = $authenticationScheme;
         $this->msVersion = $storageAPIVersion;
@@ -71,7 +71,7 @@ class CommonRequestMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure
      *
      * @return RequestInterface
      */
-    protected function onRequest(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request)
+    protected function onRequest(RequestInterface $request)
     {
         $result = $request;
         //Adding headers.
@@ -82,14 +82,14 @@ class CommonRequestMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure
             }
         }
         //rewriting version and user-agent.
-        $result = $result->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_VERSION, $this->msVersion);
-        $result = $result->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::USER_AGENT, $this->userAgent);
+        $result = $result->withHeader(Resources::X_MS_VERSION, $this->msVersion);
+        $result = $result->withHeader(Resources::USER_AGENT, $this->userAgent);
         //Adding date.
-        $date = \gmdate(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::AZURE_DATE_FORMAT, \time());
-        $result = $result->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DATE, $date);
+        $date = \gmdate(Resources::AZURE_DATE_FORMAT, \time());
+        $result = $result->withHeader(Resources::DATE, $date);
         //Adding client request-ID if not specified by the user.
-        if (!$result->hasHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_CLIENT_REQUEST_ID)) {
-            $result = $result->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_CLIENT_REQUEST_ID, \uniqid());
+        if (!$result->hasHeader(Resources::X_MS_CLIENT_REQUEST_ID)) {
+            $result = $result->withHeader(Resources::X_MS_CLIENT_REQUEST_ID, \uniqid());
         }
         //Sign the request if authentication scheme is not null.
         $request = $this->authenticationScheme == null ? $request : $this->authenticationScheme->signRequest($result);
@@ -105,6 +105,6 @@ class CommonRequestMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure
     private static function getUserAgent($serviceSDKVersion)
     {
         // e.g. User-Agent: Azure-Storage/1.0.1-1.1.1 (PHP 5.5.32)/WINNT
-        return 'Azure-Storage/' . $serviceSDKVersion . '-' . \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::COMMON_SDK_VERSION . ' (PHP ' . \PHP_VERSION . ')' . '/' . \php_uname("s");
+        return 'Azure-Storage/' . $serviceSDKVersion . '-' . Resources::COMMON_SDK_VERSION . ' (PHP ' . \PHP_VERSION . ')' . '/' . \php_uname("s");
     }
 }

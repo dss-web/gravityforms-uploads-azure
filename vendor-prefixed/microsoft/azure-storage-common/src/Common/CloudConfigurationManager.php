@@ -56,7 +56,7 @@ class CloudConfigurationManager
         if (!self::$_isInitialized) {
             self::$_sources = array();
             // Get list of default connection string sources.
-            $default = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringSource::getDefaultSources();
+            $default = ConnectionStringSource::getDefaultSources();
             foreach ($default as $name => $provider) {
                 self::$_sources[$name] = $provider;
             }
@@ -72,7 +72,7 @@ class CloudConfigurationManager
      */
     public static function getConnectionString($key)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($key, 'key');
+        Validate::canCastAsString($key, 'key');
         self::_init();
         $value = null;
         foreach (self::$_sources as $source) {
@@ -97,13 +97,13 @@ class CloudConfigurationManager
      */
     public static function registerSource($name, $provider = null, $prepend = \false)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($name, 'name');
+        Validate::canCastAsString($name, 'name');
+        Validate::notNullOrEmpty($name, 'name');
         self::_init();
-        $default = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringSource::getDefaultSources();
+        $default = ConnectionStringSource::getDefaultSources();
         // Try to get callback if the user is trying to register a default source.
-        $provider = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($default, $name, $provider);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($provider, 'callback');
+        $provider = Utilities::tryGetValue($default, $name, $provider);
+        Validate::notNullOrEmpty($provider, 'callback');
         if ($prepend) {
             self::$_sources = \array_merge(array($name => $provider), self::$_sources);
         } else {
@@ -119,10 +119,10 @@ class CloudConfigurationManager
      */
     public static function unregisterSource($name)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($name, 'name');
+        Validate::canCastAsString($name, 'name');
+        Validate::notNullOrEmpty($name, 'name');
         self::_init();
-        $sourceCallback = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue(self::$_sources, $name);
+        $sourceCallback = Utilities::tryGetValue(self::$_sources, $name);
         if (!\is_null($sourceCallback)) {
             unset(self::$_sources[$name]);
         }

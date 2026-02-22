@@ -50,13 +50,13 @@ class Metrics
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Metrics();
+        $result = new Metrics();
         $result->setVersion($parsedResponse['Version']);
-        $result->setEnabled(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean($parsedResponse['Enabled']));
+        $result->setEnabled(Utilities::toBoolean($parsedResponse['Enabled']));
         if ($result->getEnabled()) {
-            $result->setIncludeAPIs(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean($parsedResponse['IncludeAPIs']));
+            $result->setIncludeAPIs(Utilities::toBoolean($parsedResponse['IncludeAPIs']));
         }
-        $result->setRetentionPolicy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RetentionPolicy::create($parsedResponse['RetentionPolicy']));
+        $result->setRetentionPolicy(RetentionPolicy::create($parsedResponse['RetentionPolicy']));
         return $result;
     }
     /**
@@ -76,7 +76,7 @@ class Metrics
      *
      * @return void
      */
-    public function setRetentionPolicy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RetentionPolicy $policy)
+    public function setRetentionPolicy(RetentionPolicy $policy)
     {
         $this->_retentionPolicy = $policy;
     }
@@ -148,9 +148,9 @@ class Metrics
      */
     public function toArray()
     {
-        $array = array('Version' => $this->_version, 'Enabled' => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::booleanToString($this->_enabled));
+        $array = array('Version' => $this->_version, 'Enabled' => Utilities::booleanToString($this->_enabled));
         if ($this->_enabled) {
-            $array['IncludeAPIs'] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::booleanToString($this->_includeAPIs);
+            $array['IncludeAPIs'] = Utilities::booleanToString($this->_includeAPIs);
         }
         $array['RetentionPolicy'] = !empty($this->_retentionPolicy) ? $this->_retentionPolicy->toArray() : null;
         return $array;

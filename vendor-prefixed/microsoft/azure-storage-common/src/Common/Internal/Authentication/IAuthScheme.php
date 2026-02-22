@@ -46,5 +46,5 @@ interface IAuthScheme
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function signRequest(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Request $request);
+    public function signRequest(Request $request);
 }

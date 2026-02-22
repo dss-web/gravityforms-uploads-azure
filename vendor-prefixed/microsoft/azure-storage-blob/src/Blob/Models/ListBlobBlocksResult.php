@@ -58,7 +58,7 @@ class ListBlobBlocksResult
         if (\is_array($parsed)) {
             $rawEntries = array();
             if (\array_key_exists($type, $parsed) && \is_array($parsed[$type]) && !empty($parsed[$type])) {
-                $rawEntries = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed[$type]['Block']);
+                $rawEntries = Utilities::getArray($parsed[$type]['Block']);
             }
             foreach ($rawEntries as $value) {
                 $entries[$value['Name']] = $value['Size'];
@@ -78,16 +78,16 @@ class ListBlobBlocksResult
      */
     public static function create(array $headers, array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksResult();
+        $result = new ListBlobBlocksResult();
         $clean = \array_change_key_case($headers);
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG));
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED);
+        $result->setETag(Utilities::tryGetValue($clean, Resources::ETAG));
+        $date = Utilities::tryGetValue($clean, Resources::LAST_MODIFIED);
         if (!\is_null($date)) {
-            $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
+            $date = Utilities::rfc1123ToDateTime($date);
             $result->setLastModified($date);
         }
-        $result->setContentLength(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LENGTH)));
-        $result->setContentType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE_LOWER_CASE));
+        $result->setContentLength(\intval(Utilities::tryGetValue($clean, Resources::X_MS_BLOB_CONTENT_LENGTH)));
+        $result->setContentType(Utilities::tryGetValue($clean, Resources::CONTENT_TYPE_LOWER_CASE));
         $result->uncommittedBlocks = self::getEntries($parsed, 'UncommittedBlocks');
         $result->committedBlocks = self::getEntries($parsed, 'CommittedBlocks');
         return $result;
@@ -110,7 +110,7 @@ class ListBlobBlocksResult
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -171,7 +171,7 @@ class ListBlobBlocksResult
      */
     protected function setContentLength($contentLength)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($contentLength, 'contentLength');
+        Validate::isInteger($contentLength, 'contentLength');
         $this->contentLength = $contentLength;
     }
     /**

@@ -36,7 +36,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ACLBase
+class ContainerACL extends ACLBase
 {
     private $publicAccess;
     /**
@@ -45,7 +45,7 @@ class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Co
     public function __construct()
     {
         //setting the resource type to a default value.
-        $this->setResourceType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_CONTAINER);
+        $this->setResourceType(Resources::RESOURCE_TYPE_CONTAINER);
     }
     /**
      * Parses the given array into signed identifiers and create an instance of
@@ -60,8 +60,8 @@ class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Co
      */
     public static function create($publicAccess, array $parsed = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType::isValid($publicAccess), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_BLOB_PAT_MSG);
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL();
+        Validate::isTrue(PublicAccessType::isValid($publicAccess), Resources::INVALID_BLOB_PAT_MSG);
+        $result = new ContainerACL();
         $result->fromXmlArray($parsed);
         $result->setPublicAccess($publicAccess);
         return $result;
@@ -84,7 +84,7 @@ class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Co
      */
     public function setPublicAccess($publicAccess)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType::isValid($publicAccess), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_BLOB_PAT_MSG);
+        Validate::isTrue(PublicAccessType::isValid($publicAccess), Resources::INVALID_BLOB_PAT_MSG);
         $this->publicAccess = $publicAccess;
         $this->setResourceType(self::getResourceTypeByPublicAccess($publicAccess));
     }
@@ -101,14 +101,14 @@ class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Co
     {
         $result = '';
         switch ($publicAccess) {
-            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType::BLOBS_ONLY:
-                $result = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_BLOB;
+            case PublicAccessType::BLOBS_ONLY:
+                $result = Resources::RESOURCE_TYPE_BLOB;
                 break;
-            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType::CONTAINER_AND_BLOBS:
-                $result = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_CONTAINER;
+            case PublicAccessType::CONTAINER_AND_BLOBS:
+                $result = Resources::RESOURCE_TYPE_CONTAINER;
                 break;
             default:
-                $result = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_CONTAINER;
+                $result = Resources::RESOURCE_TYPE_CONTAINER;
                 break;
         }
         return $result;
@@ -126,7 +126,7 @@ class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Co
      */
     protected static function validateResourceType($resourceType)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_BLOB || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_CONTAINER, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_RESOURCE_TYPE);
+        Validate::isTrue($resourceType == Resources::RESOURCE_TYPE_BLOB || $resourceType == Resources::RESOURCE_TYPE_CONTAINER, Resources::INVALID_RESOURCE_TYPE);
     }
     /**
      * Create a ContainerAccessPolicy object.
@@ -135,6 +135,6 @@ class ContainerACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Co
      */
     protected static function createAccessPolicy()
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerAccessPolicy();
+        return new ContainerAccessPolicy();
     }
 }

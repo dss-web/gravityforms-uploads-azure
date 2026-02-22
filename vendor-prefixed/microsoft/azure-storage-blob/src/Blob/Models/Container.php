@@ -115,7 +115,7 @@ class Container
      *
      * @return void
      */
-    public function setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerProperties $properties)
+    public function setProperties(ContainerProperties $properties)
     {
         $this->_properties = $properties;
     }

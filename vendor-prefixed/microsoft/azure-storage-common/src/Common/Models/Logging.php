@@ -51,12 +51,12 @@ class Logging
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Logging();
+        $result = new Logging();
         $result->setVersion($parsedResponse['Version']);
-        $result->setDelete(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean($parsedResponse['Delete']));
-        $result->setRead(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean($parsedResponse['Read']));
-        $result->setWrite(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean($parsedResponse['Write']));
-        $result->setRetentionPolicy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RetentionPolicy::create($parsedResponse['RetentionPolicy']));
+        $result->setDelete(Utilities::toBoolean($parsedResponse['Delete']));
+        $result->setRead(Utilities::toBoolean($parsedResponse['Read']));
+        $result->setWrite(Utilities::toBoolean($parsedResponse['Write']));
+        $result->setRetentionPolicy(RetentionPolicy::create($parsedResponse['RetentionPolicy']));
         return $result;
     }
     /**
@@ -76,7 +76,7 @@ class Logging
      *
      * @return void
      */
-    public function setRetentionPolicy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RetentionPolicy $policy)
+    public function setRetentionPolicy(RetentionPolicy $policy)
     {
         $this->_retentionPolicy = $policy;
     }
@@ -168,6 +168,6 @@ class Logging
      */
     public function toArray()
     {
-        return array('Version' => $this->_version, 'Delete' => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::booleanToString($this->_delete), 'Read' => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::booleanToString($this->_read), 'Write' => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::booleanToString($this->_write), 'RetentionPolicy' => !empty($this->_retentionPolicy) ? $this->_retentionPolicy->toArray() : null);
+        return array('Version' => $this->_version, 'Delete' => Utilities::booleanToString($this->_delete), 'Read' => Utilities::booleanToString($this->_read), 'Write' => Utilities::booleanToString($this->_write), 'RetentionPolicy' => !empty($this->_retentionPolicy) ? $this->_retentionPolicy->toArray() : null);
     }
 }

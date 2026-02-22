@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class SetBlobPropertiesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class SetBlobPropertiesOptions extends BlobServiceOptions
 {
     private $_blobProperties;
     private $_sequenceNumberAction;
@@ -43,10 +43,10 @@ class SetBlobPropertiesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzur
      *
      * @param BlobProperties $blobProperties The blob properties instance.
      */
-    public function __construct(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties $blobProperties = null)
+    public function __construct(BlobProperties $blobProperties = null)
     {
         parent::__construct();
-        $this->_blobProperties = \is_null($blobProperties) ? new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties() : clone $blobProperties;
+        $this->_blobProperties = \is_null($blobProperties) ? new BlobProperties() : clone $blobProperties;
     }
     /**
      * Gets blob sequenceNumber.

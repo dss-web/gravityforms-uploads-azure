@@ -41,7 +41,7 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\Promise\RejectedPromise;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class RetryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\MiddlewareBase
+class RetryMiddleware extends MiddlewareBase
 {
     private $intervalCalculator;
     private $decider;
@@ -59,10 +59,10 @@ class RetryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage
      *
      * @return callable
      */
-    protected function onFulfilled(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
+    protected function onFulfilled(RequestInterface $request, array $options)
     {
-        return function (\Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response) use($request, $options) {
-            $isSecondary = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::requestSentToSecondary($request, $options);
+        return function (ResponseInterface $response) use($request, $options) {
+            $isSecondary = Utilities::requestSentToSecondary($request, $options);
             if (!isset($options['retries'])) {
                 $options['retries'] = 0;
             }
@@ -72,9 +72,9 @@ class RetryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage
             //Add the header that indicates the endpoint to be used if
             //continuation token is used for subsequent request.
             if ($isSecondary) {
-                $response = $response->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_CONTINUATION_LOCATION_MODE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::SECONDARY_ONLY);
+                $response = $response->withHeader(Resources::X_MS_CONTINUATION_LOCATION_MODE, LocationMode::SECONDARY_ONLY);
             } else {
-                $response = $response->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_CONTINUATION_LOCATION_MODE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
+                $response = $response->withHeader(Resources::X_MS_CONTINUATION_LOCATION_MODE, LocationMode::PRIMARY_ONLY);
             }
             return $response;
         };
@@ -88,17 +88,17 @@ class RetryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage
      *
      * @return callable
      */
-    protected function onRejected(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
+    protected function onRejected(RequestInterface $request, array $options)
     {
         return function ($reason) use($request, $options) {
-            $isSecondary = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::requestSentToSecondary($request, $options);
+            $isSecondary = Utilities::requestSentToSecondary($request, $options);
             if (!isset($options['retries'])) {
                 $options['retries'] = 0;
             }
             if (\call_user_func($this->decider, $options['retries'], $request, null, $reason, $isSecondary)) {
                 return $this->retry($request, $options);
             }
-            return new \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\RejectedPromise($reason);
+            return new RejectedPromise($reason);
         };
     }
     /**
@@ -110,22 +110,22 @@ class RetryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage
      *
      * @return callable
      */
-    private function retry(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options, \Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response = null)
+    private function retry(RequestInterface $request, array $options, ResponseInterface $response = null)
     {
         $options['delay'] = \call_user_func($this->intervalCalculator, ++$options['retries']);
         //Change the request URI according to the location mode.
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ROS_LOCATION_MODE, $options)) {
-            $locationMode = $options[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ROS_LOCATION_MODE];
+        if (\array_key_exists(Resources::ROS_LOCATION_MODE, $options)) {
+            $locationMode = $options[Resources::ROS_LOCATION_MODE];
             //If have RA-GRS enabled for the request, switch between
             //primary and secondary.
-            if ($locationMode == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_THEN_SECONDARY || $locationMode == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::SECONDARY_THEN_PRIMARY) {
-                $primaryUri = $options[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ROS_PRIMARY_URI];
-                $secondaryUri = $options[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ROS_SECONDARY_URI];
+            if ($locationMode == LocationMode::PRIMARY_THEN_SECONDARY || $locationMode == LocationMode::SECONDARY_THEN_PRIMARY) {
+                $primaryUri = $options[Resources::ROS_PRIMARY_URI];
+                $secondaryUri = $options[Resources::ROS_SECONDARY_URI];
                 $target = $request->getRequestTarget();
-                if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::startsWith($target, '/')) {
+                if (Utilities::startsWith($target, '/')) {
                     $target = \substr($target, 1);
-                    $primaryUri = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Uri($primaryUri . $target);
-                    $secondaryUri = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Uri($secondaryUri . $target);
+                    $primaryUri = new Uri($primaryUri . $target);
+                    $secondaryUri = new Uri($secondaryUri . $target);
                 }
                 //substitute the uri.
                 if ((string) $request->getUri() == (string) $primaryUri) {
@@ -135,7 +135,7 @@ class RetryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage
                 }
             }
         }
-        $handler = $options[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ROS_HANDLER];
+        $handler = $options[Resources::ROS_HANDLER];
         return \call_user_func($handler, $request, $options);
     }
 }

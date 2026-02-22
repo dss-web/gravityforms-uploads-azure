@@ -44,7 +44,7 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\Promise\RejectedPromise;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class HistoryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\MiddlewareBase
+class HistoryMiddleware extends MiddlewareBase
 {
     private $history;
     private $path;
@@ -84,7 +84,7 @@ class HistoryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
         if ($this->path !== '') {
             $this->appendNewEntryToPath($entry);
         } else {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\array_key_exists('request', $entry) && \array_key_exists('options', $entry) && (\array_key_exists('response', $entry) || \array_key_exists('reason', $entry)), 'Given history entry not in correct format');
+            Validate::isTrue(\array_key_exists('request', $entry) && \array_key_exists('options', $entry) && (\array_key_exists('response', $entry) || \array_key_exists('reason', $entry)), 'Given history entry not in correct format');
             $this->history[] = $entry;
         }
         ++$this->count;
@@ -108,10 +108,10 @@ class HistoryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      *
      * @return callable
      */
-    protected function onFulfilled(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
+    protected function onFulfilled(RequestInterface $request, array $options)
     {
         $reflection = $this;
-        return function (\Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response) use($reflection, $request, $options) {
+        return function (ResponseInterface $response) use($reflection, $request, $options) {
             $reflection->addHistory(['request' => $request, 'response' => $response, 'options' => $options]);
             return $response;
         };
@@ -125,12 +125,12 @@ class HistoryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      *
      * @return callable
      */
-    protected function onRejected(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
+    protected function onRejected(RequestInterface $request, array $options)
     {
         $reflection = $this;
         return function ($reason) use($reflection, $request, $options) {
             $reflection->addHistory(['request' => $request, 'reason' => $reason, 'options' => $options]);
-            return new \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\RejectedPromise($reason);
+            return new RejectedPromise($reason);
         };
     }
     /**
@@ -146,13 +146,13 @@ class HistoryMiddleware extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
         $delimiter = \str_pad($entryNoString, self::TITLE_LENGTH, '-', \STR_PAD_BOTH) . \PHP_EOL;
         $entryString = $delimiter;
         $entryString .= \sprintf("Time: %s\n", (new \DateTime("now", new \DateTimeZone('UTC')))->format('Y-m-d H:i:s'));
-        $entryString .= \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\MessageSerializer::objectSerialize($entry['request']);
+        $entryString .= MessageSerializer::objectSerialize($entry['request']);
         if (\array_key_exists('reason', $entry)) {
-            $entryString .= \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\MessageSerializer::objectSerialize($entry['reason']);
+            $entryString .= MessageSerializer::objectSerialize($entry['reason']);
         } elseif (\array_key_exists('response', $entry)) {
-            $entryString .= \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\MessageSerializer::objectSerialize($entry['response']);
+            $entryString .= MessageSerializer::objectSerialize($entry['response']);
         }
         $entryString .= $delimiter;
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::appendToFile($this->path, $entryString);
+        Utilities::appendToFile($this->path, $entryString);
     }
 }

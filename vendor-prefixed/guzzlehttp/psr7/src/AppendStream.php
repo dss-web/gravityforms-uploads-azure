@@ -10,7 +10,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class AppendStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class AppendStream implements StreamInterface
 {
     /** @var StreamInterface[] Streams being decorated */
     private $streams = [];
@@ -43,7 +43,7 @@ class AppendStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\Strea
      *
      * @throws \InvalidArgumentException if the stream is not readable
      */
-    public function addStream(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream)
+    public function addStream(StreamInterface $stream)
     {
         if (!$stream->isReadable()) {
             throw new \InvalidArgumentException('Each stream must be readable');
@@ -56,7 +56,7 @@ class AppendStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\Strea
     }
     public function getContents()
     {
-        return \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::copyToString($this);
+        return Utils::copyToString($this);
     }
     /**
      * Closes each attached stream.

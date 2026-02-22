@@ -36,7 +36,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class SharedAccessSignatureAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\IAuthScheme
+class SharedAccessSignatureAuthScheme implements IAuthScheme
 {
     /**
      * The sas token
@@ -53,7 +53,7 @@ class SharedAccessSignatureAuthScheme implements \Dekode\GravityForms\Vendor\Mic
         // Remove '?' in front of the SAS token if existing
         $this->sasToken = \str_replace('?', '', $sasToken, $i);
         if ($i > 1) {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_SAS_TOKEN, $sasToken));
+            throw new \InvalidArgumentException(\sprintf(Resources::INVALID_SAS_TOKEN, $sasToken));
         }
     }
     /**
@@ -65,7 +65,7 @@ class SharedAccessSignatureAuthScheme implements \Dekode\GravityForms\Vendor\Mic
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function signRequest(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Request $request)
+    public function signRequest(Request $request)
     {
         // initial URI
         $uri = $request->getUri();

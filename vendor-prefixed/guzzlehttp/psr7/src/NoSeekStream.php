@@ -8,7 +8,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class NoSeekStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class NoSeekStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     public function seek($offset, $whence = \SEEK_SET)

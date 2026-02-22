@@ -49,7 +49,7 @@ class BlockList
      */
     public static function create(array $array)
     {
-        $blockList = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlockList();
+        $blockList = new BlockList();
         foreach ($array as $value) {
             $blockList->addEntry($value->getBlockId(), $value->getType());
         }
@@ -65,9 +65,9 @@ class BlockList
      */
     public function addEntry($blockId, $type)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blockId, 'blockId');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobBlockType::isValid($type), \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_BTE_MSG, \get_class(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobBlockType())));
-        $block = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\Block();
+        Validate::canCastAsString($blockId, 'blockId');
+        Validate::isTrue(BlobBlockType::isValid($type), \sprintf(Resources::INVALID_BTE_MSG, \get_class(new BlobBlockType())));
+        $block = new Block();
         $block->setBlockId($blockId);
         $block->setType($type);
         $this->entries[] = $block;
@@ -81,7 +81,7 @@ class BlockList
      */
     public function addCommittedEntry($blockId)
     {
-        $this->addEntry($blockId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobBlockType::COMMITTED_TYPE);
+        $this->addEntry($blockId, BlobBlockType::COMMITTED_TYPE);
     }
     /**
      * Addds uncommitted block entry.
@@ -92,7 +92,7 @@ class BlockList
      */
     public function addUncommittedEntry($blockId)
     {
-        $this->addEntry($blockId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobBlockType::UNCOMMITTED_TYPE);
+        $this->addEntry($blockId, BlobBlockType::UNCOMMITTED_TYPE);
     }
     /**
      * Addds latest block entry.
@@ -103,7 +103,7 @@ class BlockList
      */
     public function addLatestEntry($blockId)
     {
-        $this->addEntry($blockId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobBlockType::LATEST_TYPE);
+        $this->addEntry($blockId, BlobBlockType::LATEST_TYPE);
     }
     /**
      * Gets blob block entry.
@@ -139,9 +139,9 @@ class BlockList
      *
      * @return string
      */
-    public function toXml(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer $xmlSerializer)
+    public function toXml(XmlSerializer $xmlSerializer)
     {
-        $properties = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer::ROOT_NAME => self::$xmlRootName);
+        $properties = array(XmlSerializer::ROOT_NAME => self::$xmlRootName);
         $array = array();
         foreach ($this->entries as $value) {
             $array[] = array($value->getType() => $value->getBlockId());

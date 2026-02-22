@@ -55,8 +55,8 @@ abstract class AccessPolicy
      */
     public function __construct($resourceType)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($resourceType, 'resourceType');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_BLOB || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_CONTAINER || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_QUEUE || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_TABLE || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_FILE || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_SHARE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_RESOURCE_TYPE_NOT_SUPPORTED);
+        Validate::canCastAsString($resourceType, 'resourceType');
+        Validate::isTrue($resourceType == Resources::RESOURCE_TYPE_BLOB || $resourceType == Resources::RESOURCE_TYPE_CONTAINER || $resourceType == Resources::RESOURCE_TYPE_QUEUE || $resourceType == Resources::RESOURCE_TYPE_TABLE || $resourceType == Resources::RESOURCE_TYPE_FILE || $resourceType == Resources::RESOURCE_TYPE_SHARE, Resources::ERROR_RESOURCE_TYPE_NOT_SUPPORTED);
         $this->resourceType = $resourceType;
     }
     /**
@@ -78,7 +78,7 @@ abstract class AccessPolicy
     public function setStart(\DateTime $start = null)
     {
         if ($start != null) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($start);
+            Validate::isDate($start);
         }
         $this->start = $start;
     }
@@ -100,7 +100,7 @@ abstract class AccessPolicy
      */
     public function setExpiry($expiry)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($expiry);
+        Validate::isDate($expiry);
         $this->expiry = $expiry;
     }
     /**
@@ -157,7 +157,7 @@ abstract class AccessPolicy
         }
         //After filtering all the permissions, if there is still characters
         //left in the given permission, throw exception.
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($permission == '', \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_PERMISSION_PROVIDED, $this->getResourceType(), \implode(', ', $validPermissions)));
+        Validate::isTrue($permission == '', \sprintf(Resources::INVALID_PERMISSION_PROVIDED, $this->getResourceType(), \implode(', ', $validPermissions)));
         return $result;
     }
     /**
@@ -171,10 +171,10 @@ abstract class AccessPolicy
     {
         $array = array();
         if ($this->getStart() != null) {
-            $array[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_START] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToEdmDateTime($this->getStart());
+            $array[Resources::XTAG_SIGNED_START] = Utilities::convertToEdmDateTime($this->getStart());
         }
-        $array[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_EXPIRY] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToEdmDateTime($this->getExpiry());
-        $array[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_PERMISSION] = $this->getPermission();
+        $array[Resources::XTAG_SIGNED_EXPIRY] = Utilities::convertToEdmDateTime($this->getExpiry());
+        $array[Resources::XTAG_SIGNED_PERMISSION] = $this->getPermission();
         return $array;
     }
 }

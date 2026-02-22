@@ -44,7 +44,7 @@ class SignedIdentifier
      * @param string            $id           The id of this signed identifier.
      * @param AccessPolicy|null $accessPolicy The access policy.
      */
-    public function __construct($id = '', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\AccessPolicy $accessPolicy = null)
+    public function __construct($id = '', AccessPolicy $accessPolicy = null)
     {
         $this->setId($id);
         $this->setAccessPolicy($accessPolicy);
@@ -85,7 +85,7 @@ class SignedIdentifier
      *
      * @return void
      */
-    public function setAccessPolicy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\AccessPolicy $accessPolicy = null)
+    public function setAccessPolicy(AccessPolicy $accessPolicy = null)
     {
         $this->accessPolicy = $accessPolicy;
     }
@@ -100,9 +100,9 @@ class SignedIdentifier
     {
         $array = array();
         $accessPolicyArray = array();
-        $accessPolicyArray[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_ID] = $this->getId();
-        $accessPolicyArray[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ACCESS_POLICY] = $this->getAccessPolicy()->toArray();
-        $array[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_IDENTIFIER] = $accessPolicyArray;
+        $accessPolicyArray[Resources::XTAG_SIGNED_ID] = $this->getId();
+        $accessPolicyArray[Resources::XTAG_ACCESS_POLICY] = $this->getAccessPolicy()->toArray();
+        $array[Resources::XTAG_SIGNED_IDENTIFIER] = $accessPolicyArray;
         return $array;
     }
 }

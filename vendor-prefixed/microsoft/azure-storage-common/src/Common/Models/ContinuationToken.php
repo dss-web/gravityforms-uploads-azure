@@ -50,8 +50,8 @@ class ContinuationToken
      */
     public function setLocation($location)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($location, 'location');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($location == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY || $location == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::SECONDARY_ONLY || $location == '', \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_VALUE_MSG, 'location', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY . ' or ' . \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::SECONDARY_ONLY));
+        Validate::canCastAsString($location, 'location');
+        Validate::isTrue($location == LocationMode::PRIMARY_ONLY || $location == LocationMode::SECONDARY_ONLY || $location == '', \sprintf(Resources::INVALID_VALUE_MSG, 'location', LocationMode::PRIMARY_ONLY . ' or ' . LocationMode::SECONDARY_ONLY));
         $this->location = $location;
     }
     /**

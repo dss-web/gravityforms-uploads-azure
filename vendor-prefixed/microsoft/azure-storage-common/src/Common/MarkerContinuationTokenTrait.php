@@ -44,14 +44,14 @@ trait MarkerContinuationTokenTrait
      * @param MarkerContinuationToken|null $continuationToken the continuation
      *                                                        token to be set.
      */
-    public function setContinuationToken(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\MarkerContinuationToken $continuationToken = null)
+    public function setContinuationToken(MarkerContinuationToken $continuationToken = null)
     {
         $this->continuationToken = $continuationToken;
     }
     public function setMarker($marker)
     {
         if ($this->continuationToken == null) {
-            $this->continuationToken = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\MarkerContinuationToken();
+            $this->continuationToken = new MarkerContinuationToken();
         }
         $this->continuationToken->setNextMarker($marker);
     }

@@ -50,7 +50,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-service-properties
      */
-    public function getServiceProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function getServiceProperties(ServiceOptions $options = null);
     /**
      * Creates promise to get the properties of the service.
      *
@@ -60,7 +60,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-service-properties
      */
-    public function getServicePropertiesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function getServicePropertiesAsync(ServiceOptions $options = null);
     /**
      * Sets the properties of the service.
      *
@@ -71,7 +71,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-service-properties
      */
-    public function setServiceProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties $serviceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function setServiceProperties(ServiceProperties $serviceProperties, ServiceOptions $options = null);
     /**
      * Creates the promise to set the properties of the service.
      *
@@ -85,7 +85,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-service-properties
      */
-    public function setServicePropertiesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties $serviceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function setServicePropertiesAsync(ServiceProperties $serviceProperties, ServiceOptions $options = null);
     /**
      * Returns a list of the shares under the specified account
      *
@@ -95,7 +95,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-shares
      */
-    public function listShares(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesOptions $options = null);
+    public function listShares(FileModels\ListSharesOptions $options = null);
     /**
      * Create a promise to return a list of the shares under the specified account
      *
@@ -105,7 +105,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-shares
      */
-    public function listSharesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesOptions $options = null);
+    public function listSharesAsync(FileModels\ListSharesOptions $options = null);
     /**
      * Creates a new share in the given storage account.
      *
@@ -116,7 +116,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-share
      */
-    public function createShare($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateShareOptions $options = null);
+    public function createShare($share, FileModels\CreateShareOptions $options = null);
     /**
      * Creates promise to create a new share in the given storage account.
      *
@@ -127,7 +127,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-share
      */
-    public function createShareAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateShareOptions $options = null);
+    public function createShareAsync($share, FileModels\CreateShareOptions $options = null);
     /**
      * Deletes a share in the given storage account.
      *
@@ -138,7 +138,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-share
      */
-    public function deleteShare($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function deleteShare($share, FileModels\FileServiceOptions $options = null);
     /**
      * Create a promise for deleting a share.
      *
@@ -149,7 +149,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-share
      */
-    public function deleteShareAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function deleteShareAsync($share, FileModels\FileServiceOptions $options = null);
     /**
      * Returns all properties and metadata on the share.
      *
@@ -160,7 +160,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-properties
      */
-    public function getShareProperties($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareProperties($share, FileModels\FileServiceOptions $options = null);
     /**
      * Create promise to return all properties and metadata on the share.
      *
@@ -171,7 +171,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-properties
      */
-    public function getSharePropertiesAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getSharePropertiesAsync($share, FileModels\FileServiceOptions $options = null);
     /**
      * Sets quota of the share.
      *
@@ -183,7 +183,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-properties
      */
-    public function setShareProperties($share, $quota, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setShareProperties($share, $quota, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to set quota the share.
      *
@@ -195,7 +195,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-properties
      */
-    public function setSharePropertiesAsync($share, $quota, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setSharePropertiesAsync($share, $quota, FileModels\FileServiceOptions $options = null);
     /**
      * Returns only user-defined metadata for the specified share.
      *
@@ -206,7 +206,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-metadata
      */
-    public function getShareMetadata($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareMetadata($share, FileModels\FileServiceOptions $options = null);
     /**
      * Create promise to return only user-defined metadata for the specified
      * share.
@@ -218,7 +218,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-metadata
      */
-    public function getShareMetadataAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareMetadataAsync($share, FileModels\FileServiceOptions $options = null);
     /**
      * Updates metadata of the share.
      *
@@ -230,7 +230,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-metadata
      */
-    public function setShareMetadata($share, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setShareMetadata($share, array $metadata, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to update metadata headers on the share.
      *
@@ -242,7 +242,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-metadata
      */
-    public function setShareMetadataAsync($share, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setShareMetadataAsync($share, array $metadata, FileModels\FileServiceOptions $options = null);
     /**
      * Gets the access control list (ACL) for the share.
      *
@@ -253,7 +253,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-acl
      */
-    public function getShareAcl($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareAcl($share, FileModels\FileServiceOptions $options = null);
     /**
      * Creates the promise to get the access control list (ACL) for the share.
      *
@@ -264,7 +264,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-acl
      */
-    public function getShareAclAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareAclAsync($share, FileModels\FileServiceOptions $options = null);
     /**
      * Sets the ACL and any share-level access policies for the share.
      *
@@ -277,7 +277,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-acl
      */
-    public function setShareAcl($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setShareAcl($share, FileModels\ShareACL $acl, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to set the ACL and any share-level access policies
      * for the share.
@@ -291,7 +291,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-acl
      */
-    public function setShareAclAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setShareAclAsync($share, FileModels\ShareACL $acl, FileModels\FileServiceOptions $options = null);
     /**
      * Get the statistics related to the share.
      *
@@ -302,7 +302,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-stats
      */
-    public function getShareStats($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareStats($share, FileModels\FileServiceOptions $options = null);
     /**
      * Get the statistics related to the share.
      *
@@ -313,7 +313,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-stats
      */
-    public function getShareStatsAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getShareStatsAsync($share, FileModels\FileServiceOptions $options = null);
     /**
      * List directories and files under specified path.
      *
@@ -327,7 +327,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-directories-and-files
      */
-    public function listDirectoriesAndFiles($share, $path = '', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesOptions $options = null);
+    public function listDirectoriesAndFiles($share, $path = '', FileModels\ListDirectoriesAndFilesOptions $options = null);
     /**
      * Creates promise to list directories and files under specified path.
      *
@@ -341,7 +341,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-directories-and-files
      */
-    public function listDirectoriesAndFilesAsync($share, $path = '', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesOptions $options = null);
+    public function listDirectoriesAndFilesAsync($share, $path = '', FileModels\ListDirectoriesAndFilesOptions $options = null);
     /**
      * Creates a new directory in the given share and path.
      *
@@ -354,7 +354,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-directory
      */
-    public function createDirectory($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateDirectoryOptions $options = null);
+    public function createDirectory($share, $path, FileModels\CreateDirectoryOptions $options = null);
     /**
      * Creates a promise to create a new directory in the given share and path.
      *
@@ -367,7 +367,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-directory
      */
-    public function createDirectoryAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateDirectoryOptions $options = null);
+    public function createDirectoryAsync($share, $path, FileModels\CreateDirectoryOptions $options = null);
     /**
      * Deletes a directory in the given share and path.
      *
@@ -380,7 +380,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-directory
      */
-    public function deleteDirectory($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function deleteDirectory($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Creates a promise to delete a new directory in the given share and path.
      *
@@ -393,7 +393,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-directory
      */
-    public function deleteDirectoryAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function deleteDirectoryAsync($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Gets a directory's properties from the given share and path.
      *
@@ -405,7 +405,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-properties
      */
-    public function getDirectoryProperties($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getDirectoryProperties($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to get a directory's properties from the given share
      * and path.
@@ -418,7 +418,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-properties
      */
-    public function getDirectoryPropertiesAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getDirectoryPropertiesAsync($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Gets a directory's metadata from the given share and path.
      *
@@ -430,7 +430,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-metadata
      */
-    public function getDirectoryMetadata($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getDirectoryMetadata($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to get a directory's metadata from the given share
      * and path.
@@ -443,7 +443,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-metadata
      */
-    public function getDirectoryMetadataAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getDirectoryMetadataAsync($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Sets a directory's metadata from the given share and path.
      *
@@ -457,7 +457,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-directory-metadata
      */
-    public function setDirectoryMetadata($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setDirectoryMetadata($share, $path, array $metadata, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to set a directory's metadata from the given share
      * and path.
@@ -472,7 +472,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-directory-metadata
      */
-    public function setDirectoryMetadataAsync($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setDirectoryMetadataAsync($share, $path, array $metadata, FileModels\FileServiceOptions $options = null);
     /**
      * Create a new file.
      *
@@ -485,7 +485,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-file
      */
-    public function createFile($share, $path, $size, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileOptions $options = null);
+    public function createFile($share, $path, $size, FileModels\CreateFileOptions $options = null);
     /**
      * Creates promise to create a new file.
      *
@@ -498,7 +498,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-file
      */
-    public function createFileAsync($share, $path, $size, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileOptions $options = null);
+    public function createFileAsync($share, $path, $size, FileModels\CreateFileOptions $options = null);
     /**
      * Deletes a file in the given share and path.
      *
@@ -510,7 +510,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-file2
      */
-    public function deleteFile($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function deleteFile($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Creates a promise to delete a new file in the given share and path.
      *
@@ -522,7 +522,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-file2
      */
-    public function deleteFileAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function deleteFileAsync($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Reads or downloads a file from the server, including its metadata and
      * properties.
@@ -535,7 +535,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file
      */
-    public function getFile($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileOptions $options = null);
+    public function getFile($share, $path, FileModels\GetFileOptions $options = null);
     /**
      * Creates promise to read or download a file from the server, including its
      * metadata and properties.
@@ -548,7 +548,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file
      */
-    public function getFileAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileOptions $options = null);
+    public function getFileAsync($share, $path, FileModels\GetFileOptions $options = null);
     /**
      * Gets a file's properties from the given share and path.
      *
@@ -560,7 +560,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-properties
      */
-    public function getFileProperties($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getFileProperties($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to get a file's properties from the given share
      * and path.
@@ -573,7 +573,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-properties
      */
-    public function getFilePropertiesAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getFilePropertiesAsync($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Sets properties on the file.
      *
@@ -586,7 +586,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-properties
      */
-    public function setFileProperties($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties $properties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setFileProperties($share, $path, FileModels\FileProperties $properties, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to set properties on the file.
      *
@@ -599,7 +599,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-properties
      */
-    public function setFilePropertiesAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties $properties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setFilePropertiesAsync($share, $path, FileModels\FileProperties $properties, FileModels\FileServiceOptions $options = null);
     /**
      * Gets a file's metadata from the given share and path.
      *
@@ -611,7 +611,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-metadata
      */
-    public function getFileMetadata($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getFileMetadata($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to get a file's metadata from the given share
      * and path.
@@ -624,7 +624,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-metadata
      */
-    public function getFileMetadataAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function getFileMetadataAsync($share, $path, FileModels\FileServiceOptions $options = null);
     /**
      * Sets a file's metadata from the given share and path.
      *
@@ -637,7 +637,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-metadata
      */
-    public function setFileMetadata($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setFileMetadata($share, $path, array $metadata, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to set a file's metadata from the given share
      * and path.
@@ -651,7 +651,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-metadata
      */
-    public function setFileMetadataAsync($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function setFileMetadataAsync($share, $path, array $metadata, FileModels\FileServiceOptions $options = null);
     /**
      * Writes range of bytes to a file. Range can be at most 4MB in length.
      *
@@ -666,7 +666,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      */
-    public function putFileRange($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions $options = null);
+    public function putFileRange($share, $path, $content, Range $range, FileModels\PutFileRangeOptions $options = null);
     /**
      * Creates promise to write range of bytes to a file. Range can be at most
      * 4MB in length.
@@ -683,7 +683,7 @@ interface IFile
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      *
      */
-    public function putFileRangeAsync($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions $options = null);
+    public function putFileRangeAsync($share, $path, $content, Range $range, FileModels\PutFileRangeOptions $options = null);
     /**
      * Creates a file from a provided content.
      *
@@ -696,7 +696,7 @@ interface IFile
      *
      * @return void
      */
-    public function createFileFromContent($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileFromContentOptions $options = null);
+    public function createFileFromContent($share, $path, $content, FileModels\CreateFileFromContentOptions $options = null);
     /**
      * Creates a promise to create a file from a provided content.
      *
@@ -709,7 +709,7 @@ interface IFile
      *
      * @return void
      */
-    public function createFileFromContentAsync($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileFromContentOptions $options = null);
+    public function createFileFromContentAsync($share, $path, $content, FileModels\CreateFileFromContentOptions $options = null);
     /**
      * Clears range of bytes of a file. If the specified range is not 512-byte
      * aligned, the operation will write zeros to the start or end of the range
@@ -726,7 +726,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      */
-    public function clearFileRange($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function clearFileRange($share, $path, Range $range, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to clear range of bytes of a file. If the specified range
      * is not 512-byte aligned, the operation will write zeros to the start or
@@ -744,7 +744,7 @@ interface IFile
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      *
      */
-    public function clearFileRangeAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function clearFileRangeAsync($share, $path, Range $range, FileModels\FileServiceOptions $options = null);
     /**
      * Lists range of bytes of a file.
      *
@@ -758,7 +758,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-ranges
      */
-    public function listFileRange($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function listFileRange($share, $path, Range $range = null, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to list range of bytes of a file.
      *
@@ -773,7 +773,7 @@ interface IFile
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-ranges
      *
      */
-    public function listFileRangeAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function listFileRangeAsync($share, $path, Range $range = null, FileModels\FileServiceOptions $options = null);
     /**
      * Informs server to copy file from $sourcePath to $path.
      * To copy a file to another file within the same storage account, you may
@@ -801,7 +801,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-file
      */
-    public function copyFile($share, $path, $sourcePath, array $metadata = array(), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function copyFile($share, $path, $sourcePath, array $metadata = array(), FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to inform server to copy file from $sourcePath to $path.
      *
@@ -831,7 +831,7 @@ interface IFile
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-file
      *
      */
-    public function copyFileAsync($share, $path, $sourcePath, array $metadata = array(), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function copyFileAsync($share, $path, $sourcePath, array $metadata = array(), FileModels\FileServiceOptions $options = null);
     /**
      * Abort a file copy operation
      *
@@ -844,7 +844,7 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/abort-copy-file
      */
-    public function abortCopy($share, $path, $copyID, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function abortCopy($share, $path, $copyID, FileModels\FileServiceOptions $options = null);
     /**
      * Creates promise to abort a file copy operation
      *
@@ -857,5 +857,5 @@ interface IFile
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/abort-copy-file
      */
-    public function abortCopyAsync($share, $path, $copyID, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null);
+    public function abortCopyAsync($share, $path, $copyID, FileModels\FileServiceOptions $options = null);
 }

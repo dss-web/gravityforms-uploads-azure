@@ -37,7 +37,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class TokenAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\IAuthScheme
+class TokenAuthScheme implements IAuthScheme
 {
     /**
      * The authentication token
@@ -61,9 +61,9 @@ class TokenAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stor
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function signRequest(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Request $request)
+    public function signRequest(Request $request)
     {
         $bearerToken = "Bearer " . $this->tokenRef;
-        return $request->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::AUTHENTICATION, $bearerToken);
+        return $request->withHeader(Resources::AUTHENTICATION, $bearerToken);
     }
 }

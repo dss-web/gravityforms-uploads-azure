@@ -72,7 +72,7 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\Psr7;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\IFile
+class FileRestProxy extends ServiceRestProxy implements IFile
 {
     use ServiceRestTrait;
     /**
@@ -96,18 +96,18 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      */
     public static function createFileService($connectionString, array $options = [])
     {
-        $settings = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\StorageServiceSettings::createFromConnectionString($connectionString);
-        $primaryUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryAddUrlScheme($settings->getFileEndpointUri());
-        $secondaryUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryAddUrlScheme($settings->getFileSecondaryEndpointUri());
-        $fileWrapper = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\FileRestProxy($primaryUri, $secondaryUri, $settings->getName(), $options);
+        $settings = StorageServiceSettings::createFromConnectionString($connectionString);
+        $primaryUri = Utilities::tryAddUrlScheme($settings->getFileEndpointUri());
+        $secondaryUri = Utilities::tryAddUrlScheme($settings->getFileSecondaryEndpointUri());
+        $fileWrapper = new FileRestProxy($primaryUri, $secondaryUri, $settings->getName(), $options);
         // Getting authentication scheme
         if ($settings->hasSasToken()) {
-            $authScheme = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\SharedAccessSignatureAuthScheme($settings->getSasToken());
+            $authScheme = new SharedAccessSignatureAuthScheme($settings->getSasToken());
         } else {
-            $authScheme = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\SharedKeyAuthScheme($settings->getName(), $settings->getKey());
+            $authScheme = new SharedKeyAuthScheme($settings->getName(), $settings->getKey());
         }
         // Adding common request middleware
-        $commonRequestMiddleware = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Middlewares\CommonRequestMiddleware($authScheme, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STORAGE_API_LATEST_VERSION, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::FILE_SDK_VERSION);
+        $commonRequestMiddleware = new CommonRequestMiddleware($authScheme, Resources::STORAGE_API_LATEST_VERSION, Resources::FILE_SDK_VERSION);
         $fileWrapper->pushMiddleware($commonRequestMiddleware);
         return $fileWrapper;
     }
@@ -149,26 +149,26 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    private function getSharePropertiesAsyncImpl($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null, $operation = null)
+    private function getSharePropertiesAsyncImpl($share, FileServiceOptions $options = null, $operation = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($operation == 'properties' || $operation == 'metadata', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::FILE_SHARE_PROPERTIES_OPERATION_INVALID);
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        Validate::isTrue($operation == 'properties' || $operation == 'metadata', Resources::FILE_SHARE_PROPERTIES_OPERATION_INVALID);
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'share');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'share');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         if ($operation == 'metadata') {
-            $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, $operation);
+            $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, $operation);
         }
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $responseHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetSharePropertiesResult::create($responseHeaders);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $responseHeaders = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetSharePropertiesResult::create($responseHeaders);
         }, null);
     }
     /**
@@ -186,29 +186,29 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    private function setSharePropertiesAsyncImpl($share, array $properties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null, $operation = 'properties')
+    private function setSharePropertiesAsyncImpl($share, array $properties, FileServiceOptions $options = null, $operation = 'properties')
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($operation == 'properties' || $operation == 'metadata', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::FILE_SHARE_PROPERTIES_OPERATION_INVALID);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($share, 'share');
+        Validate::isTrue($operation == 'properties' || $operation == 'metadata', Resources::FILE_SHARE_PROPERTIES_OPERATION_INVALID);
+        Validate::canCastAsString($share, 'share');
         $headers = array();
         if ($operation == 'properties') {
-            $headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_SHARE_QUOTA] = $properties[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_SHARE_QUOTA];
+            $headers[Resources::X_MS_SHARE_QUOTA] = $properties[Resources::X_MS_SHARE_QUOTA];
         } else {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($properties);
+            Utilities::validateMetadata($properties);
             $headers = $this->generateMetadataHeaders($properties);
         }
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'share');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, $operation);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'share');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, $operation);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
     }
     /**
      * Creates promise to write range of bytes (more than 4MB) to a file.
@@ -228,18 +228,18 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      *
      */
-    private function multiplePutRangeConcurrentAsync($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions $options = null, $useTransactionalMD5 = \false)
+    private function multiplePutRangeConcurrentAsync($share, $path, $content, Range $range, PutFileRangeOptions $options = null, $useTransactionalMD5 = \false)
     {
         $queryParams = array();
         $headers = array();
         $path = $this->createPath($share, $path);
         $selfInstance = $this;
         if ($options == null) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions();
+            $options = new PutFileRangeOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'range');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_WRITE, 'Update');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'range');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_WRITE, 'Update');
         $counter = 0;
         //create the generator for requests.
         $generator = function () use($headers, $path, $content, &$counter, $queryParams, $range, $useTransactionalMD5, $selfInstance) {
@@ -247,28 +247,28 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
             $chunkContent = '';
             $start = 0;
             do {
-                $start = $range->getStart() + \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::MB_IN_BYTES_4 * $counter++;
+                $start = $range->getStart() + Resources::MB_IN_BYTES_4 * $counter++;
                 $end = $range->getEnd();
                 if ($end != null && $start >= $end) {
                     return null;
                 }
-                $chunkContent = $content->read(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::MB_IN_BYTES_4);
+                $chunkContent = $content->read(Resources::MB_IN_BYTES_4);
                 $size = \strlen($chunkContent);
                 if ($size == 0) {
                     return null;
                 }
-            } while (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::allZero($chunkContent));
-            $chunkRange = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range($start);
+            } while (Utilities::allZero($chunkContent));
+            $chunkRange = new Range($start);
             $chunkRange->setLength($size);
-            $selfInstance->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_RANGE, $chunkRange->getRangeString());
-            $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_LENGTH, $size);
+            $selfInstance->addOptionalHeader($headers, Resources::X_MS_RANGE, $chunkRange->getRangeString());
+            $this->addOptionalHeader($headers, Resources::CONTENT_LENGTH, $size);
             if ($useTransactionalMD5) {
                 $contentMD5 = \base64_encode(\md5($chunkContent, \true));
-                $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_MD5, $contentMD5);
+                $this->addOptionalHeader($headers, Resources::CONTENT_MD5, $contentMD5);
             }
-            return $selfInstance->createRequest(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT, $headers, $queryParams, array(), $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY, $chunkContent);
+            return $selfInstance->createRequest(Resources::HTTP_PUT, $headers, $queryParams, array(), $path, LocationMode::PRIMARY_ONLY, $chunkContent);
         };
-        return $this->sendConcurrentAsync($generator, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_CREATED, $options);
+        return $this->sendConcurrentAsync($generator, Resources::STATUS_CREATED, $options);
     }
     /**
      * Returns a list of the shares under the specified account
@@ -279,7 +279,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-shares
      */
-    public function listShares(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesOptions $options = null)
+    public function listShares(ListSharesOptions $options = null)
     {
         return $this->listSharesAsync($options)->wait();
     }
@@ -292,28 +292,28 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-shares
      */
-    public function listSharesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesOptions $options = null)
+    public function listSharesAsync(ListSharesOptions $options = null)
     {
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
-        $path = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING;
+        $path = Resources::EMPTY_STRING;
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesOptions();
+            $options = new ListSharesOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'list');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_PREFIX_LOWERCASE, $options->getPrefix());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MARKER_LOWERCASE, $options->getNextMarker());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'list');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_PREFIX_LOWERCASE, $options->getPrefix());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MARKER_LOWERCASE, $options->getNextMarker());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
         $isInclude = $options->getIncludeMetadata();
         $isInclude = $isInclude ? 'metadata' : null;
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_INCLUDE, $isInclude);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_INCLUDE, $isInclude);
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesResult::create($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getLocationFromHeaders($response->getHeaders()));
+            return ListSharesResult::create($parsed, Utilities::getLocationFromHeaders($response->getHeaders()));
         });
     }
     /**
@@ -326,7 +326,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-share
      */
-    public function createShare($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateShareOptions $options = null)
+    public function createShare($share, CreateShareOptions $options = null)
     {
         $this->createShareAsync($share, $options)->wait();
     }
@@ -340,22 +340,22 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-share
      */
-    public function createShareAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateShareOptions $options = null)
+    public function createShareAsync($share, CreateShareOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::notNullOrEmpty($share, 'share');
+        $method = Resources::HTTP_PUT;
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE => 'share');
+        $queryParams = array(Resources::QP_REST_TYPE => 'share');
         $path = $this->createPath($share);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateShareOptions();
+            $options = new CreateShareOptions();
         }
         $metadata = $options->getMetadata();
         $headers = $this->generateMetadataHeaders($metadata);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_SHARE_QUOTA, $options->getQuota());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalHeader($headers, Resources::X_MS_SHARE_QUOTA, $options->getQuota());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Deletes a share in the given storage account.
@@ -367,7 +367,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-share
      */
-    public function deleteShare($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function deleteShare($share, FileServiceOptions $options = null)
     {
         $this->deleteShareAsync($share, $options)->wait();
     }
@@ -381,21 +381,21 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-share
      */
-    public function deleteShareAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function deleteShareAsync($share, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_DELETE;
+        Validate::canCastAsString($share, 'share');
+        Validate::notNullOrEmpty($share, 'share');
+        $method = Resources::HTTP_DELETE;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'share');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'share');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Returns all properties and metadata on the share.
@@ -407,7 +407,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-properties
      */
-    public function getShareProperties($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareProperties($share, FileServiceOptions $options = null)
     {
         return $this->getSharePropertiesAsync($share, $options)->wait();
     }
@@ -421,7 +421,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-properties
      */
-    public function getSharePropertiesAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getSharePropertiesAsync($share, FileServiceOptions $options = null)
     {
         return $this->getSharePropertiesAsyncImpl($share, $options, 'properties');
     }
@@ -436,7 +436,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-properties
      */
-    public function setShareProperties($share, $quota, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setShareProperties($share, $quota, FileServiceOptions $options = null)
     {
         $this->setSharePropertiesAsync($share, $quota, $options)->wait();
     }
@@ -451,9 +451,9 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-properties
      */
-    public function setSharePropertiesAsync($share, $quota, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setSharePropertiesAsync($share, $quota, FileServiceOptions $options = null)
     {
-        return $this->setSharePropertiesAsyncImpl($share, [\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_SHARE_QUOTA => $quota], $options, 'properties');
+        return $this->setSharePropertiesAsyncImpl($share, [Resources::X_MS_SHARE_QUOTA => $quota], $options, 'properties');
     }
     /**
      * Returns only user-defined metadata for the specified share.
@@ -465,7 +465,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-metadata
      */
-    public function getShareMetadata($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareMetadata($share, FileServiceOptions $options = null)
     {
         return $this->getShareMetadataAsync($share, $options)->wait();
     }
@@ -480,7 +480,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-metadata
      */
-    public function getShareMetadataAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareMetadataAsync($share, FileServiceOptions $options = null)
     {
         return $this->getSharePropertiesAsyncImpl($share, $options, 'metadata');
     }
@@ -495,7 +495,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-metadata
      */
-    public function setShareMetadata($share, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setShareMetadata($share, array $metadata, FileServiceOptions $options = null)
     {
         $this->setShareMetadataAsync($share, $metadata, $options)->wait();
     }
@@ -510,7 +510,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-metadata
      */
-    public function setShareMetadataAsync($share, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setShareMetadataAsync($share, array $metadata, FileServiceOptions $options = null)
     {
         return $this->setSharePropertiesAsyncImpl($share, $metadata, $options, 'metadata');
     }
@@ -524,7 +524,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-acl
      */
-    public function getShareAcl($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareAcl($share, FileServiceOptions $options = null)
     {
         return $this->getShareAclAsync($share, $options)->wait();
     }
@@ -538,29 +538,29 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-acl
      */
-    public function getShareAclAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareAclAsync($share, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'share');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'acl');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'share');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'acl');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         $dataSerializer = $this->dataSerializer;
-        $promise = $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $promise = $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
         return $promise->then(function ($response) use($dataSerializer) {
-            $responseHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            $etag = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($responseHeaders, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::ETAG);
-            $modified = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($responseHeaders, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::LAST_MODIFIED);
-            $modifiedDate = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToDateTime($modified);
+            $responseHeaders = HttpFormatter::formatHeaders($response->getHeaders());
+            $etag = Utilities::tryGetValue($responseHeaders, Resources::ETAG);
+            $modified = Utilities::tryGetValue($responseHeaders, Resources::LAST_MODIFIED);
+            $modifiedDate = Utilities::convertToDateTime($modified);
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetShareACLResult::create($etag, $modifiedDate, $parsed);
+            return GetShareAclResult::create($etag, $modifiedDate, $parsed);
         }, null);
     }
     /**
@@ -574,7 +574,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-acl
      */
-    public function setShareAcl($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setShareAcl($share, ShareACL $acl, FileServiceOptions $options = null)
     {
         $this->setShareAclAsync($share, $acl, $options)->wait();
     }
@@ -590,24 +590,24 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-share-acl
      */
-    public function setShareAclAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setShareAclAsync($share, ShareACL $acl, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($acl, 'acl');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::notNullOrEmpty($acl, 'acl');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share);
         $body = $acl->toXml($this->dataSerializer);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'share');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'acl');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::URL_ENCODED_CONTENT_TYPE);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, $body, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'share');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'acl');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, Resources::URL_ENCODED_CONTENT_TYPE);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, $body, $options);
     }
     /**
      * Get the statistics related to the share.
@@ -619,7 +619,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-stats
      */
-    public function getShareStats($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareStats($share, FileServiceOptions $options = null)
     {
         return $this->getShareStatsAsync($share, $options)->wait();
     }
@@ -633,24 +633,24 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-share-stats
      */
-    public function getShareStatsAsync($share, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getShareStatsAsync($share, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'share');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'stats');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'share');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'stats');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetShareStatsResult::create($parsed);
+            return GetShareStatsResult::create($parsed);
         }, null);
     }
     /**
@@ -666,7 +666,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-directories-and-files
      */
-    public function listDirectoriesAndFiles($share, $path = '', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesOptions $options = null)
+    public function listDirectoriesAndFiles($share, $path = '', ListDirectoriesAndFilesOptions $options = null)
     {
         return $this->listDirectoriesAndFilesAsync($share, $path, $options)->wait();
     }
@@ -683,29 +683,29 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-directories-and-files
      */
-    public function listDirectoriesAndFilesAsync($share, $path = '', \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesOptions $options = null)
+    public function listDirectoriesAndFilesAsync($share, $path = '', ListDirectoriesAndFilesOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::notNull($share, 'share');
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesOptions();
+            $options = new ListDirectoriesAndFilesOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE, 'directory');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'list');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_PREFIX_LOWERCASE, $options->getPrefix());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MARKER_LOWERCASE, $options->getNextMarker());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'directory');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'list');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_PREFIX_LOWERCASE, $options->getPrefix());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MARKER_LOWERCASE, $options->getNextMarker());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesResult::create($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getLocationFromHeaders($response->getHeaders()));
+            return ListDirectoriesAndFilesResult::create($parsed, Utilities::getLocationFromHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -719,7 +719,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-directory
      */
-    public function createDirectory($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateDirectoryOptions $options = null)
+    public function createDirectory($share, $path, CreateDirectoryOptions $options = null)
     {
         $this->createDirectoryAsync($share, $path, $options)->wait();
     }
@@ -734,22 +734,22 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-directory
      */
-    public function createDirectoryAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateDirectoryOptions $options = null)
+    public function createDirectoryAsync($share, $path, CreateDirectoryOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::notNullOrEmpty($path, 'path');
+        $method = Resources::HTTP_PUT;
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE => 'directory');
+        $queryParams = array(Resources::QP_REST_TYPE => 'directory');
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateDirectoryOptions();
+            $options = new CreateDirectoryOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         $metadata = $options->getMetadata();
         $headers = $this->generateMetadataHeaders($metadata);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Deletes a directory in the given share and path.
@@ -762,7 +762,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-directory
      */
-    public function deleteDirectory($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function deleteDirectory($share, $path, FileServiceOptions $options = null)
     {
         $this->deleteDirectoryAsync($share, $path, $options)->wait();
     }
@@ -777,20 +777,20 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-directory
      */
-    public function deleteDirectoryAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function deleteDirectoryAsync($share, $path, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_DELETE;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_DELETE;
         $headers = array();
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE => 'directory');
+        $queryParams = array(Resources::QP_REST_TYPE => 'directory');
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Gets a directory's properties from the given share and path.
@@ -803,7 +803,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-properties
      */
-    public function getDirectoryProperties($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getDirectoryProperties($share, $path, FileServiceOptions $options = null)
     {
         return $this->getDirectoryPropertiesAsync($share, $path, $options)->wait();
     }
@@ -819,22 +819,22 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-properties
      */
-    public function getDirectoryPropertiesAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getDirectoryPropertiesAsync($share, $path, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE => 'directory');
+        $queryParams = array(Resources::QP_REST_TYPE => 'directory');
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $parsed = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetDirectoryPropertiesResult::create($parsed);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $parsed = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetDirectoryPropertiesResult::create($parsed);
         }, null);
     }
     /**
@@ -848,7 +848,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-metadata
      */
-    public function getDirectoryMetadata($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getDirectoryMetadata($share, $path, FileServiceOptions $options = null)
     {
         return $this->getDirectoryMetadataAsync($share, $path, $options)->wait();
     }
@@ -864,23 +864,23 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-directory-metadata
      */
-    public function getDirectoryMetadataAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getDirectoryMetadataAsync($share, $path, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE => 'directory');
+        $queryParams = array(Resources::QP_REST_TYPE => 'directory');
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'metadata');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $parsed = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetDirectoryMetadataResult::create($parsed);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $parsed = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetDirectoryMetadataResult::create($parsed);
         }, null);
     }
     /**
@@ -895,7 +895,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-directory-metadata
      */
-    public function setDirectoryMetadata($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setDirectoryMetadata($share, $path, array $metadata, FileServiceOptions $options = null)
     {
         $this->setDirectoryMetadataAsync($share, $path, $metadata, $options)->wait();
     }
@@ -912,22 +912,22 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-directory-metadata
      */
-    public function setDirectoryMetadataAsync($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setDirectoryMetadataAsync($share, $path, array $metadata, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_PUT;
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_REST_TYPE => 'directory');
+        $queryParams = array(Resources::QP_REST_TYPE => 'directory');
         $path = $this->createPath($share, $path);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($metadata);
+        Utilities::validateMetadata($metadata);
         $headers = $this->generateMetadataHeaders($metadata);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'metadata');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
     }
     /**
      * Create a new file.
@@ -941,7 +941,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-file
      */
-    public function createFile($share, $path, $size, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileOptions $options = null)
+    public function createFile($share, $path, $size, CreateFileOptions $options = null)
     {
         return $this->createFileAsync($share, $path, $size, $options)->wait();
     }
@@ -957,33 +957,33 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-file
      */
-    public function createFileAsync($share, $path, $size, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileOptions $options = null)
+    public function createFileAsync($share, $path, $size, CreateFileOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($size, 'size');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::notNullOrEmpty($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::notNullOrEmpty($path, 'path');
+        Validate::isInteger($size, 'size');
+        $method = Resources::HTTP_PUT;
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileOptions();
+            $options = new CreateFileOptions();
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($options->getMetadata());
+        Utilities::validateMetadata($options->getMetadata());
         $headers = $this->generateMetadataHeaders($options->getMetadata());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_TYPE, 'file');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_LENGTH, $size);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_TYPE, $options->getContentType());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_ENCODING, $options->getContentEncoding());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_LANGUAGE, $options->getContentLanguage());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CACHE_CONTROL, $options->getCacheControl());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::FILE_CONTENT_MD5, $options->getContentMD5());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_DISPOSITION, $options->getContentDisposition());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_DISPOSITION, $options->getContentDisposition());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalHeader($headers, Resources::X_MS_TYPE, 'file');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_LENGTH, $size);
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, $options->getContentType());
+        $this->addOptionalHeader($headers, Resources::CONTENT_ENCODING, $options->getContentEncoding());
+        $this->addOptionalHeader($headers, Resources::CONTENT_LANGUAGE, $options->getContentLanguage());
+        $this->addOptionalHeader($headers, Resources::CACHE_CONTROL, $options->getCacheControl());
+        $this->addOptionalHeader($headers, Resources::FILE_CONTENT_MD5, $options->getContentMD5());
+        $this->addOptionalHeader($headers, Resources::CONTENT_DISPOSITION, $options->getContentDisposition());
+        $this->addOptionalHeader($headers, Resources::CONTENT_DISPOSITION, $options->getContentDisposition());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Deletes a file in the given share and path.
@@ -996,7 +996,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-file2
      */
-    public function deleteFile($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function deleteFile($share, $path, FileServiceOptions $options = null)
     {
         $this->deleteFileAsync($share, $path, $options)->wait();
     }
@@ -1011,20 +1011,20 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-file2
      */
-    public function deleteFileAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function deleteFileAsync($share, $path, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_DELETE;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_DELETE;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Reads or downloads a file from the server, including its metadata and
@@ -1038,7 +1038,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file
      */
-    public function getFile($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileOptions $options = null)
+    public function getFile($share, $path, GetFileOptions $options = null)
     {
         return $this->getFileAsync($share, $path, $options)->wait();
     }
@@ -1054,25 +1054,25 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file
      */
-    public function getFileAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileOptions $options = null)
+    public function getFileAsync($share, $path, GetFileOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileOptions();
+            $options = new GetFileOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_RANGE, $options->getRangeString() == '' ? null : $options->getRangeString());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_RANGE_GET_CONTENT_MD5, $options->getRangeGetContentMD5() ? 'true' : null);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_RANGE, $options->getRangeString() == '' ? null : $options->getRangeString());
+        $this->addOptionalHeader($headers, Resources::X_MS_RANGE_GET_CONTENT_MD5, $options->getRangeGetContentMD5() ? 'true' : null);
         $options->setIsStreaming(\true);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_PARTIAL_CONTENT), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $metadata = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getMetadataArray(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()), $response->getBody(), $metadata);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, array(Resources::STATUS_OK, Resources::STATUS_PARTIAL_CONTENT), Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $metadata = Utilities::getMetadataArray(HttpFormatter::formatHeaders($response->getHeaders()));
+            return GetFileResult::create(HttpFormatter::formatHeaders($response->getHeaders()), $response->getBody(), $metadata);
         });
     }
     /**
@@ -1086,7 +1086,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-properties
      */
-    public function getFileProperties($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getFileProperties($share, $path, FileServiceOptions $options = null)
     {
         return $this->getFilePropertiesAsync($share, $path, $options)->wait();
     }
@@ -1102,22 +1102,22 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-properties
      */
-    public function getFilePropertiesAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getFilePropertiesAsync($share, $path, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_HEAD;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_HEAD;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $parsed = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties::createFromHttpHeaders($parsed);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $parsed = HttpFormatter::formatHeaders($response->getHeaders());
+            return FileProperties::createFromHttpHeaders($parsed);
         }, null);
     }
     /**
@@ -1132,7 +1132,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-properties
      */
-    public function setFileProperties($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties $properties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setFileProperties($share, $path, FileProperties $properties, FileServiceOptions $options = null)
     {
         $this->setFilePropertiesAsync($share, $path, $properties, $options)->wait();
     }
@@ -1148,27 +1148,27 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-properties
      */
-    public function setFilePropertiesAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties $properties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setFilePropertiesAsync($share, $path, FileProperties $properties, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
         $headers = array();
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP => 'properties');
+        $queryParams = array(Resources::QP_COMP => 'properties');
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CACHE_CONTROL, $properties->getCacheControl());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_TYPE, $properties->getContentType());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_MD5, $properties->getContentMD5());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_ENCODING, $properties->getContentEncoding());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_LANGUAGE, $properties->getContentLanguage());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_DISPOSITION, $properties->getContentDisposition());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_CONTENT_LENGTH, $properties->getContentLength());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_CACHE_CONTROL, $properties->getCacheControl());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_TYPE, $properties->getContentType());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_MD5, $properties->getContentMD5());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_ENCODING, $properties->getContentEncoding());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_LANGUAGE, $properties->getContentLanguage());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_DISPOSITION, $properties->getContentDisposition());
+        $this->addOptionalHeader($headers, Resources::X_MS_CONTENT_LENGTH, $properties->getContentLength());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
     }
     /**
      * Gets a file's metadata from the given share and path.
@@ -1181,7 +1181,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-metadata
      */
-    public function getFileMetadata($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getFileMetadata($share, $path, FileServiceOptions $options = null)
     {
         return $this->getFileMetadataAsync($share, $path, $options)->wait();
     }
@@ -1197,23 +1197,23 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-file-metadata
      */
-    public function getFileMetadataAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function getFileMetadataAsync($share, $path, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'metadata');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $parsed = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileMetadataResult::create($parsed);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $parsed = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetFileMetadataResult::create($parsed);
         }, null);
     }
     /**
@@ -1228,7 +1228,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-metadata
      */
-    public function setFileMetadata($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setFileMetadata($share, $path, array $metadata, FileServiceOptions $options = null)
     {
         return $this->setFileMetadataAsync($share, $path, $metadata, $options)->wait();
     }
@@ -1245,22 +1245,22 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-file-metadata
      */
-    public function setFileMetadataAsync($share, $path, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function setFileMetadataAsync($share, $path, array $metadata, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        $method = Resources::HTTP_PUT;
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($metadata);
+        Utilities::validateMetadata($metadata);
         $headers = $this->generateMetadataHeaders($metadata);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'metadata');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
     }
     /**
      * Writes range of bytes to a file. Range can be at most 4MB in length.
@@ -1276,7 +1276,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      */
-    public function putFileRange($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions $options = null)
+    public function putFileRange($share, $path, $content, Range $range, PutFileRangeOptions $options = null)
     {
         $this->putFileRangeAsync($share, $path, $content, $range, $options)->wait();
     }
@@ -1296,29 +1296,29 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      *
      */
-    public function putFileRangeAsync($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions $options = null)
+    public function putFileRangeAsync($share, $path, $content, Range $range, PutFileRangeOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($range->getLength(), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::RESOURCE_RANGE_LENGTH_MUST_SET);
-        $stream = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::notNullOrEmpty($path, 'path');
+        Validate::notNullOrEmpty($share, 'share');
+        Validate::notNull($range->getLength(), Resources::RESOURCE_RANGE_LENGTH_MUST_SET);
+        $stream = Psr7\Utils::streamFor($content);
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share, $path);
         if ($options == null) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions();
+            $options = new PutFileRangeOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_RANGE, $range->getRangeString());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_LENGTH, $range->getLength());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_WRITE, 'Update');
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_MD5, $options->getContentMD5());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'range');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_CREATED, $stream, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_RANGE, $range->getRangeString());
+        $this->addOptionalHeader($headers, Resources::CONTENT_LENGTH, $range->getLength());
+        $this->addOptionalHeader($headers, Resources::X_MS_WRITE, 'Update');
+        $this->addOptionalHeader($headers, Resources::CONTENT_MD5, $options->getContentMD5());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'range');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, $stream, $options);
     }
     /**
      * Creates a file from a provided content.
@@ -1331,7 +1331,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return void
      */
-    public function createFileFromContent($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileFromContentOptions $options = null)
+    public function createFileFromContent($share, $path, $content, CreateFileFromContentOptions $options = null)
     {
         $this->createFileFromContentAsync($share, $path, $content, $options)->wait();
     }
@@ -1346,20 +1346,20 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createFileFromContentAsync($share, $path, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileFromContentOptions $options = null)
+    public function createFileFromContentAsync($share, $path, $content, CreateFileFromContentOptions $options = null)
     {
-        $stream = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
+        $stream = Psr7\Utils::streamFor($content);
         $size = $stream->getSize();
         if ($options == null) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CreateFileFromContentOptions();
+            $options = new CreateFileFromContentOptions();
         }
         //create the file first
         $promise = $this->createFileAsync($share, $path, $size, $options);
         //then upload the content
-        $range = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range(0, $size - 1);
-        $putOptions = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\PutFileRangeOptions($options);
+        $range = new Range(0, $size - 1);
+        $putOptions = new PutFileRangeOptions($options);
         $useTransactionalMD5 = $options->getUseTransactionalMD5();
-        if ($size > \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::MB_IN_BYTES_4) {
+        if ($size > Resources::MB_IN_BYTES_4) {
             return $promise->then(function ($response) use($share, $path, $stream, $range, $putOptions, $useTransactionalMD5) {
                 return $this->multiplePutRangeConcurrentAsync($share, $path, $stream, $range, $putOptions, $useTransactionalMD5);
             }, null);
@@ -1387,7 +1387,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      */
-    public function clearFileRange($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function clearFileRange($share, $path, Range $range, FileServiceOptions $options = null)
     {
         $this->clearFileRangeAsync($share, $path, $range, $options)->wait();
     }
@@ -1408,25 +1408,25 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-range
      *
      */
-    public function clearFileRangeAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function clearFileRangeAsync($share, $path, Range $range, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::notNullOrEmpty($path, 'path');
+        Validate::notNullOrEmpty($share, 'share');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_RANGE, $range->getRangeString());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_WRITE, 'Clear');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'range');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalHeader($headers, Resources::X_MS_RANGE, $range->getRangeString());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_WRITE, 'Clear');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'range');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Lists range of bytes of a file.
@@ -1441,7 +1441,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-ranges
      */
-    public function listFileRange($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function listFileRange($share, $path, Range $range = null, FileServiceOptions $options = null)
     {
         return $this->listFileRangeAsync($share, $path, $range, $options)->wait();
     }
@@ -1459,30 +1459,30 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-ranges
      *
      */
-    public function listFileRangeAsync($share, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function listFileRangeAsync($share, $path, Range $range = null, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_GET;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::notNullOrEmpty($path, 'path');
+        Validate::notNullOrEmpty($share, 'share');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
         if ($range != null) {
-            $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_RANGE, $range->getRangeString());
+            $this->addOptionalHeader($headers, Resources::X_MS_RANGE, $range->getRangeString());
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'rangelist');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'rangelist');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
-            $responseHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+            $responseHeaders = HttpFormatter::formatHeaders($response->getHeaders());
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListFileRangesResult::create($responseHeaders, $parsed);
+            return ListFileRangesResult::create($responseHeaders, $parsed);
         }, null);
     }
     /**
@@ -1510,7 +1510,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-file
      */
-    public function copyFile($share, $path, $sourcePath, array $metadata = array(), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function copyFile($share, $path, $sourcePath, array $metadata = array(), FileServiceOptions $options = null)
     {
         return $this->copyFileAsync($share, $path, $sourcePath, $metadata, $options)->wait();
     }
@@ -1541,28 +1541,28 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-file
      *
      */
-    public function copyFileAsync($share, $path, $sourcePath, array $metadata = array(), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function copyFileAsync($share, $path, $sourcePath, array $metadata = array(), FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($sourcePath, 'sourcePath');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($sourcePath, 'sourcePath');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::canCastAsString($sourcePath, 'sourcePath');
+        Validate::notNullOrEmpty($path, 'path');
+        Validate::notNullOrEmpty($share, 'share');
+        Validate::notNullOrEmpty($sourcePath, 'sourcePath');
+        $method = Resources::HTTP_PUT;
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($share, $path);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($metadata);
+        Utilities::validateMetadata($metadata);
         $headers = $this->generateMetadataHeaders($metadata);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_SOURCE, $sourcePath);
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options)->then(function ($response) {
-            $headers = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CopyFileResult::create($headers);
+        $this->addOptionalHeader($headers, Resources::X_MS_COPY_SOURCE, $sourcePath);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $headers = HttpFormatter::formatHeaders($response->getHeaders());
+            return CopyFileResult::create($headers);
         }, null);
     }
     /**
@@ -1577,7 +1577,7 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/abort-copy-file
      */
-    public function abortCopy($share, $path, $copyID, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function abortCopy($share, $path, $copyID, FileServiceOptions $options = null)
     {
         return $this->abortCopyAsync($share, $path, $copyID, $options)->wait();
     }
@@ -1593,26 +1593,26 @@ class FileRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/abort-copy-file
      */
-    public function abortCopyAsync($share, $path, $copyID, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions $options = null)
+    public function abortCopyAsync($share, $path, $copyID, FileServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($copyID, 'copyID');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($share, 'share');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($path, 'path');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($copyID, 'copyID');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::HTTP_PUT;
+        Validate::canCastAsString($share, 'share');
+        Validate::canCastAsString($path, 'path');
+        Validate::canCastAsString($copyID, 'copyID');
+        Validate::notNullOrEmpty($share, 'share');
+        Validate::notNullOrEmpty($path, 'path');
+        Validate::notNullOrEmpty($copyID, 'copyID');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($share, $path);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions();
+            $options = new FileServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COMP, 'copy');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_COPY_ID, $copyID);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_ACTION, 'abort');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::STATUS_NO_CONTENT, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'copy');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COPY_ID, $copyID);
+        $this->addOptionalHeader($headers, Resources::X_MS_COPY_ACTION, 'abort');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_NO_CONTENT, Resources::EMPTY_STRING, $options);
     }
 }

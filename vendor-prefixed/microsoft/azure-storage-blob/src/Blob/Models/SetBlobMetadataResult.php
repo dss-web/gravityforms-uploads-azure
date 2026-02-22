@@ -52,11 +52,11 @@ class SetBlobMetadataResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobMetadataResult();
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG, $headers));
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED, $headers);
-        $result->setLastModified(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date));
-        $result->setRequestServerEncrypted(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
+        $result = new SetBlobMetadataResult();
+        $result->setETag(Utilities::tryGetValueInsensitive(Resources::ETAG, $headers));
+        $date = Utilities::tryGetValueInsensitive(Resources::LAST_MODIFIED, $headers);
+        $result->setLastModified(Utilities::rfc1123ToDateTime($date));
+        $result->setRequestServerEncrypted(Utilities::toBoolean(Utilities::tryGetValueInsensitive(Resources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
         return $result;
     }
     /**
@@ -77,7 +77,7 @@ class SetBlobMetadataResult
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -98,7 +98,7 @@ class SetBlobMetadataResult
      */
     protected function setETag($etag)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($etag, 'etag');
+        Validate::canCastAsString($etag, 'etag');
         $this->etag = $etag;
     }
     /**

@@ -60,39 +60,39 @@ class ListBlobsResult
      */
     public static function create(array $parsed, $location = '')
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsResult();
-        $serviceEndpoint = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetKeysChainValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_ATTRIBUTES, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_SERVICE_ENDPOINT);
-        $containerName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetKeysChainValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_ATTRIBUTES, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_CONTAINER_NAME);
+        $result = new ListBlobsResult();
+        $serviceEndpoint = Utilities::tryGetKeysChainValue($parsed, Resources::XTAG_ATTRIBUTES, Resources::XTAG_SERVICE_ENDPOINT);
+        $containerName = Utilities::tryGetKeysChainValue($parsed, Resources::XTAG_ATTRIBUTES, Resources::XTAG_CONTAINER_NAME);
         $result->setContainerName($containerName);
-        $result->setPrefix(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_PREFIX));
-        $result->setMarker(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MARKER));
-        $nextMarker = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_NEXT_MARKER);
+        $result->setPrefix(Utilities::tryGetValue($parsed, Resources::QP_PREFIX));
+        $result->setMarker(Utilities::tryGetValue($parsed, Resources::QP_MARKER));
+        $nextMarker = Utilities::tryGetValue($parsed, Resources::QP_NEXT_MARKER);
         if ($nextMarker != null) {
-            $result->setContinuationToken(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\MarkerContinuationToken($nextMarker, $location));
+            $result->setContinuationToken(new MarkerContinuationToken($nextMarker, $location));
         }
-        $result->setMaxResults(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MAX_RESULTS, 0)));
-        $result->setDelimiter(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_DELIMITER));
+        $result->setMaxResults(\intval(Utilities::tryGetValue($parsed, Resources::QP_MAX_RESULTS, 0)));
+        $result->setDelimiter(Utilities::tryGetValue($parsed, Resources::QP_DELIMITER));
         $blobs = array();
         $blobPrefixes = array();
         $rawBlobs = array();
         $rawBlobPrefixes = array();
         if (\is_array($parsed['Blobs']) && \array_key_exists('Blob', $parsed['Blobs'])) {
-            $rawBlobs = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed['Blobs']['Blob']);
+            $rawBlobs = Utilities::getArray($parsed['Blobs']['Blob']);
         }
         foreach ($rawBlobs as $value) {
-            $blob = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\Blob();
+            $blob = new Blob();
             $blob->setName($value['Name']);
             $blob->setUrl($serviceEndpoint . $containerName . '/' . $value['Name']);
-            $blob->setSnapshot(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($value, 'Snapshot'));
-            $blob->setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties::createFromXml(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($value, 'Properties')));
-            $blob->setMetadata(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($value, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_METADATA, array()));
+            $blob->setSnapshot(Utilities::tryGetValue($value, 'Snapshot'));
+            $blob->setProperties(BlobProperties::createFromXml(Utilities::tryGetValue($value, 'Properties')));
+            $blob->setMetadata(Utilities::tryGetValue($value, Resources::QP_METADATA, array()));
             $blobs[] = $blob;
         }
         if (\is_array($parsed['Blobs']) && \array_key_exists('BlobPrefix', $parsed['Blobs'])) {
-            $rawBlobPrefixes = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed['Blobs']['BlobPrefix']);
+            $rawBlobPrefixes = Utilities::getArray($parsed['Blobs']['BlobPrefix']);
         }
         foreach ($rawBlobPrefixes as $value) {
-            $blobPrefix = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobPrefix();
+            $blobPrefix = new BlobPrefix();
             $blobPrefix->setName($value['Name']);
             $blobPrefixes[] = $blobPrefix;
         }

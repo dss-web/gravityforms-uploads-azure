@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class MarkerContinuationToken extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ContinuationToken
+class MarkerContinuationToken extends ContinuationToken
 {
     private $nextMarker;
     public function __construct($nextMarker = '', $location = '')
@@ -50,7 +50,7 @@ class MarkerContinuationToken extends \Dekode\GravityForms\Vendor\MicrosoftAzure
      */
     public function setNextMarker($nextMarker)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($nextMarker, 'nextMarker');
+        Validate::canCastAsString($nextMarker, 'nextMarker');
         $this->nextMarker = $nextMarker;
     }
     /**

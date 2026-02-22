@@ -52,10 +52,10 @@ class GetShareACLResult
      */
     public static function create($etag, \DateTime $lastModified, array $parsed = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetShareAclResult();
+        $result = new GetShareAclResult();
         $result->setETag($etag);
         $result->setLastModified($lastModified);
-        $acl = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL::create($parsed);
+        $acl = ShareACL::create($parsed);
         $result->setShareAcl($acl);
         return $result;
     }
@@ -75,7 +75,7 @@ class GetShareACLResult
      *
      * @return void
      */
-    protected function setShareAcl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL $shareACL)
+    protected function setShareAcl(ShareACL $shareACL)
     {
         $this->shareACL = $shareACL;
     }

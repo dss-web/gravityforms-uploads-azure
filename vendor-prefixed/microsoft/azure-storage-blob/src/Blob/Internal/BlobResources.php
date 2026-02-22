@@ -35,10 +35,10 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class BlobResources extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources
+class BlobResources extends Resources
 {
     // @codingStandardsIgnoreStart
-    const BLOB_SDK_VERSION = '1.5.3';
+    const BLOB_SDK_VERSION = '1.5.4';
     const STORAGE_API_LATEST_VERSION = '2017-11-09';
     // Error messages
     const INVALID_BTE_MSG = "The blob block type must exist in %s";
@@ -94,6 +94,6 @@ class BlobResources extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
     const QP_BLOCK_LIST_TYPE = 'blocklisttype';
     const QP_PRE_SNAPSHOT = 'prevsnapshot';
     // Resource permissions
-    const ACCESS_PERMISSIONS = [\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_BLOB => ['r', 'a', 'c', 'w', 'd'], \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_CONTAINER => ['r', 'a', 'c', 'w', 'd', 'l']];
+    const ACCESS_PERMISSIONS = [Resources::RESOURCE_TYPE_BLOB => ['r', 'a', 'c', 'w', 'd'], Resources::RESOURCE_TYPE_CONTAINER => ['r', 'a', 'c', 'w', 'd', 'l']];
     // @codingStandardsIgnoreEnd
 }

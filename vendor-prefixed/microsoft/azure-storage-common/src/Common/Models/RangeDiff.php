@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class RangeDiff extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range
+class RangeDiff extends Range
 {
     private $isClearedPageRange;
     /**

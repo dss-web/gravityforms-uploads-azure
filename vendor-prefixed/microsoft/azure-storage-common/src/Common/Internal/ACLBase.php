@@ -83,9 +83,9 @@ abstract class ACLBase
      *
      * @return string
      */
-    public function toXml(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer $serializer)
+    public function toXml(XmlSerializer $serializer)
     {
-        $properties = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer::DEFAULT_TAG => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_IDENTIFIER, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer::ROOT_NAME => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_IDENTIFIERS);
+        $properties = array(XmlSerializer::DEFAULT_TAG => Resources::XTAG_SIGNED_IDENTIFIER, XmlSerializer::ROOT_NAME => Resources::XTAG_SIGNED_IDENTIFIERS);
         return $serializer->serialize($this->toArray(), $properties);
     }
     /**
@@ -102,17 +102,17 @@ abstract class ACLBase
     {
         $this->setSignedIdentifiers(array());
         // Initialize signed identifiers.
-        if (!empty($parsed) && \is_array($parsed[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_IDENTIFIER])) {
-            $entries = $parsed[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_IDENTIFIER];
-            $temp = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($entries);
+        if (!empty($parsed) && \is_array($parsed[Resources::XTAG_SIGNED_IDENTIFIER])) {
+            $entries = $parsed[Resources::XTAG_SIGNED_IDENTIFIER];
+            $temp = Utilities::getArray($entries);
             foreach ($temp as $value) {
-                $accessPolicy = $value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ACCESS_POLICY];
-                $startString = \urldecode($accessPolicy[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_START]);
-                $expiryString = \urldecode($accessPolicy[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_EXPIRY]);
-                $start = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToDateTime($startString);
-                $expiry = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToDateTime($expiryString);
-                $permission = $accessPolicy[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_PERMISSION];
-                $id = $value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_SIGNED_ID];
+                $accessPolicy = $value[Resources::XTAG_ACCESS_POLICY];
+                $startString = \urldecode($accessPolicy[Resources::XTAG_SIGNED_START]);
+                $expiryString = \urldecode($accessPolicy[Resources::XTAG_SIGNED_EXPIRY]);
+                $start = Utilities::convertToDateTime($startString);
+                $expiry = Utilities::convertToDateTime($expiryString);
+                $permission = $accessPolicy[Resources::XTAG_SIGNED_PERMISSION];
+                $id = $value[Resources::XTAG_SIGNED_ID];
                 $this->addSignedIdentifier($id, $start, $expiry, $permission);
             }
         }
@@ -161,23 +161,23 @@ abstract class ACLBase
      */
     public function addSignedIdentifier($id, \DateTime $start, \DateTime $expiry, $permissions)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($id, 'id');
+        Validate::canCastAsString($id, 'id');
         if ($start != null) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($start);
+            Validate::isDate($start);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($expiry);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($permissions, 'permissions');
+        Validate::isDate($expiry);
+        Validate::canCastAsString($permissions, 'permissions');
         $accessPolicy = static::createAccessPolicy();
         $accessPolicy->setStart($start);
         $accessPolicy->setExpiry($expiry);
         $accessPolicy->setPermission($permissions);
-        $signedIdentifier = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\SignedIdentifier();
+        $signedIdentifier = new SignedIdentifier();
         $signedIdentifier->setId($id);
         $signedIdentifier->setAccessPolicy($accessPolicy);
         // Remove the signed identifier with the same ID.
         $this->removeSignedIdentifier($id);
         // There can be no more than 5 signed identifiers at the same time.
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\count($this->getSignedIdentifiers()) < 5, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_TOO_MANY_SIGNED_IDENTIFIERS);
+        Validate::isTrue(\count($this->getSignedIdentifiers()) < 5, Resources::ERROR_TOO_MANY_SIGNED_IDENTIFIERS);
         $this->signedIdentifiers[] = $signedIdentifier;
     }
     /**
@@ -189,7 +189,7 @@ abstract class ACLBase
      */
     public function removeSignedIdentifier($id)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($id, 'id');
+        Validate::canCastAsString($id, 'id');
         //var_dump($this->signedIdentifiers);
         for ($i = 0; $i < \count($this->signedIdentifiers); ++$i) {
             if ($this->signedIdentifiers[$i]->getId() == $id) {
@@ -211,7 +211,7 @@ abstract class ACLBase
     public function setSignedIdentifiers(array $signedIdentifiers)
     {
         // There can be no more than 5 signed identifiers at the same time.
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\count($signedIdentifiers) <= 5, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_TOO_MANY_SIGNED_IDENTIFIERS);
+        Validate::isTrue(\count($signedIdentifiers) <= 5, Resources::ERROR_TOO_MANY_SIGNED_IDENTIFIERS);
         $this->signedIdentifiers = $signedIdentifiers;
     }
 }

@@ -40,9 +40,9 @@ class Controller {
 	/**
 	 * Official library API class instance
 	 *
-	 * @var false
+	 * @var BlobRestProxy|null
 	 */
-	private static $blob_client = false;
+	private static $blob_client = null;
 
 	/**
 	 * Logs messages to file for debugging
@@ -123,7 +123,7 @@ class Controller {
 	 * @return BlobRestProxy
 	 */
 	protected function get_blob_client(): BlobRestProxy {
-		if ( false === self::$blob_client ) {
+		if ( null === self::$blob_client ) {
 			$blob_client = BlobRestProxy::createBlobService( $this->build_connection_string() );
 
 			$container_name = $this->get_container_name();

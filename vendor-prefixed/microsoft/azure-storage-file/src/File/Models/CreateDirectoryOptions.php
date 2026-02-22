@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateDirectoryOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions
+class CreateDirectoryOptions extends FileServiceOptions
 {
     private $metadata;
     /**

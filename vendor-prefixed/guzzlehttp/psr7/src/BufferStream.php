@@ -13,7 +13,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class BufferStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class BufferStream implements StreamInterface
 {
     private $hwm;
     private $buffer = '';

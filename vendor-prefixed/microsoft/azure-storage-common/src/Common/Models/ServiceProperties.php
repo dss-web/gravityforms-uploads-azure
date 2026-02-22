@@ -53,28 +53,28 @@ class ServiceProperties
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties();
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_DEFAULT_SERVICE_VERSION, $parsedResponse) && $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_DEFAULT_SERVICE_VERSION] != null) {
-            $result->setDefaultServiceVersion($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_DEFAULT_SERVICE_VERSION]);
+        $result = new ServiceProperties();
+        if (\array_key_exists(Resources::XTAG_DEFAULT_SERVICE_VERSION, $parsedResponse) && $parsedResponse[Resources::XTAG_DEFAULT_SERVICE_VERSION] != null) {
+            $result->setDefaultServiceVersion($parsedResponse[Resources::XTAG_DEFAULT_SERVICE_VERSION]);
         }
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_LOGGING, $parsedResponse)) {
-            $result->setLogging(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Logging::create($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_LOGGING]));
+        if (\array_key_exists(Resources::XTAG_LOGGING, $parsedResponse)) {
+            $result->setLogging(Logging::create($parsedResponse[Resources::XTAG_LOGGING]));
         }
-        $result->setHourMetrics(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Metrics::create($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_HOUR_METRICS]));
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MINUTE_METRICS, $parsedResponse)) {
-            $result->setMinuteMetrics(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Metrics::create($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MINUTE_METRICS]));
+        $result->setHourMetrics(Metrics::create($parsedResponse[Resources::XTAG_HOUR_METRICS]));
+        if (\array_key_exists(Resources::XTAG_MINUTE_METRICS, $parsedResponse)) {
+            $result->setMinuteMetrics(Metrics::create($parsedResponse[Resources::XTAG_MINUTE_METRICS]));
         }
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS, $parsedResponse) && $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS] != null) {
+        if (\array_key_exists(Resources::XTAG_CORS, $parsedResponse) && $parsedResponse[Resources::XTAG_CORS] != null) {
             //There could be multiple CORS rules, so need to extract them all.
             $corses = array();
-            $corsArray = $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS][\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS_RULE];
+            $corsArray = $parsedResponse[Resources::XTAG_CORS][Resources::XTAG_CORS_RULE];
             if (\count(\array_filter(\array_keys($corsArray), 'is_string')) > 0) {
                 //single cors rule
-                $corses[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\CORS::create($corsArray);
+                $corses[] = CORS::create($corsArray);
             } else {
                 //multiple cors rule
                 foreach ($corsArray as $cors) {
-                    $corses[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\CORS::create($cors);
+                    $corses[] = CORS::create($cors);
                 }
             }
             $result->setCorses($corses);
@@ -99,7 +99,7 @@ class ServiceProperties
      *
      * @return void
      */
-    public function setLogging(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Logging $logging)
+    public function setLogging(Logging $logging)
     {
         $this->logging = clone $logging;
     }
@@ -119,7 +119,7 @@ class ServiceProperties
      *
      * @return void
      */
-    public function setHourMetrics(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Metrics $hourMetrics)
+    public function setHourMetrics(Metrics $hourMetrics)
     {
         $this->hourMetrics = clone $hourMetrics;
     }
@@ -139,7 +139,7 @@ class ServiceProperties
      *
      * @return void
      */
-    public function setMinuteMetrics(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Metrics $minuteMetrics)
+    public function setMinuteMetrics(Metrics $minuteMetrics)
     {
         $this->minuteMetrics = clone $minuteMetrics;
     }
@@ -193,20 +193,20 @@ class ServiceProperties
     {
         $result = array();
         if (!empty($this->getLogging())) {
-            $result[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_LOGGING] = $this->getLogging()->toArray();
+            $result[Resources::XTAG_LOGGING] = $this->getLogging()->toArray();
         }
         if (!empty($this->getHourMetrics())) {
-            $result[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_HOUR_METRICS] = $this->getHourMetrics()->toArray();
+            $result[Resources::XTAG_HOUR_METRICS] = $this->getHourMetrics()->toArray();
         }
         if (!empty($this->getMinuteMetrics())) {
-            $result[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MINUTE_METRICS] = $this->getMinuteMetrics()->toArray();
+            $result[Resources::XTAG_MINUTE_METRICS] = $this->getMinuteMetrics()->toArray();
         }
         $corsesArray = $this->getCorsesArray();
         if (!empty($corsesArray)) {
-            $result[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS] = $corsesArray;
+            $result[Resources::XTAG_CORS] = $corsesArray;
         }
         if ($this->defaultServiceVersion != null) {
-            $result[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_DEFAULT_SERVICE_VERSION] = $this->defaultServiceVersion;
+            $result[Resources::XTAG_DEFAULT_SERVICE_VERSION] = $this->defaultServiceVersion;
         }
         return $result;
     }
@@ -219,10 +219,10 @@ class ServiceProperties
     {
         $corsesArray = array();
         if (\count($this->getCorses()) == 1) {
-            $corsesArray = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS_RULE => $this->getCorses()[0]->toArray());
+            $corsesArray = array(Resources::XTAG_CORS_RULE => $this->getCorses()[0]->toArray());
         } elseif ($this->getCorses() != array()) {
             foreach ($this->getCorses() as $cors) {
-                $corsesArray[] = [\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_CORS_RULE => $cors->toArray()];
+                $corsesArray[] = [Resources::XTAG_CORS_RULE => $cors->toArray()];
             }
         }
         return $corsesArray;
@@ -235,9 +235,9 @@ class ServiceProperties
      *
      * @return string
      */
-    public function toXml(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer $xmlSerializer)
+    public function toXml(XmlSerializer $xmlSerializer)
     {
-        $properties = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer::ROOT_NAME => self::$xmlRootName);
+        $properties = array(XmlSerializer::ROOT_NAME => self::$xmlRootName);
         return $xmlSerializer->serialize($this->toArray(), $properties);
     }
 }

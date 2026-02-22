@@ -9,7 +9,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\UriInterface;
 /**
  * PSR-7 request implementation.
  */
-class Request implements \Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface
+class Request implements RequestInterface
 {
     use MessageTrait;
     /** @var string */
@@ -28,8 +28,8 @@ class Request implements \Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInt
     public function __construct($method, $uri, array $headers = [], $body = null, $version = '1.1')
     {
         $this->assertMethod($method);
-        if (!$uri instanceof \Dekode\GravityForms\Vendor\Psr\Http\Message\UriInterface) {
-            $uri = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Uri($uri);
+        if (!$uri instanceof UriInterface) {
+            $uri = new Uri($uri);
         }
         $this->method = \strtoupper($method);
         $this->uri = $uri;
@@ -39,7 +39,7 @@ class Request implements \Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInt
             $this->updateHostFromUri();
         }
         if ($body !== '' && $body !== null) {
-            $this->stream = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($body);
+            $this->stream = Utils::streamFor($body);
         }
     }
     public function getRequestTarget()
@@ -59,7 +59,7 @@ class Request implements \Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInt
     public function withRequestTarget($requestTarget)
     {
         if (\preg_match('#\\s#', $requestTarget)) {
-            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
         $new = clone $this;
         $new->requestTarget = $requestTarget;
@@ -80,7 +80,7 @@ class Request implements \Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInt
     {
         return $this->uri;
     }
-    public function withUri(\Dekode\GravityForms\Vendor\Psr\Http\Message\UriInterface $uri, $preserveHost = \false)
+    public function withUri(UriInterface $uri, $preserveHost = \false)
     {
         if ($uri === $this->uri) {
             return $this;

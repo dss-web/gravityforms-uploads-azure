@@ -62,7 +62,7 @@ class HttpCallContext
         $this->_postParameters = array();
         $this->_statusCodes = array();
         $this->_headers = array();
-        $this->_serviceOptions = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions();
+        $this->_serviceOptions = new ServiceOptions();
     }
     /**
      * Gets method.
@@ -82,7 +82,7 @@ class HttpCallContext
      */
     public function setMethod($method)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($method, 'method');
+        Validate::canCastAsString($method, 'method');
         $this->_method = $method;
     }
     /**
@@ -153,7 +153,7 @@ class HttpCallContext
      */
     public function setUri($uri)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($uri, 'uri');
+        Validate::canCastAsString($uri, 'uri');
         $this->_uri = $uri;
     }
     /**
@@ -174,7 +174,7 @@ class HttpCallContext
      */
     public function setPath($path)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($path, 'path');
+        Validate::canCastAsString($path, 'path');
         $this->_path = $path;
     }
     /**
@@ -218,7 +218,7 @@ class HttpCallContext
      */
     public function setBody($body)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($body, 'body');
+        Validate::canCastAsString($body, 'body');
         $this->_body = $body;
     }
     /**
@@ -231,8 +231,8 @@ class HttpCallContext
      */
     public function addHeader($name, $value)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
+        Validate::canCastAsString($name, 'name');
+        Validate::canCastAsString($value, 'value');
         $this->_headers[$name] = $value;
     }
     /**
@@ -247,8 +247,8 @@ class HttpCallContext
      */
     public function addOptionalHeader($name, $value)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
+        Validate::canCastAsString($name, 'name');
+        Validate::canCastAsString($value, 'value');
         if (!empty($value)) {
             $this->_headers[$name] = $value;
         }
@@ -262,8 +262,8 @@ class HttpCallContext
      */
     public function removeHeader($name)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($name, 'name');
+        Validate::canCastAsString($name, 'name');
+        Validate::notNullOrEmpty($name, 'name');
         unset($this->_headers[$name]);
     }
     /**
@@ -276,8 +276,8 @@ class HttpCallContext
      */
     public function addQueryParameter($name, $value)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
+        Validate::canCastAsString($name, 'name');
+        Validate::canCastAsString($value, 'value');
         $this->_queryParams[$name] = $value;
     }
     /**
@@ -298,7 +298,7 @@ class HttpCallContext
      */
     public function setPostParameters(array $postParameters)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($postParameters, 'postParameters');
+        Validate::isArray($postParameters, 'postParameters');
         $this->_postParameters = $postParameters;
     }
     /**
@@ -313,8 +313,8 @@ class HttpCallContext
      */
     public function addOptionalQueryParameter($name, $value)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($name, 'name');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
+        Validate::canCastAsString($name, 'name');
+        Validate::canCastAsString($value, 'value');
         if (!empty($value)) {
             $this->_queryParams[$name] = $value;
         }
@@ -328,7 +328,7 @@ class HttpCallContext
      */
     public function addStatusCode($statusCode)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($statusCode, 'statusCode');
+        Validate::isInteger($statusCode, 'statusCode');
         $this->_statusCodes[] = $statusCode;
     }
     /**
@@ -340,7 +340,7 @@ class HttpCallContext
      */
     public function getHeader($name)
     {
-        return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($this->_headers, $name);
+        return Utilities::tryGetValue($this->_headers, $name);
     }
     /**
      * Gets the saved service options
@@ -350,7 +350,7 @@ class HttpCallContext
     public function getServiceOptions()
     {
         if ($this->_serviceOptions == null) {
-            $this->_serviceOptions = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions();
+            $this->_serviceOptions = new ServiceOptions();
         }
         return $this->_serviceOptions;
     }
@@ -361,7 +361,7 @@ class HttpCallContext
      *
      * @return void
      */
-    public function setServiceOptions(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $serviceOptions)
+    public function setServiceOptions(ServiceOptions $serviceOptions)
     {
         $this->_serviceOptions = $serviceOptions;
     }
@@ -372,7 +372,7 @@ class HttpCallContext
      */
     public function __toString()
     {
-        $headers = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING;
+        $headers = Resources::EMPTY_STRING;
         $uri = $this->_uri;
         if ($uri === null) {
             $uri = '/';

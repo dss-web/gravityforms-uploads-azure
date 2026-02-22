@@ -46,8 +46,8 @@ class GetServicePropertiesResult
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\GetServicePropertiesResult();
-        $result->setValue(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties::create($parsedResponse));
+        $result = new GetServicePropertiesResult();
+        $result->setValue(ServiceProperties::create($parsedResponse));
         return $result;
     }
     /**

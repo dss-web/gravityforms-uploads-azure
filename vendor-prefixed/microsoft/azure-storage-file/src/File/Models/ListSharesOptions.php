@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ListSharesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions
+class ListSharesOptions extends FileServiceOptions
 {
     use MarkerContinuationTokenTrait;
     private $prefix;
@@ -61,7 +61,7 @@ class ListSharesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function setPrefix($prefix)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($prefix, 'prefix');
+        Validate::canCastAsString($prefix, 'prefix');
         $this->prefix = $prefix;
     }
     /**
@@ -90,7 +90,7 @@ class ListSharesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function setMaxResults($maxResults)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($maxResults, 'maxResults');
+        Validate::canCastAsString($maxResults, 'maxResults');
         $this->maxResults = $maxResults;
     }
     /**
@@ -111,7 +111,7 @@ class ListSharesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function setIncludeMetadata($includeMetadata)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeMetadata);
+        Validate::isBoolean($includeMetadata);
         $this->includeMetadata = $includeMetadata;
     }
 }

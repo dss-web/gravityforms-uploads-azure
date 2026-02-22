@@ -13,7 +13,7 @@ trait StreamDecoratorTrait
     /**
      * @param StreamInterface $stream Stream to decorate
      */
-    public function __construct(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream)
+    public function __construct(StreamInterface $stream)
     {
         $this->stream = $stream;
     }
@@ -48,7 +48,7 @@ trait StreamDecoratorTrait
     }
     public function getContents()
     {
-        return \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::copyToString($this);
+        return Utils::copyToString($this);
     }
     /**
      * Allow decorators to implement custom methods

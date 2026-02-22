@@ -50,7 +50,7 @@ class Validate
     public static function isArray($var, $name)
     {
         if (!\is_array($var)) {
-            throw new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException(\gettype(array()), $name);
+            throw new InvalidArgumentTypeException(\gettype(array()), $name);
         }
     }
     /**
@@ -68,7 +68,7 @@ class Validate
         try {
             (string) $var;
         } catch (\Exception $e) {
-            throw new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException(\gettype(''), $name);
+            throw new InvalidArgumentTypeException(\gettype(''), $name);
         }
     }
     /**
@@ -97,7 +97,7 @@ class Validate
     public static function notNullOrEmpty($var, $name)
     {
         if (\is_null($var) || empty($var) && $var != '0') {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::NULL_OR_EMPTY_MSG, $name));
+            throw new \InvalidArgumentException(\sprintf(Resources::NULL_OR_EMPTY_MSG, $name));
         }
     }
     /**
@@ -113,7 +113,7 @@ class Validate
     public static function isDouble($var, $name)
     {
         if (!\is_numeric($var)) {
-            throw new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException('double', $name);
+            throw new InvalidArgumentTypeException('double', $name);
         }
     }
     /**
@@ -131,7 +131,7 @@ class Validate
         try {
             (int) $var;
         } catch (\Exception $e) {
-            throw new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException(\gettype(123), $name);
+            throw new InvalidArgumentTypeException(\gettype(123), $name);
         }
     }
     /**
@@ -178,7 +178,7 @@ class Validate
     public static function isDate($date)
     {
         if (\gettype($date) != 'object' || !$date instanceof \DateTimeInterface) {
-            throw new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException('DateTimeInterface');
+            throw new InvalidArgumentTypeException('DateTimeInterface');
         }
     }
     /**
@@ -194,7 +194,7 @@ class Validate
     public static function notNull($var, $name)
     {
         if (\is_null($var)) {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::NULL_MSG, $name));
+            throw new \InvalidArgumentException(\sprintf(Resources::NULL_MSG, $name));
         }
     }
     /**
@@ -211,7 +211,7 @@ class Validate
      */
     public static function isInstanceOf($objectInstance, $classInstance, $name)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($classInstance, 'classInstance');
+        Validate::notNull($classInstance, 'classInstance');
         if (\is_null($objectInstance)) {
             return \true;
         }
@@ -220,7 +220,7 @@ class Validate
         if ($objectType === $classType) {
             return \true;
         } else {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INSTANCE_TYPE_VALIDATION_MSG, $name, $objectType, $classType));
+            throw new \InvalidArgumentException(\sprintf(Resources::INSTANCE_TYPE_VALIDATION_MSG, $name, $objectType, $classType));
         }
     }
     /**
@@ -231,7 +231,7 @@ class Validate
     public static function getIsValidHostname()
     {
         return function ($hostname) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isValidHostname($hostname);
+            return Validate::isValidHostname($hostname);
         };
     }
     /**
@@ -254,7 +254,7 @@ class Validate
         if ($isValid) {
             return \true;
         } else {
-            throw new \RuntimeException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_CONFIG_HOSTNAME, $hostname));
+            throw new \RuntimeException(\sprintf(Resources::INVALID_CONFIG_HOSTNAME, $hostname));
         }
     }
     /**
@@ -265,7 +265,7 @@ class Validate
     public static function getIsValidUri()
     {
         return function ($uri) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isValidUri($uri);
+            return Validate::isValidUri($uri);
         };
     }
     /**
@@ -283,7 +283,7 @@ class Validate
         if ($isValid) {
             return \true;
         } else {
-            throw new \RuntimeException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_CONFIG_URI, $uri));
+            throw new \RuntimeException(\sprintf(Resources::INVALID_CONFIG_URI, $uri));
         }
     }
     /**
@@ -299,7 +299,7 @@ class Validate
     public static function isObject($var, $name)
     {
         if (!\is_object($var)) {
-            throw new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException('object', $name);
+            throw new InvalidArgumentTypeException('object', $name);
         }
         return \true;
     }
@@ -316,14 +316,14 @@ class Validate
      */
     public static function isA($objectInstance, $class, $name)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($class, 'class');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($objectInstance, 'objectInstance');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isObject($objectInstance, 'objectInstance');
+        Validate::canCastAsString($class, 'class');
+        Validate::notNull($objectInstance, 'objectInstance');
+        Validate::isObject($objectInstance, 'objectInstance');
         $objectType = \get_class($objectInstance);
         if (\is_a($objectInstance, $class)) {
             return \true;
         } else {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INSTANCE_TYPE_VALIDATION_MSG, $name, $objectType, $class));
+            throw new \InvalidArgumentException(\sprintf(Resources::INSTANCE_TYPE_VALIDATION_MSG, $name, $objectType, $class));
         }
     }
     /**
@@ -338,13 +338,13 @@ class Validate
      */
     public static function methodExists($objectInstance, $method, $name)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($method, 'method');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($objectInstance, 'objectInstance');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isObject($objectInstance, 'objectInstance');
+        Validate::canCastAsString($method, 'method');
+        Validate::notNull($objectInstance, 'objectInstance');
+        Validate::isObject($objectInstance, 'objectInstance');
         if (\method_exists($objectInstance, $method)) {
             return \true;
         } else {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_METHOD_NOT_FOUND, $method, $name));
+            throw new \InvalidArgumentException(\sprintf(Resources::ERROR_METHOD_NOT_FOUND, $method, $name));
         }
     }
     /**
@@ -359,12 +359,12 @@ class Validate
      */
     public static function isDateString($value, $name)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
+        Validate::canCastAsString($value, 'value');
         try {
             new \DateTime($value);
             return \true;
         } catch (\Exception $e) {
-            throw new \InvalidArgumentException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_INVALID_DATE_STRING, $name, $value));
+            throw new \InvalidArgumentException(\sprintf(Resources::ERROR_INVALID_DATE_STRING, $name, $value));
         }
     }
     /**
@@ -381,9 +381,9 @@ class Validate
      */
     public static function hasKey($key, $name, array $array)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($array, $name);
+        Validate::isArray($array, $name);
         if (!\array_key_exists($key, $array)) {
-            throw new \UnexpectedValueException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_VALUE_MSG, $name, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_KEY_NOT_EXIST, $key)));
+            throw new \UnexpectedValueException(\sprintf(Resources::INVALID_VALUE_MSG, $name, \sprintf(Resources::ERROR_KEY_NOT_EXIST, $key)));
         }
         return \true;
     }

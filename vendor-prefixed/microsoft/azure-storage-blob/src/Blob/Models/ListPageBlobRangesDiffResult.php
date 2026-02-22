@@ -36,7 +36,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RangeDiff;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ListPageBlobRangesDiffResult extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesResult
+class ListPageBlobRangesDiffResult extends ListPageBlobRangesResult
 {
     /**
      * Creates ListPageBlobRangesDiffResult object from $parsed response in array representation
@@ -50,32 +50,32 @@ class ListPageBlobRangesDiffResult extends \Dekode\GravityForms\Vendor\Microsoft
      */
     public static function create(array $headers, array $parsed = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesDiffResult();
+        $result = new ListPageBlobRangesDiffResult();
         $headers = \array_change_key_case($headers);
-        $date = $headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED];
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $blobLength = \intval($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LENGTH]);
+        $date = $headers[Resources::LAST_MODIFIED];
+        $date = Utilities::rfc1123ToDateTime($date);
+        $blobLength = \intval($headers[Resources::X_MS_BLOB_CONTENT_LENGTH]);
         $result->setContentLength($blobLength);
         $result->setLastModified($date);
-        $result->setETag($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG]);
+        $result->setETag($headers[Resources::ETAG]);
         if (\is_null($parsed)) {
             return $result;
         }
         $parsed = \array_change_key_case($parsed);
         $rawRanges = array();
-        if (!empty($parsed[\strtolower(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_PAGE_RANGE)])) {
-            $rawRanges = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed[\strtolower(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_PAGE_RANGE)]);
+        if (!empty($parsed[\strtolower(Resources::XTAG_PAGE_RANGE)])) {
+            $rawRanges = Utilities::getArray($parsed[\strtolower(Resources::XTAG_PAGE_RANGE)]);
         }
         $pageRanges = array();
         foreach ($rawRanges as $value) {
-            $pageRanges[] = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RangeDiff(\intval($value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_RANGE_START]), \intval($value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_RANGE_END]));
+            $pageRanges[] = new RangeDiff(\intval($value[Resources::XTAG_RANGE_START]), \intval($value[Resources::XTAG_RANGE_END]));
         }
         $rawRanges = array();
-        if (!empty($parsed[\strtolower(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_CLEAR_RANGE)])) {
-            $rawRanges = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed[\strtolower(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_CLEAR_RANGE)]);
+        if (!empty($parsed[\strtolower(Resources::XTAG_CLEAR_RANGE)])) {
+            $rawRanges = Utilities::getArray($parsed[\strtolower(Resources::XTAG_CLEAR_RANGE)]);
         }
         foreach ($rawRanges as $value) {
-            $pageRanges[] = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RangeDiff(\intval($value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_RANGE_START]), \intval($value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_RANGE_END]), \true);
+            $pageRanges[] = new RangeDiff(\intval($value[Resources::XTAG_RANGE_START]), \intval($value[Resources::XTAG_RANGE_END]), \true);
         }
         $result->setRanges($pageRanges);
         return $result;

@@ -9,7 +9,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class CachingStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class CachingStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     /** @var StreamInterface Stream being wrapped */
@@ -22,10 +22,10 @@ class CachingStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\Stre
      * @param StreamInterface $stream Stream to cache. The cursor is assumed to be at the beginning of the stream.
      * @param StreamInterface $target Optionally specify where data is cached
      */
-    public function __construct(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $target = null)
+    public function __construct(StreamInterface $stream, StreamInterface $target = null)
     {
         $this->remoteStream = $stream;
-        $this->stream = $target ?: new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Stream(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::tryFopen('php://temp', 'r+'));
+        $this->stream = $target ?: new Stream(Utils::tryFopen('php://temp', 'r+'));
     }
     public function getSize()
     {
@@ -114,8 +114,8 @@ class CachingStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\Stre
     }
     private function cacheEntireStream()
     {
-        $target = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\FnStream(['write' => 'strlen']);
-        \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::copyToStream($this, $target);
+        $target = new FnStream(['write' => 'strlen']);
+        Utils::copyToStream($this, $target);
         return $this->tell();
     }
 }

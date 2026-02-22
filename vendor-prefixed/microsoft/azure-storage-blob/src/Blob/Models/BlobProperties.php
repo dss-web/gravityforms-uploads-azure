@@ -77,34 +77,34 @@ class BlobProperties
      */
     public static function createFromXml(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties();
+        $result = new BlobProperties();
         $clean = \array_change_key_case($parsed);
         $result->setCommonBlobProperties($clean);
-        $result->setLeaseStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'leasestatus'));
-        $result->setLeaseState(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'leasestate'));
-        $result->setLeaseDuration(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'leaseduration'));
-        $result->setCopyState(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyState::createFromXml($clean));
-        $result->setIncrementalCopy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'incrementalcopy'), \true));
-        $result->setAccessTier(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'accesstier'));
-        $result->setAccessTierInferred(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'accesstierinferred'), \true));
-        $accesstierchangetime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'accesstierchangetime');
+        $result->setLeaseStatus(Utilities::tryGetValue($clean, 'leasestatus'));
+        $result->setLeaseState(Utilities::tryGetValue($clean, 'leasestate'));
+        $result->setLeaseDuration(Utilities::tryGetValue($clean, 'leaseduration'));
+        $result->setCopyState(CopyState::createFromXml($clean));
+        $result->setIncrementalCopy(Utilities::toBoolean(Utilities::tryGetValue($clean, 'incrementalcopy'), \true));
+        $result->setAccessTier(Utilities::tryGetValue($clean, 'accesstier'));
+        $result->setAccessTierInferred(Utilities::toBoolean(Utilities::tryGetValue($clean, 'accesstierinferred'), \true));
+        $accesstierchangetime = Utilities::tryGetValue($clean, 'accesstierchangetime');
         if (!\is_null($accesstierchangetime)) {
-            $accesstierchangetime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($accesstierchangetime);
+            $accesstierchangetime = Utilities::rfc1123ToDateTime($accesstierchangetime);
             $result->setAccessTierChangeTime($accesstierchangetime);
         }
-        $result->setArchiveStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'archivestatus'));
-        $deletedtime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'deletedtime');
+        $result->setArchiveStatus(Utilities::tryGetValue($clean, 'archivestatus'));
+        $deletedtime = Utilities::tryGetValue($clean, 'deletedtime');
         if (!\is_null($deletedtime)) {
-            $deletedtime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($deletedtime);
+            $deletedtime = Utilities::rfc1123ToDateTime($deletedtime);
             $result->setDeletedTime($deletedtime);
         }
-        $remainingretentiondays = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'remainingretentiondays');
+        $remainingretentiondays = Utilities::tryGetValue($clean, 'remainingretentiondays');
         if (!\is_null($remainingretentiondays)) {
             $result->setRemainingRetentionDays((int) $remainingretentiondays);
         }
-        $creationtime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'creation-time');
+        $creationtime = Utilities::tryGetValue($clean, 'creation-time');
         if (!\is_null($creationtime)) {
-            $creationtime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($creationtime);
+            $creationtime = Utilities::rfc1123ToDateTime($creationtime);
             $result->setCreationTime($creationtime);
         }
         return $result;
@@ -120,26 +120,26 @@ class BlobProperties
      */
     public static function createFromHttpHeaders(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties();
+        $result = new BlobProperties();
         $clean = \array_change_key_case($parsed);
         $result->setCommonBlobProperties($clean);
-        $result->setBlobType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_TYPE));
-        $result->setLeaseStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_STATUS));
-        $result->setLeaseState(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_STATE));
-        $result->setLeaseDuration(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_DURATION));
-        $result->setCopyState(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyState::createFromHttpHeaders($clean));
-        $result->setServerEncrypted(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SERVER_ENCRYPTED), \true));
-        $result->setIncrementalCopy(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_INCREMENTAL_COPY), \true));
-        $result->setCommittedBlockCount(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_COMMITTED_BLOCK_COUNT)));
-        $result->setCopyDestinationSnapshot(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_DESTINATION_SNAPSHOT));
-        $result->setAccessTier(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ACCESS_TIER));
-        $result->setAccessTierInferred(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ACCESS_TIER_INFERRED), \true));
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ACCESS_TIER_CHANGE_TIME);
+        $result->setBlobType(Utilities::tryGetValue($clean, Resources::X_MS_BLOB_TYPE));
+        $result->setLeaseStatus(Utilities::tryGetValue($clean, Resources::X_MS_LEASE_STATUS));
+        $result->setLeaseState(Utilities::tryGetValue($clean, Resources::X_MS_LEASE_STATE));
+        $result->setLeaseDuration(Utilities::tryGetValue($clean, Resources::X_MS_LEASE_DURATION));
+        $result->setCopyState(CopyState::createFromHttpHeaders($clean));
+        $result->setServerEncrypted(Utilities::toBoolean(Utilities::tryGetValue($clean, Resources::X_MS_SERVER_ENCRYPTED), \true));
+        $result->setIncrementalCopy(Utilities::toBoolean(Utilities::tryGetValue($clean, Resources::X_MS_INCREMENTAL_COPY), \true));
+        $result->setCommittedBlockCount(\intval(Utilities::tryGetValue($clean, Resources::X_MS_BLOB_COMMITTED_BLOCK_COUNT)));
+        $result->setCopyDestinationSnapshot(Utilities::tryGetValue($clean, Resources::X_MS_COPY_DESTINATION_SNAPSHOT));
+        $result->setAccessTier(Utilities::tryGetValue($clean, Resources::X_MS_ACCESS_TIER));
+        $result->setAccessTierInferred(Utilities::toBoolean(Utilities::tryGetValue($clean, Resources::X_MS_ACCESS_TIER_INFERRED), \true));
+        $date = Utilities::tryGetValue($clean, Resources::X_MS_ACCESS_TIER_CHANGE_TIME);
         if (!\is_null($date)) {
-            $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
+            $date = Utilities::rfc1123ToDateTime($date);
             $result->setAccessTierChangeTime($date);
         }
-        $result->setArchiveStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ARCHIVE_STATUS));
+        $result->setArchiveStatus(Utilities::tryGetValue($clean, Resources::X_MS_ARCHIVE_STATUS));
         return $result;
     }
     /**
@@ -160,7 +160,7 @@ class BlobProperties
      */
     public function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -181,7 +181,7 @@ class BlobProperties
      */
     public function setCreationTime(\DateTime $creationTime)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($creationTime);
+        Validate::isDate($creationTime);
         $this->creationTime = $creationTime;
     }
     /**
@@ -262,7 +262,7 @@ class BlobProperties
      */
     public function setContentLength($contentLength)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($contentLength, 'contentLength');
+        Validate::isInteger($contentLength, 'contentLength');
         $this->contentLength = $contentLength;
     }
     /**
@@ -383,7 +383,7 @@ class BlobProperties
      */
     public function setAccessTierInferred($accessTierInferred)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($accessTierInferred);
+        Validate::isBoolean($accessTierInferred);
         $this->accessTierInferred = $accessTierInferred;
     }
     /**
@@ -404,7 +404,7 @@ class BlobProperties
      */
     public function setAccessTierChangeTime(\DateTime $accessTierChangeTime)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($accessTierChangeTime);
+        Validate::isDate($accessTierChangeTime);
         $this->accessTierChangeTime = $accessTierChangeTime;
     }
     /**
@@ -605,7 +605,7 @@ class BlobProperties
      */
     public function setSequenceNumber($sequenceNumber)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($sequenceNumber, 'sequenceNumber');
+        Validate::isInteger($sequenceNumber, 'sequenceNumber');
         $this->sequenceNumber = $sequenceNumber;
     }
     /**
@@ -706,26 +706,26 @@ class BlobProperties
     }
     private function setCommonBlobProperties(array $clean)
     {
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED);
+        $date = Utilities::tryGetValue($clean, Resources::LAST_MODIFIED);
         if (!\is_null($date)) {
-            $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
+            $date = Utilities::rfc1123ToDateTime($date);
             $this->setLastModified($date);
         }
-        $this->setBlobType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'blobtype'));
-        $this->setContentLength(\intval($clean[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_LENGTH]));
-        $this->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG));
-        $this->setSequenceNumber(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_SEQUENCE_NUMBER)));
-        $this->setContentRange(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_RANGE));
-        $this->setCacheControl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CACHE_CONTROL));
-        $this->setContentDisposition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_DISPOSITION));
-        $this->setContentEncoding(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_ENCODING));
-        $this->setContentLanguage(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_LANGUAGE));
-        $this->setContentType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE_LOWER_CASE));
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5) && !\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_RANGE)) {
-            $this->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5));
+        $this->setBlobType(Utilities::tryGetValue($clean, 'blobtype'));
+        $this->setContentLength(\intval($clean[Resources::CONTENT_LENGTH]));
+        $this->setETag(Utilities::tryGetValue($clean, Resources::ETAG));
+        $this->setSequenceNumber(\intval(Utilities::tryGetValue($clean, Resources::X_MS_BLOB_SEQUENCE_NUMBER)));
+        $this->setContentRange(Utilities::tryGetValue($clean, Resources::CONTENT_RANGE));
+        $this->setCacheControl(Utilities::tryGetValue($clean, Resources::CACHE_CONTROL));
+        $this->setContentDisposition(Utilities::tryGetValue($clean, Resources::CONTENT_DISPOSITION));
+        $this->setContentEncoding(Utilities::tryGetValue($clean, Resources::CONTENT_ENCODING));
+        $this->setContentLanguage(Utilities::tryGetValue($clean, Resources::CONTENT_LANGUAGE));
+        $this->setContentType(Utilities::tryGetValue($clean, Resources::CONTENT_TYPE_LOWER_CASE));
+        if (Utilities::tryGetValue($clean, Resources::CONTENT_MD5) && !Utilities::tryGetValue($clean, Resources::CONTENT_RANGE)) {
+            $this->setContentMD5(Utilities::tryGetValue($clean, Resources::CONTENT_MD5));
         } else {
-            $this->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::BLOB_CONTENT_MD5));
-            $this->setRangeContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5));
+            $this->setContentMD5(Utilities::tryGetValue($clean, Resources::BLOB_CONTENT_MD5));
+            $this->setRangeContentMD5(Utilities::tryGetValue($clean, Resources::CONTENT_MD5));
         }
     }
 }

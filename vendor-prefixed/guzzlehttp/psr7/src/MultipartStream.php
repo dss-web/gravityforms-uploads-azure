@@ -9,7 +9,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class MultipartStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class MultipartStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     private $boundary;
@@ -59,22 +59,22 @@ class MultipartStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\St
      */
     protected function createStream(array $elements)
     {
-        $stream = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\AppendStream();
+        $stream = new AppendStream();
         foreach ($elements as $element) {
             $this->addElement($stream, $element);
         }
         // Add the trailing boundary with CRLF
-        $stream->addStream(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor("--{$this->boundary}--\r\n"));
+        $stream->addStream(Utils::streamFor("--{$this->boundary}--\r\n"));
         return $stream;
     }
-    private function addElement(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\AppendStream $stream, array $element)
+    private function addElement(AppendStream $stream, array $element)
     {
         foreach (['contents', 'name'] as $key) {
             if (!\array_key_exists($key, $element)) {
                 throw new \InvalidArgumentException("A '{$key}' key is required");
             }
         }
-        $element['contents'] = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($element['contents']);
+        $element['contents'] = Utils::streamFor($element['contents']);
         if (empty($element['filename'])) {
             $uri = $element['contents']->getMetadata('uri');
             if (\substr($uri, 0, 6) !== 'php://') {
@@ -82,14 +82,14 @@ class MultipartStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\St
             }
         }
         list($body, $headers) = $this->createElement($element['name'], $element['contents'], isset($element['filename']) ? $element['filename'] : null, isset($element['headers']) ? $element['headers'] : []);
-        $stream->addStream(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($this->getHeaders($headers)));
+        $stream->addStream(Utils::streamFor($this->getHeaders($headers)));
         $stream->addStream($body);
-        $stream->addStream(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor("\r\n"));
+        $stream->addStream(Utils::streamFor("\r\n"));
     }
     /**
      * @return array
      */
-    private function createElement($name, \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, $filename, array $headers)
+    private function createElement($name, StreamInterface $stream, $filename, array $headers)
     {
         // Set a default content-disposition header if one was no provided
         $disposition = $this->getHeader($headers, 'content-disposition');
@@ -106,7 +106,7 @@ class MultipartStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\St
         // Set a default Content-Type if one was not supplied
         $type = $this->getHeader($headers, 'content-type');
         if (!$type && ($filename === '0' || $filename)) {
-            if ($type = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\MimeType::fromFilename($filename)) {
+            if ($type = MimeType::fromFilename($filename)) {
                 $headers['Content-Type'] = $type;
             }
         }

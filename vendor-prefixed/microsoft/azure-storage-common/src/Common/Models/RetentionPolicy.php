@@ -49,8 +49,8 @@ class RetentionPolicy
      */
     public static function create(array $parsedResponse = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\RetentionPolicy();
-        $result->setEnabled(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean($parsedResponse['Enabled']));
+        $result = new RetentionPolicy();
+        $result->setEnabled(Utilities::toBoolean($parsedResponse['Enabled']));
         if ($result->getEnabled()) {
             $result->setDays(\intval($parsedResponse['Days']));
         }
@@ -105,7 +105,7 @@ class RetentionPolicy
      */
     public function toArray()
     {
-        $array = array('Enabled' => \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::booleanToString($this->_enabled));
+        $array = array('Enabled' => Utilities::booleanToString($this->_enabled));
         if (isset($this->_days)) {
             $array['Days'] = \strval($this->_days);
         }

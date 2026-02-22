@@ -76,8 +76,8 @@ class GetShareStatsResult
      */
     public static function create(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetShareStatsResult();
-        $result->setShareUsage(\intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::XTAG_SHARE_USAGE, $parsed)));
+        $result = new GetShareStatsResult();
+        $result->setShareUsage(\intval(Utilities::tryGetValueInsensitive(Resources::XTAG_SHARE_USAGE, $parsed)));
         return $result;
     }
 }

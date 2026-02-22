@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResource
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class FileAccessPolicy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\AccessPolicy
+class FileAccessPolicy extends AccessPolicy
 {
     /**
      * Get the valid permissions for the given resource.
@@ -44,13 +44,13 @@ class FileAccessPolicy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public static function getResourceValidPermissions()
     {
-        return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::ACCESS_PERMISSIONS[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::RESOURCE_TYPE_FILE];
+        return FileResources::ACCESS_PERMISSIONS[FileResources::RESOURCE_TYPE_FILE];
     }
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::RESOURCE_TYPE_FILE);
+        parent::__construct(FileResources::RESOURCE_TYPE_FILE);
     }
 }

@@ -8,7 +8,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @var $stream
  */
-class Stream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class Stream implements StreamInterface
 {
     /**
      * Resource modes.

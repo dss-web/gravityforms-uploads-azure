@@ -39,7 +39,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\WindowsAzu
  */
 class AccessCondition
 {
-    private $_header = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING;
+    private $_header = Resources::EMPTY_STRING;
     private $_value;
     /**
      * Constructor
@@ -61,7 +61,7 @@ class AccessCondition
      */
     public static function none()
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, null);
+        return new AccessCondition(Resources::EMPTY_STRING, null);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -82,7 +82,7 @@ class AccessCondition
      */
     public static function ifMatch($etag)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_MATCH, $etag);
+        return new AccessCondition(Resources::IF_MATCH, $etag);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -104,8 +104,8 @@ class AccessCondition
      */
     public static function ifModifiedSince(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_MODIFIED_SINCE, $lastModified);
+        Validate::isDate($lastModified);
+        return new AccessCondition(Resources::IF_MODIFIED_SINCE, $lastModified);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -126,7 +126,7 @@ class AccessCondition
      */
     public static function ifNoneMatch($etag)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_NONE_MATCH, $etag);
+        return new AccessCondition(Resources::IF_NONE_MATCH, $etag);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -148,8 +148,8 @@ class AccessCondition
      */
     public static function ifNotModifiedSince(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_UNMODIFIED_SINCE, $lastModified);
+        Validate::isDate($lastModified);
+        return new AccessCondition(Resources::IF_UNMODIFIED_SINCE, $lastModified);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -170,7 +170,7 @@ class AccessCondition
      */
     public static function appendPosition($appendPosition)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MAX_APPEND_POSITION, $appendPosition);
+        return new AccessCondition(Resources::MAX_APPEND_POSITION, $appendPosition);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -193,7 +193,7 @@ class AccessCondition
      */
     public static function maxBlobSize($maxBlobSize)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MAX_BLOB_SIZE, $maxBlobSize);
+        return new AccessCondition(Resources::MAX_BLOB_SIZE, $maxBlobSize);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -214,7 +214,7 @@ class AccessCondition
      */
     public static function ifSequenceNumberLessThan($sequenceNumber)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::SEQUENCE_NUMBER_LESS_THAN, $sequenceNumber);
+        return new AccessCondition(Resources::SEQUENCE_NUMBER_LESS_THAN, $sequenceNumber);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -235,7 +235,7 @@ class AccessCondition
      */
     public static function ifSequenceNumberEqual($sequenceNumber)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::SEQUENCE_NUMBER_EQUAL, $sequenceNumber);
+        return new AccessCondition(Resources::SEQUENCE_NUMBER_EQUAL, $sequenceNumber);
     }
     /**
      * Returns an access condition such that an operation will be performed only if
@@ -256,7 +256,7 @@ class AccessCondition
      */
     public static function ifSequenceNumberLessThanOrEqual($sequenceNumber)
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::SEQUENCE_NUMBER_LESS_THAN_OR_EQUAL, $sequenceNumber);
+        return new AccessCondition(Resources::SEQUENCE_NUMBER_LESS_THAN_OR_EQUAL, $sequenceNumber);
     }
     /**
      * Sets header type
@@ -267,8 +267,8 @@ class AccessCondition
      */
     public function setHeader($headerType)
     {
-        $valid = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition::isValid($headerType);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($valid, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_HT_MSG);
+        $valid = AccessCondition::isValid($headerType);
+        Validate::isTrue($valid, Resources::INVALID_HT_MSG);
         $this->_header = $headerType;
     }
     /**
@@ -311,7 +311,7 @@ class AccessCondition
      */
     public static function isValid($headerType)
     {
-        if ($headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_UNMODIFIED_SINCE || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_MATCH || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_MODIFIED_SINCE || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_NONE_MATCH || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MAX_BLOB_SIZE || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MAX_APPEND_POSITION || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::SEQUENCE_NUMBER_LESS_THAN_OR_EQUAL || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::SEQUENCE_NUMBER_LESS_THAN || $headerType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::SEQUENCE_NUMBER_EQUAL) {
+        if ($headerType == Resources::EMPTY_STRING || $headerType == Resources::IF_UNMODIFIED_SINCE || $headerType == Resources::IF_MATCH || $headerType == Resources::IF_MODIFIED_SINCE || $headerType == Resources::IF_NONE_MATCH || $headerType == Resources::MAX_BLOB_SIZE || $headerType == Resources::MAX_APPEND_POSITION || $headerType == Resources::SEQUENCE_NUMBER_LESS_THAN_OR_EQUAL || $headerType == Resources::SEQUENCE_NUMBER_LESS_THAN || $headerType == Resources::SEQUENCE_NUMBER_EQUAL) {
             return \true;
         } else {
             return \false;

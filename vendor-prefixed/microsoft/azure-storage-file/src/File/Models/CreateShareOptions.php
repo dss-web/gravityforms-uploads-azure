@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateShareOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions
+class CreateShareOptions extends FileServiceOptions
 {
     private $quota;
     private $metadata;
@@ -57,7 +57,7 @@ class CreateShareOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stor
      */
     public function setQuota($quota)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($quota, 'quota');
+        Validate::isInteger($quota, 'quota');
         $this->quota = $quota;
     }
     /**

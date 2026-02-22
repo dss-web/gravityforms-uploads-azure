@@ -49,10 +49,10 @@ class Share
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\Share();
-        $result->setName($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NAME]);
-        $result->setMetadata(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_METADATA, array()));
-        $result->setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareProperties::create($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_PROPERTIES]));
+        $result = new Share();
+        $result->setName($parsedResponse[Resources::QP_NAME]);
+        $result->setMetadata(Utilities::tryGetValue($parsedResponse, Resources::QP_METADATA, array()));
+        $result->setProperties(ShareProperties::create($parsedResponse[Resources::QP_PROPERTIES]));
         return $result;
     }
     /**
@@ -111,7 +111,7 @@ class Share
      *
      * @return void
      */
-    public function setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareProperties $properties)
+    public function setProperties(ShareProperties $properties)
     {
         $this->properties = $properties;
     }

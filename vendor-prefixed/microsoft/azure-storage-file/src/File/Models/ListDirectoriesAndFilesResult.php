@@ -58,38 +58,38 @@ class ListDirectoriesAndFilesResult
      */
     public static function create(array $parsedResponse, $location = '')
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListDirectoriesAndFilesResult();
-        $serviceEndpoint = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetKeysChainValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::XTAG_ATTRIBUTES, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::XTAG_SERVICE_ENDPOINT);
-        $result->setAccountName(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryParseAccountNameFromUrl($serviceEndpoint));
-        $nextMarker = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NEXT_MARKER);
+        $result = new ListDirectoriesAndFilesResult();
+        $serviceEndpoint = Utilities::tryGetKeysChainValue($parsedResponse, Resources::XTAG_ATTRIBUTES, Resources::XTAG_SERVICE_ENDPOINT);
+        $result->setAccountName(Utilities::tryParseAccountNameFromUrl($serviceEndpoint));
+        $nextMarker = Utilities::tryGetValue($parsedResponse, Resources::QP_NEXT_MARKER);
         if ($nextMarker != null) {
-            $result->setContinuationToken(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\MarkerContinuationToken($nextMarker, $location));
+            $result->setContinuationToken(new MarkerContinuationToken($nextMarker, $location));
         }
-        $result->setMaxResults(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MAX_RESULTS));
-        $result->setMarker(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MARKER));
-        $entries = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_ENTRIES);
+        $result->setMaxResults(Utilities::tryGetValue($parsedResponse, Resources::QP_MAX_RESULTS));
+        $result->setMarker(Utilities::tryGetValue($parsedResponse, Resources::QP_MARKER));
+        $entries = Utilities::tryGetValue($parsedResponse, Resources::QP_ENTRIES);
         if (empty($entries)) {
             $result->setDirectories(array());
             $result->setFiles(array());
         } else {
-            $directoriesArray = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($entries, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_DIRECTORY);
-            $filesArray = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($entries, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_FILE);
+            $directoriesArray = Utilities::tryGetValue($entries, Resources::QP_DIRECTORY);
+            $filesArray = Utilities::tryGetValue($entries, Resources::QP_FILE);
             $directories = array();
             $files = array();
             if ($directoriesArray != null) {
-                if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NAME, $directoriesArray)) {
+                if (\array_key_exists(Resources::QP_NAME, $directoriesArray)) {
                     $directoriesArray = [$directoriesArray];
                 }
                 foreach ($directoriesArray as $directoryArray) {
-                    $directories[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\Directory::create($directoryArray);
+                    $directories[] = Directory::create($directoryArray);
                 }
             }
             if ($filesArray != null) {
-                if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NAME, $filesArray)) {
+                if (\array_key_exists(Resources::QP_NAME, $filesArray)) {
                     $filesArray = [$filesArray];
                 }
                 foreach ($filesArray as $fileArray) {
-                    $files[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\File::create($fileArray);
+                    $files[] = File::create($fileArray);
                 }
             }
             $result->setDirectories($directories);

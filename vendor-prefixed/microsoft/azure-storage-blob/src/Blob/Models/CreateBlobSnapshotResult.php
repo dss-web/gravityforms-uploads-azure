@@ -52,11 +52,11 @@ class CreateBlobSnapshotResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotResult();
+        $result = new CreateBlobSnapshotResult();
         $headerWithLowerCaseKey = \array_change_key_case($headers);
-        $result->setETag($headerWithLowerCaseKey[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG]);
-        $result->setLastModified(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($headerWithLowerCaseKey[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED]));
-        $result->setSnapshot($headerWithLowerCaseKey[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SNAPSHOT]);
+        $result->setETag($headerWithLowerCaseKey[Resources::ETAG]);
+        $result->setLastModified(Utilities::rfc1123ToDateTime($headerWithLowerCaseKey[Resources::LAST_MODIFIED]));
+        $result->setSnapshot($headerWithLowerCaseKey[Resources::X_MS_SNAPSHOT]);
         return $result;
     }
     /**

@@ -88,11 +88,11 @@ class File
      */
     public static function create(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\File();
-        $name = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NAME);
+        $result = new File();
+        $name = Utilities::tryGetValue($parsed, Resources::QP_NAME);
         $result->setName($name);
-        $properties = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_PROPERTIES);
-        $length = \intval(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($properties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_CONTENT_LENGTH));
+        $properties = Utilities::tryGetValue($parsed, Resources::QP_PROPERTIES);
+        $length = \intval(Utilities::tryGetValue($properties, Resources::QP_CONTENT_LENGTH));
         $result->setLength($length);
         return $result;
     }

@@ -51,7 +51,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452239.aspx
      */
-    public function getServiceProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function getServiceProperties(ServiceOptions $options = null);
     /**
      * Creates promise to get the properties of the service.
      *
@@ -61,7 +61,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452239.aspx
      */
-    public function getServicePropertiesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function getServicePropertiesAsync(ServiceOptions $options = null);
     /**
      * Sets the properties of the service.
      *
@@ -72,7 +72,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452235.aspx
      */
-    public function setServiceProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties $serviceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function setServiceProperties(ServiceProperties $serviceProperties, ServiceOptions $options = null);
     /**
      * Retieves statistics related to replication for the service. The operation
      * will only be sent to secondary location endpoint.
@@ -83,7 +83,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-stats
      */
-    public function getServiceStats(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function getServiceStats(ServiceOptions $options = null);
     /**
      * Creates promise that retrieves statistics related to replication for the
      * service. The operation will only be sent to secondary location endpoint.
@@ -94,7 +94,7 @@ interface IBlob
      *
      * @see  https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-stats
      */
-    public function getServiceStatsAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function getServiceStatsAsync(ServiceOptions $options = null);
     /**
      * Creates the promise to set the properties of the service.
      *
@@ -108,7 +108,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452235.aspx
      */
-    public function setServicePropertiesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties $serviceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null);
+    public function setServicePropertiesAsync(ServiceProperties $serviceProperties, ServiceOptions $options = null);
     /**
      * Lists all of the containers in the given storage account.
      *
@@ -118,7 +118,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179352.aspx
      */
-    public function listContainers(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersOptions $options = null);
+    public function listContainers(BlobModels\ListContainersOptions $options = null);
     /**
      * Create a promise for lists all of the containers in the given
      * storage account.
@@ -127,7 +127,7 @@ interface IBlob
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function listContainersAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersOptions $options = null);
+    public function listContainersAsync(BlobModels\ListContainersOptions $options = null);
     /**
      * Creates a new container in the given storage account.
      *
@@ -138,7 +138,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179468.aspx
      */
-    public function createContainer($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions $options = null);
+    public function createContainer($container, BlobModels\CreateContainerOptions $options = null);
     /**
      * Creates a new container in the given storage account.
      *
@@ -149,7 +149,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179468.aspx
      */
-    public function createContainerAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions $options = null);
+    public function createContainerAsync($container, BlobModels\CreateContainerOptions $options = null);
     /**
      * Creates a new container in the given storage account.
      *
@@ -160,7 +160,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179408.aspx
      */
-    public function deleteContainer($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function deleteContainer($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Create a promise for deleting a container.
      *
@@ -169,7 +169,7 @@ interface IBlob
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteContainerAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function deleteContainerAsync($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Returns all properties and metadata on the container.
      *
@@ -180,7 +180,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179370.aspx
      */
-    public function getContainerProperties($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function getContainerProperties($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Create promise to return all properties and metadata on the container.
      *
@@ -191,7 +191,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179370.aspx
      */
-    public function getContainerPropertiesAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function getContainerPropertiesAsync($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Returns only user-defined metadata for the specified container.
      *
@@ -202,7 +202,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691976.aspx
      */
-    public function getContainerMetadata($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function getContainerMetadata($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Create promise to return only user-defined metadata for the specified
      * container.
@@ -214,7 +214,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691976.aspx
      */
-    public function getContainerMetadataAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function getContainerMetadataAsync($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Gets the access control list (ACL) and any container-level access policies
      * for the container.
@@ -226,7 +226,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179469.aspx
      */
-    public function getContainerAcl($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function getContainerAcl($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates the promise to get the access control list (ACL) and any
      * container-level access policies for the container.
@@ -238,7 +238,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179469.aspx
      */
-    public function getContainerAclAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function getContainerAclAsync($container, BlobModels\BlobServiceOptions $options = null);
     /**
      * Sets the ACL and any container-level access policies for the container.
      *
@@ -250,7 +250,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179391.aspx
      */
-    public function setContainerAcl($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function setContainerAcl($container, BlobModels\ContainerACL $acl, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to set the ACL and any container-level access policies
      * for the container.
@@ -263,7 +263,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179391.aspx
      */
-    public function setContainerAclAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function setContainerAclAsync($container, BlobModels\ContainerACL $acl, BlobModels\BlobServiceOptions $options = null);
     /**
      * Sets metadata headers on the container.
      *
@@ -275,7 +275,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179362.aspx
      */
-    public function setContainerMetadata($container, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function setContainerMetadata($container, array $metadata, BlobModels\BlobServiceOptions $options = null);
     /**
      * Sets metadata headers on the container.
      *
@@ -287,7 +287,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179362.aspx
      */
-    public function setContainerMetadataAsync($container, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function setContainerMetadataAsync($container, array $metadata, BlobModels\BlobServiceOptions $options = null);
     /**
      * Lists all of the blobs in the given container.
      *
@@ -298,7 +298,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135734.aspx
      */
-    public function listBlobs($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions $options = null);
+    public function listBlobs($container, BlobModels\ListBlobsOptions $options = null);
     /**
      * Creates promise to list all of the blobs in the given container.
      *
@@ -309,7 +309,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135734.aspx
      */
-    public function listBlobsAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions $options = null);
+    public function listBlobsAsync($container, BlobModels\ListBlobsOptions $options = null);
     /**
      * Creates a new page blob. Note that calling createPageBlob to create a page
      * blob only initializes the blob.
@@ -326,7 +326,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createPageBlob($container, $blob, $length, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobOptions $options = null);
+    public function createPageBlob($container, $blob, $length, BlobModels\CreatePageBlobOptions $options = null);
     /**
      * Creates promise to create a new page blob. Note that calling
      * createPageBlob to create a page blob only initializes the blob.
@@ -345,7 +345,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createPageBlobAsync($container, $blob, $length, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobOptions $options = null);
+    public function createPageBlobAsync($container, $blob, $length, BlobModels\CreatePageBlobOptions $options = null);
     /**
      * Create a new append blob.
      * If the blob already exists on the service, it will be overwritten.
@@ -358,7 +358,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createAppendBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $options = null);
+    public function createAppendBlob($container, $blob, BlobModels\CreateBlobOptions $options = null);
     /**
      * Creates promise to create a new append blob.
      * If the blob already exists on the service, it will be overwritten.
@@ -371,7 +371,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createAppendBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $options = null);
+    public function createAppendBlobAsync($container, $blob, BlobModels\CreateBlobOptions $options = null);
     /**
      * Creates a new block blob or updates the content of an existing block blob.
      * Updating an existing block blob overwrites any existing metadata on the blob.
@@ -388,7 +388,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createBlockBlob($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions $options = null);
+    public function createBlockBlob($container, $blob, $content, BlobModels\CreateBlockBlobOptions $options = null);
     /**
      * Creates a promise to create a new block blob or updates the content of
      * an existing block blob.
@@ -408,7 +408,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createBlockBlobAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions $options = null);
+    public function createBlockBlobAsync($container, $blob, $content, BlobModels\CreateBlockBlobOptions $options = null);
     /**
      * Create a new page blob and upload the content to the page blob.
      *
@@ -423,7 +423,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-properties
      */
-    public function createPageBlobFromContent($container, $blob, $length, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions $options = null);
+    public function createPageBlobFromContent($container, $blob, $length, $content, BlobModels\CreatePageBlobFromContentOptions $options = null);
     /**
      * Creates a promise to create a new page blob and upload the content
      * to the page blob.
@@ -439,7 +439,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-properties
      */
-    public function createPageBlobFromContentAsync($container, $blob, $length, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions $options = null);
+    public function createPageBlobFromContentAsync($container, $blob, $length, $content, BlobModels\CreatePageBlobFromContentOptions $options = null);
     /**
      * Clears a range of pages from the blob.
      *
@@ -453,7 +453,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function clearBlobPages($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null);
+    public function clearBlobPages($container, $blob, Range $range, BlobModels\CreateBlobPagesOptions $options = null);
     /**
      * Creates promise to clear a range of pages from the blob.
      *
@@ -470,7 +470,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function clearBlobPagesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null);
+    public function clearBlobPagesAsync($container, $blob, Range $range, BlobModels\CreateBlobPagesOptions $options = null);
     /**
      * Creates a range of pages to a page blob.
      *
@@ -484,7 +484,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function createBlobPages($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null);
+    public function createBlobPages($container, $blob, Range $range, $content, BlobModels\CreateBlobPagesOptions $options = null);
     /**
      * Creates promise to create a range of pages to a page blob.
      *
@@ -501,7 +501,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function createBlobPagesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null);
+    public function createBlobPagesAsync($container, $blob, Range $range, $content, BlobModels\CreateBlobPagesOptions $options = null);
     /**
      * Creates a new block to be committed as part of a block blob.
      *
@@ -517,7 +517,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx
      */
-    public function createBlobBlock($container, $blob, $blockId, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions $options = null);
+    public function createBlobBlock($container, $blob, $blockId, $content, BlobModels\CreateBlobBlockOptions $options = null);
     /**
      * Creates a new block to be committed as part of a block blob.
      *
@@ -539,7 +539,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx
      */
-    public function createBlobBlockAsync($container, $blob, $blockId, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions $options = null);
+    public function createBlobBlockAsync($container, $blob, $blockId, $content, BlobModels\CreateBlobBlockOptions $options = null);
     /**
      * Commits a new block of data to the end of an existing append blob.
      *
@@ -552,7 +552,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/append-block
      */
-    public function appendBlock($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockOptions $options = null);
+    public function appendBlock($container, $blob, $content, BlobModels\AppendBlockOptions $options = null);
     /**
      * Creates promise to commit a new block of data to the end of an existing append blob.
      *
@@ -565,7 +565,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/append-block
      */
-    public function appendBlockAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockOptions $options = null);
+    public function appendBlockAsync($container, $blob, $content, BlobModels\AppendBlockOptions $options = null);
     /**
      * This method writes a blob by specifying the list of block IDs that make up the
      * blob. In order to be written as part of a blob, a block must have been
@@ -586,7 +586,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179467.aspx
      */
-    public function commitBlobBlocks($container, $blob, $blockList, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions $options = null);
+    public function commitBlobBlocks($container, $blob, $blockList, BlobModels\CommitBlobBlocksOptions $options = null);
     /**
      * This method writes a blob by specifying the list of block IDs that make up the
      * blob. In order to be written as part of a blob, a block must have been
@@ -608,7 +608,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179467.aspx
      */
-    public function commitBlobBlocksAsync($container, $blob, $blockList, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions $options = null);
+    public function commitBlobBlocksAsync($container, $blob, $blockList, BlobModels\CommitBlobBlocksOptions $options = null);
     /**
      * Retrieves the list of blocks that have been uploaded as part of a block blob.
      *
@@ -628,7 +628,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179400.aspx
      */
-    public function listBlobBlocks($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksOptions $options = null);
+    public function listBlobBlocks($container, $blob, BlobModels\ListBlobBlocksOptions $options = null);
     /**
      * Creates promise to retrieve the list of blocks that have been uploaded as
      * part of a block blob.
@@ -649,7 +649,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179400.aspx
      */
-    public function listBlobBlocksAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksOptions $options = null);
+    public function listBlobBlocksAsync($container, $blob, BlobModels\ListBlobBlocksOptions $options = null);
     /**
      * Returns all properties and metadata on the blob.
      *
@@ -661,7 +661,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179394.aspx
      */
-    public function getBlobProperties($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesOptions $options = null);
+    public function getBlobProperties($container, $blob, BlobModels\GetBlobPropertiesOptions $options = null);
     /**
      * Creates promise to return all properties and metadata on the blob.
      *
@@ -673,7 +673,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179394.aspx
      */
-    public function getBlobPropertiesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesOptions $options = null);
+    public function getBlobPropertiesAsync($container, $blob, BlobModels\GetBlobPropertiesOptions $options = null);
     /**
      * Returns all properties and metadata on the blob.
      *
@@ -685,7 +685,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179350.aspx
      */
-    public function getBlobMetadata($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobMetadataOptions $options = null);
+    public function getBlobMetadata($container, $blob, BlobModels\GetBlobMetadataOptions $options = null);
     /**
      * Creates promise to return all properties and metadata on the blob.
      *
@@ -697,7 +697,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179350.aspx
      */
-    public function getBlobMetadataAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobMetadataOptions $options = null);
+    public function getBlobMetadataAsync($container, $blob, BlobModels\GetBlobMetadataOptions $options = null);
     /**
      * Returns a list of active page ranges for a page blob. Active page ranges are
      * those that have been populated with data.
@@ -710,7 +710,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    public function listPageBlobRanges($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null);
+    public function listPageBlobRanges($container, $blob, BlobModels\ListPageBlobRangesOptions $options = null);
     /**
      * Creates promise to return a list of active page ranges for a page blob.
      * Active page ranges are those that have been populated with data.
@@ -724,7 +724,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    public function listPageBlobRangesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null);
+    public function listPageBlobRangesAsync($container, $blob, BlobModels\ListPageBlobRangesOptions $options = null);
     /**
      * Returns a list of page ranges that have been updated or cleared.
      *
@@ -746,7 +746,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/version-2015-07-08
      */
-    public function listPageBlobRangesDiff($container, $blob, $previousSnapshotTime, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null);
+    public function listPageBlobRangesDiff($container, $blob, $previousSnapshotTime, BlobModels\ListPageBlobRangesOptions $options = null);
     /**
      * Creates promise to return a list of page ranges that have been updated
      * or cleared.
@@ -769,7 +769,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    public function listPageBlobRangesDiffAsync($container, $blob, $previousSnapshotTime, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null);
+    public function listPageBlobRangesDiffAsync($container, $blob, $previousSnapshotTime, BlobModels\ListPageBlobRangesOptions $options = null);
     /**
      * Sets blob tier on the blob.
      *
@@ -781,7 +781,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tier
      */
-    public function setBlobTier($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobTierOptions $options = null);
+    public function setBlobTier($container, $blob, BlobModels\SetBlobTierOptions $options = null);
     /**
      * Sets blob tier on the blob.
      *
@@ -793,7 +793,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tier
      */
-    public function setBlobTierAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobTierOptions $options = null);
+    public function setBlobTierAsync($container, $blob, BlobModels\SetBlobTierOptions $options = null);
     /**
      * Sets system properties defined for a blob.
      *
@@ -805,7 +805,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691966.aspx
      */
-    public function setBlobProperties($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesOptions $options = null);
+    public function setBlobProperties($container, $blob, BlobModels\SetBlobPropertiesOptions $options = null);
     /**
      * Creates promise to set system properties defined for a blob.
      *
@@ -817,7 +817,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691966.aspx
      */
-    public function setBlobPropertiesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesOptions $options = null);
+    public function setBlobPropertiesAsync($container, $blob, BlobModels\SetBlobPropertiesOptions $options = null);
     /**
      * Sets metadata headers on the blob.
      *
@@ -830,7 +830,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179414.aspx
      */
-    public function setBlobMetadata($container, $blob, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function setBlobMetadata($container, $blob, array $metadata, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to set metadata headers on the blob.
      *
@@ -843,7 +843,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179414.aspx
      */
-    public function setBlobMetadataAsync($container, $blob, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function setBlobMetadataAsync($container, $blob, array $metadata, BlobModels\BlobServiceOptions $options = null);
     /**
      * Downloads a blob to a file, the result contains its metadata and
      * properties. The result will not contain a stream pointing to the
@@ -858,7 +858,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function saveBlobToFile($path, $container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null);
+    public function saveBlobToFile($path, $container, $blob, BlobModels\GetBlobOptions $options = null);
     /**
      * Creates promise to download a blob to a file, the result contains its
      * metadata and properties. The result will not contain a stream pointing
@@ -873,7 +873,7 @@ interface IBlob
      * @throws \Exception
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function saveBlobToFileAsync($path, $container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null);
+    public function saveBlobToFileAsync($path, $container, $blob, BlobModels\GetBlobOptions $options = null);
     /**
      * Undeletes a blob.
      *
@@ -885,7 +885,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/undelete-blob
      */
-    public function undeleteBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\UndeleteBlobOptions $options = null);
+    public function undeleteBlob($container, $blob, BlobModels\UndeleteBlobOptions $options = null);
     /**
      * Undeletes a blob.
      *
@@ -897,7 +897,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/undelete-blob
      */
-    public function undeleteBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\UndeleteBlobOptions $options = null);
+    public function undeleteBlobAsync($container, $blob, BlobModels\UndeleteBlobOptions $options = null);
     /**
      * Reads or downloads a blob from the system, including its metadata and
      * properties.
@@ -910,7 +910,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function getBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null);
+    public function getBlob($container, $blob, BlobModels\GetBlobOptions $options = null);
     /**
      * Creates promise to read or download a blob from the system, including its
      * metadata and properties.
@@ -923,7 +923,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function getBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null);
+    public function getBlobAsync($container, $blob, BlobModels\GetBlobOptions $options = null);
     /**
      * Deletes a blob or blob snapshot.
      *
@@ -939,7 +939,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179413.aspx
      */
-    public function deleteBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\DeleteBlobOptions $options = null);
+    public function deleteBlob($container, $blob, BlobModels\DeleteBlobOptions $options = null);
     /**
      * Creates promise to delete a blob or blob snapshot.
      *
@@ -955,7 +955,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179413.aspx
      */
-    public function deleteBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\DeleteBlobOptions $options = null);
+    public function deleteBlobAsync($container, $blob, BlobModels\DeleteBlobOptions $options = null);
     /**
      * Creates a snapshot of a blob.
      *
@@ -967,7 +967,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691971.aspx
      */
-    public function createBlobSnapshot($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotOptions $options = null);
+    public function createBlobSnapshot($container, $blob, BlobModels\CreateBlobSnapshotOptions $options = null);
     /**
      * Creates promise to create a snapshot of a blob.
      *
@@ -982,7 +982,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691971.aspx
      */
-    public function createBlobSnapshotAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotOptions $options = null);
+    public function createBlobSnapshotAsync($container, $blob, BlobModels\CreateBlobSnapshotOptions $options = null);
     /**
      * Copies a source blob to a destination blob within the same storage account.
      *
@@ -996,7 +996,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlob($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobOptions $options = null);
+    public function copyBlob($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, BlobModels\CopyBlobOptions $options = null);
     /**
      * Creates promise to copy a source blob to a destination blob within the
      * same storage account.
@@ -1016,7 +1016,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlobAsync($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobOptions $options = null);
+    public function copyBlobAsync($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, BlobModels\CopyBlobOptions $options = null);
     /**
      * Copies from a source URL to a destination blob.
      *
@@ -1036,7 +1036,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlobFromURL($destinationContainer, $destinationBlob, $sourceURL, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobFromURLOptions $options = null);
+    public function copyBlobFromURL($destinationContainer, $destinationBlob, $sourceURL, BlobModels\CopyBlobFromURLOptions $options = null);
     /**
      * Creates promise to copy from source URL to a destination blob.
      *
@@ -1056,7 +1056,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlobFromURLAsync($destinationContainer, $destinationBlob, $sourceURL, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobFromURLOptions $options = null);
+    public function copyBlobFromURLAsync($destinationContainer, $destinationBlob, $sourceURL, BlobModels\CopyBlobFromURLOptions $options = null);
     /**
      * Abort a blob copy operation
      *
@@ -1069,7 +1069,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
      */
-    public function abortCopy($container, $blob, $copyId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function abortCopy($container, $blob, $copyId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to abort a blob copy operation
      *
@@ -1082,7 +1082,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
      */
-    public function abortCopyAsync($container, $blob, $copyId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function abortCopyAsync($container, $blob, $copyId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Establishes an exclusive write lock on a blob. To write to a locked
      * blob, a client must provide a lease ID.
@@ -1099,7 +1099,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function acquireLease($container, $blob, $proposedLeaseId = null, $leaseDuration = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function acquireLease($container, $blob, $proposedLeaseId = null, $leaseDuration = null, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to establish an exclusive one-minute write lock on a blob.
      * To write to a locked blob, a client must provide a lease ID.
@@ -1116,7 +1116,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function acquireLeaseAsync($container, $blob, $proposedLeaseId = null, $leaseDuration = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function acquireLeaseAsync($container, $blob, $proposedLeaseId = null, $leaseDuration = null, BlobModels\BlobServiceOptions $options = null);
     /**
      * change an existing lease
      *
@@ -1130,7 +1130,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function changeLease($container, $blob, $leaseId, $proposedLeaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function changeLease($container, $blob, $leaseId, $proposedLeaseId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to change an existing lease
      *
@@ -1144,7 +1144,7 @@ interface IBlob
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function changeLeaseAsync($container, $blob, $leaseId, $proposedLeaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function changeLeaseAsync($container, $blob, $leaseId, $proposedLeaseId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Renews an existing lease
      *
@@ -1157,7 +1157,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function renewLease($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function renewLease($container, $blob, $leaseId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to renew an existing lease
      *
@@ -1170,7 +1170,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function renewLeaseAsync($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function renewLeaseAsync($container, $blob, $leaseId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Frees the lease if it is no longer needed so that another client may
      * immediately acquire a lease against the blob.
@@ -1184,7 +1184,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function releaseLease($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function releaseLease($container, $blob, $leaseId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to free the lease if it is no longer needed so that
      * another client may immediately acquire a lease against the blob.
@@ -1198,7 +1198,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function releaseLeaseAsync($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function releaseLeaseAsync($container, $blob, $leaseId, BlobModels\BlobServiceOptions $options = null);
     /**
      * Ends the lease but ensure that another client cannot acquire a new lease until
      * the current lease period has expired.
@@ -1211,7 +1211,7 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function breakLease($container, $blob, $breakPeriod = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function breakLease($container, $blob, $breakPeriod = null, BlobModels\BlobServiceOptions $options = null);
     /**
      * Creates promise to end the lease but ensure that another client cannot
      * acquire a new lease until the current lease period has expired.
@@ -1224,5 +1224,5 @@ interface IBlob
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function breakLeaseAsync($container, $blob, $breakPeriod = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null);
+    public function breakLeaseAsync($container, $blob, $breakPeriod = null, BlobModels\BlobServiceOptions $options = null);
 }

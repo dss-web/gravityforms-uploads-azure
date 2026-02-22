@@ -67,30 +67,30 @@ class FileProperties
      */
     public static function createFromHttpHeaders(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties();
+        $result = new FileProperties();
         $clean = \array_change_key_case($parsed);
-        $lastModified = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::LAST_MODIFIED);
-        $result->setLastModified(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($lastModified));
-        $result->setContentLength(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_LENGTH));
-        $result->setContentType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_TYPE_LOWER_CASE));
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::ETAG));
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_MD5) && !\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_RANGE)) {
-            $result->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_MD5));
+        $lastModified = Utilities::tryGetValue($parsed, Resources::LAST_MODIFIED);
+        $result->setLastModified(Utilities::rfc1123ToDateTime($lastModified));
+        $result->setContentLength(Utilities::tryGetValue($parsed, Resources::CONTENT_LENGTH));
+        $result->setContentType(Utilities::tryGetValue($parsed, Resources::CONTENT_TYPE_LOWER_CASE));
+        $result->setETag(Utilities::tryGetValue($parsed, Resources::ETAG));
+        if (Utilities::tryGetValue($parsed, Resources::CONTENT_MD5) && !Utilities::tryGetValue($parsed, Resources::CONTENT_RANGE)) {
+            $result->setContentMD5(Utilities::tryGetValue($parsed, Resources::CONTENT_MD5));
         } else {
-            $result->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::FILE_CONTENT_MD5));
-            $result->setRangeContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_MD5));
+            $result->setContentMD5(Utilities::tryGetValue($parsed, Resources::FILE_CONTENT_MD5));
+            $result->setRangeContentMD5(Utilities::tryGetValue($parsed, Resources::CONTENT_MD5));
         }
-        $result->setContentEncoding(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_ENCODING));
-        $result->setContentLanguage(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_LANGUAGE));
-        $result->setCacheControl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CACHE_CONTROL));
-        $result->setContentDisposition(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_DISPOSITION));
-        $result->setContentRange(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::CONTENT_RANGE));
-        $result->setCopyCompletionTime(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_COMPLETION_TIME));
-        $result->setCopyStatusDescription(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_STATUS_DESCRIPTION));
-        $result->setCopyID(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_ID));
-        $result->setCopyProgress(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_PROGRESS));
-        $result->setCopySource(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_SOURCE));
-        $result->setCopyStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_STATUS));
+        $result->setContentEncoding(Utilities::tryGetValue($parsed, Resources::CONTENT_ENCODING));
+        $result->setContentLanguage(Utilities::tryGetValue($parsed, Resources::CONTENT_LANGUAGE));
+        $result->setCacheControl(Utilities::tryGetValue($parsed, Resources::CACHE_CONTROL));
+        $result->setContentDisposition(Utilities::tryGetValue($parsed, Resources::CONTENT_DISPOSITION));
+        $result->setContentRange(Utilities::tryGetValue($parsed, Resources::CONTENT_RANGE));
+        $result->setCopyCompletionTime(Utilities::tryGetValue($parsed, Resources::X_MS_COPY_COMPLETION_TIME));
+        $result->setCopyStatusDescription(Utilities::tryGetValue($parsed, Resources::X_MS_COPY_STATUS_DESCRIPTION));
+        $result->setCopyID(Utilities::tryGetValue($parsed, Resources::X_MS_COPY_ID));
+        $result->setCopyProgress(Utilities::tryGetValue($parsed, Resources::X_MS_COPY_PROGRESS));
+        $result->setCopySource(Utilities::tryGetValue($parsed, Resources::X_MS_COPY_SOURCE));
+        $result->setCopyStatus(Utilities::tryGetValue($parsed, Resources::X_MS_COPY_STATUS));
         return $result;
     }
     /**
@@ -111,7 +111,7 @@ class FileProperties
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -192,7 +192,7 @@ class FileProperties
      */
     public function setContentLength($contentLength)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($contentLength, 'contentLength');
+        Validate::isInteger($contentLength, 'contentLength');
         $this->contentLength = (int) $contentLength;
     }
     /**
@@ -413,7 +413,7 @@ class FileProperties
      */
     protected function setCopySource($copySource)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($copySource, 'copySource');
+        Validate::isInteger($copySource, 'copySource');
         $this->copySource = $copySource;
     }
     /**

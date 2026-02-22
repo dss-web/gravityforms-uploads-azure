@@ -55,19 +55,19 @@ class CopyState
      */
     public static function createFromXml(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyState();
+        $result = new CopyState();
         $clean = \array_change_key_case($parsed);
-        $copyCompletionTime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'copycompletiontime');
+        $copyCompletionTime = Utilities::tryGetValue($clean, 'copycompletiontime');
         if (!\is_null($copyCompletionTime)) {
-            $copyCompletionTime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($copyCompletionTime);
+            $copyCompletionTime = Utilities::rfc1123ToDateTime($copyCompletionTime);
             $result->setCompletionTime($copyCompletionTime);
         }
-        $result->setCopyId(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'copyid'));
-        $result->setStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'copystatus'));
-        $result->setStatusDescription(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'copystatusdescription'));
-        $result->setSource(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'copysource'));
-        $copyProgress = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, 'copyprogress');
-        if (\strpos($copyProgress, '/') !== \false) {
+        $result->setCopyId(Utilities::tryGetValue($clean, 'copyid'));
+        $result->setStatus(Utilities::tryGetValue($clean, 'copystatus'));
+        $result->setStatusDescription(Utilities::tryGetValue($clean, 'copystatusdescription'));
+        $result->setSource(Utilities::tryGetValue($clean, 'copysource'));
+        $copyProgress = Utilities::tryGetValue($clean, 'copyprogress');
+        if (!\is_null($copyProgress) && \strpos($copyProgress, '/') !== \false) {
             $parts = \explode('/', $copyProgress);
             $bytesCopied = \intval($parts[0]);
             $totalBytes = \intval($parts[1]);
@@ -87,19 +87,19 @@ class CopyState
      */
     public static function createFromHttpHeaders(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyState();
+        $result = new CopyState();
         $clean = \array_change_key_case($parsed);
-        $copyCompletionTime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_COMPLETION_TIME);
+        $copyCompletionTime = Utilities::tryGetValue($clean, Resources::X_MS_COPY_COMPLETION_TIME);
         if (!\is_null($copyCompletionTime)) {
-            $copyCompletionTime = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($copyCompletionTime);
+            $copyCompletionTime = Utilities::rfc1123ToDateTime($copyCompletionTime);
             $result->setCompletionTime($copyCompletionTime);
         }
-        $result->setCopyId(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_ID));
-        $result->setStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_STATUS));
-        $result->setStatusDescription(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_STATUS_DESCRIPTION));
-        $result->setSource(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_SOURCE));
-        $copyProgress = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($clean, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_PROGRESS);
-        if (\strpos($copyProgress, '/') !== \false) {
+        $result->setCopyId(Utilities::tryGetValue($clean, Resources::X_MS_COPY_ID));
+        $result->setStatus(Utilities::tryGetValue($clean, Resources::X_MS_COPY_STATUS));
+        $result->setStatusDescription(Utilities::tryGetValue($clean, Resources::X_MS_COPY_STATUS_DESCRIPTION));
+        $result->setSource(Utilities::tryGetValue($clean, Resources::X_MS_COPY_SOURCE));
+        $copyProgress = Utilities::tryGetValue($clean, Resources::X_MS_COPY_PROGRESS);
+        if (!\is_null($copyProgress) && \strpos($copyProgress, '/') !== \false) {
             $parts = \explode('/', $copyProgress);
             $bytesCopied = \intval($parts[0]);
             $totalBytes = \intval($parts[1]);

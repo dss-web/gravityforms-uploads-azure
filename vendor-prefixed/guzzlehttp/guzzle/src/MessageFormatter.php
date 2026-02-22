@@ -34,16 +34,16 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface;
  *
  * @final
  */
-class MessageFormatter implements \Dekode\GravityForms\Vendor\GuzzleHttp\MessageFormatterInterface
+class MessageFormatter implements MessageFormatterInterface
 {
     /**
      * Apache Common Log Format.
      *
-     * @link https://httpd.apache.org/docs/2.4/logs.html#common
+     * @see https://httpd.apache.org/docs/2.4/logs.html#common
      *
      * @var string
      */
-    public const CLF = "{hostname} {req_header_User-Agent} - [{date_common_log}] \"{method} {target} HTTP/{version}\" {code} {res_header_Content-Length}";
+    public const CLF = '{hostname} {req_header_User-Agent} - [{date_common_log}] "{method} {target} HTTP/{version}" {code} {res_header_Content-Length}';
     public const DEBUG = ">>>>>>>>\n{request}\n<<<<<<<<\n{response}\n--------\n{error}";
     public const SHORT = '[{ts}] "{method} {target} HTTP/{version}" {code}';
     /**
@@ -64,7 +64,7 @@ class MessageFormatter implements \Dekode\GravityForms\Vendor\GuzzleHttp\Message
      * @param ResponseInterface|null $response Response that was received
      * @param \Throwable|null        $error    Exception that was received
      */
-    public function format(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, ?\Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response = null, ?\Throwable $error = null) : string
+    public function format(RequestInterface $request, ?ResponseInterface $response = null, ?\Throwable $error = null) : string
     {
         $cache = [];
         /** @var string */
@@ -75,10 +75,10 @@ class MessageFormatter implements \Dekode\GravityForms\Vendor\GuzzleHttp\Message
             $result = '';
             switch ($matches[1]) {
                 case 'request':
-                    $result = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Message::toString($request);
+                    $result = Psr7\Message::toString($request);
                     break;
                 case 'response':
-                    $result = $response ? \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Message::toString($response) : '';
+                    $result = $response ? Psr7\Message::toString($response) : '';
                     break;
                 case 'req_headers':
                     $result = \trim($request->getMethod() . ' ' . $request->getRequestTarget()) . ' HTTP/' . $request->getProtocolVersion() . "\r\n" . $this->headers($request);
@@ -90,7 +90,7 @@ class MessageFormatter implements \Dekode\GravityForms\Vendor\GuzzleHttp\Message
                     $result = $request->getBody()->__toString();
                     break;
                 case 'res_body':
-                    if (!$response instanceof \Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface) {
+                    if (!$response instanceof ResponseInterface) {
                         $result = 'NULL';
                         break;
                     }
@@ -116,7 +116,7 @@ class MessageFormatter implements \Dekode\GravityForms\Vendor\GuzzleHttp\Message
                     break;
                 case 'uri':
                 case 'url':
-                    $result = $request->getUri();
+                    $result = $request->getUri()->__toString();
                     break;
                 case 'target':
                     $result = $request->getRequestTarget();
@@ -157,7 +157,7 @@ class MessageFormatter implements \Dekode\GravityForms\Vendor\GuzzleHttp\Message
     /**
      * Get headers from message as string
      */
-    private function headers(\Dekode\GravityForms\Vendor\Psr\Http\Message\MessageInterface $message) : string
+    private function headers(MessageInterface $message) : string
     {
         $result = '';
         foreach ($message->getHeaders() as $name => $values) {

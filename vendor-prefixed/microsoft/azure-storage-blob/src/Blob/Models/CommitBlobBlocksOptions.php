@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CommitBlobBlocksOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class CommitBlobBlocksOptions extends BlobServiceOptions
 {
     private $_contentType;
     private $_contentEncoding;
@@ -192,7 +192,7 @@ class CommitBlobBlocksOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure
      */
     public static function create($options)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions();
+        $result = new CommitBlobBlocksOptions();
         $result->setContentType($options->getContentType());
         $result->setContentEncoding($options->getContentEncoding());
         $result->setContentLanguage($options->getContentLanguage());
