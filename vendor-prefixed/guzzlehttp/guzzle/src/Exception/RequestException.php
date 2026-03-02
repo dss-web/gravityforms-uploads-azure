@@ -7,7 +7,6 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\BodySummarizerInterface;
 use Dekode\GravityForms\Vendor\Psr\Http\Client\RequestExceptionInterface;
 use Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface;
 use Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface;
-use Dekode\GravityForms\Vendor\Psr\Http\Message\UriInterface;
 /**
  * HTTP Request exception
  */
@@ -66,8 +65,7 @@ class RequestException extends TransferException implements RequestExceptionInte
             $label = 'Unsuccessful request';
             $className = __CLASS__;
         }
-        $uri = $request->getUri();
-        $uri = static::obfuscateUri($uri);
+        $uri = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::redactUserInfo($request->getUri());
         // Client Error: `GET /` resulted in a `404 Not Found` response:
         // <html> ... (truncated)
         $message = \sprintf('%s: `%s %s` resulted in a `%s %s` response', $label, $request->getMethod(), $uri->__toString(), $response->getStatusCode(), $response->getReasonPhrase());
@@ -76,17 +74,6 @@ class RequestException extends TransferException implements RequestExceptionInte
             $message .= ":\n{$summary}\n";
         }
         return new $className($message, $request, $response, $previous, $handlerContext);
-    }
-    /**
-     * Obfuscates URI if there is a username and a password present
-     */
-    private static function obfuscateUri(UriInterface $uri) : UriInterface
-    {
-        $userInfo = $uri->getUserInfo();
-        if (\false !== ($pos = \strpos($userInfo, ':'))) {
-            return $uri->withUserInfo(\substr($userInfo, 0, $pos), '***');
-        }
-        return $uri;
     }
     /**
      * Get the request that caused the exception
