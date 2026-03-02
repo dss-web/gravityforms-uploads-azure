@@ -50,9 +50,9 @@ class PutBlockResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PutBlockResult();
-        $result->setContentMD5(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $headers));
-        $result->setRequestServerEncrypted(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::toBoolean(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
+        $result = new PutBlockResult();
+        $result->setContentMD5(Utilities::tryGetValueInsensitive(Resources::CONTENT_MD5, $headers));
+        $result->setRequestServerEncrypted(Utilities::toBoolean(Utilities::tryGetValueInsensitive(Resources::X_MS_REQUEST_SERVER_ENCRYPTED, $headers), \true));
         return $result;
     }
     /**

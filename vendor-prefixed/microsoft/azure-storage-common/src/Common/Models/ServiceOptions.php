@@ -79,11 +79,11 @@ class ServiceOptions
     /**
      * Initialize the properties to default value.
      */
-    public function __construct(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function __construct(ServiceOptions $options = null)
     {
         if ($options == null) {
-            $this->setNumberOfConcurrency(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::NUMBER_OF_CONCURRENCY);
-            $this->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
+            $this->setNumberOfConcurrency(Resources::NUMBER_OF_CONCURRENCY);
+            $this->setLocationMode(LocationMode::PRIMARY_ONLY);
             $this->setIsStreaming(\false);
             $this->setDecodeContent(\false);
             $this->middlewares = array();
@@ -147,7 +147,7 @@ class ServiceOptions
      *
      * @return void
      */
-    public function setMiddlewareStack(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\MiddlewareStack $middlewareStack)
+    public function setMiddlewareStack(MiddlewareStack $middlewareStack)
     {
         $this->middlewareStack = $middlewareStack;
     }
@@ -272,8 +272,8 @@ class ServiceOptions
      */
     private static function validateIsMiddleware($middleware)
     {
-        if (!(\is_callable($middleware) || $middleware instanceof \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\IMiddleware)) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\false, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_TYPE_MSG . 'callable or IMiddleware');
+        if (!(\is_callable($middleware) || $middleware instanceof IMiddleware)) {
+            Validate::isTrue(\false, Resources::INVALID_TYPE_MSG . 'callable or IMiddleware');
         }
     }
 }

@@ -37,7 +37,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\SharedAccessSignatu
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class BlobSharedAccessSignatureHelper extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\SharedAccessSignatureHelper
+class BlobSharedAccessSignatureHelper extends SharedAccessSignatureHelper
 {
     /**
      * Constructor.
@@ -84,51 +84,51 @@ class BlobSharedAccessSignatureHelper extends \Dekode\GravityForms\Vendor\Micros
     public function generateBlobServiceSharedAccessSignatureToken($signedResource, $resourceName, $signedPermissions, $signedExpiry, $signedStart = "", $signedIP = "", $signedProtocol = "", $signedIdentifier = "", $cacheControl = "", $contentDisposition = "", $contentEncoding = "", $contentLanguage = "", $contentType = "")
     {
         // check that the resource name is valid.
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedResource, 'signedResource');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedResource, 'signedResource');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($signedResource == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_BLOB || $signedResource == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_CONTAINER, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_VALUE_MSG, '$signedResource', 'Can only be \'b\' or \'c\'.'));
+        Validate::canCastAsString($signedResource, 'signedResource');
+        Validate::notNullOrEmpty($signedResource, 'signedResource');
+        Validate::isTrue($signedResource == Resources::RESOURCE_TYPE_BLOB || $signedResource == Resources::RESOURCE_TYPE_CONTAINER, \sprintf(Resources::INVALID_VALUE_MSG, '$signedResource', 'Can only be \'b\' or \'c\'.'));
         // check that the resource name is valid.
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($resourceName, 'resourceName');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($resourceName, 'resourceName');
+        Validate::notNullOrEmpty($resourceName, 'resourceName');
+        Validate::canCastAsString($resourceName, 'resourceName');
         // validate and sanitize signed permissions
-        $signedPermissions = $this->validateAndSanitizeStringWithArray(\strtolower($signedPermissions), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ACCESS_PERMISSIONS[$signedResource]);
+        $signedPermissions = $this->validateAndSanitizeStringWithArray(\strtolower($signedPermissions), Resources::ACCESS_PERMISSIONS[$signedResource]);
         // check that expiry is valid
-        if ($signedExpiry instanceof \Dekode\GravityForms\Vendor\Datetime) {
-            $signedExpiry = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::isoDate($signedExpiry);
+        if ($signedExpiry instanceof \Datetime) {
+            $signedExpiry = Utilities::isoDate($signedExpiry);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($signedExpiry, 'signedExpiry');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedExpiry, 'signedExpiry');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDateString($signedExpiry, 'signedExpiry');
+        Validate::notNullOrEmpty($signedExpiry, 'signedExpiry');
+        Validate::canCastAsString($signedExpiry, 'signedExpiry');
+        Validate::isDateString($signedExpiry, 'signedExpiry');
         // check that signed start is valid
-        if ($signedStart instanceof \Dekode\GravityForms\Vendor\Datetime) {
-            $signedStart = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::isoDate($signedStart);
+        if ($signedStart instanceof \Datetime) {
+            $signedStart = Utilities::isoDate($signedStart);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedStart, 'signedStart');
+        Validate::canCastAsString($signedStart, 'signedStart');
         if (\strlen($signedStart) > 0) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDateString($signedStart, 'signedStart');
+            Validate::isDateString($signedStart, 'signedStart');
         }
         // check that signed IP is valid
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedIP, 'signedIP');
+        Validate::canCastAsString($signedIP, 'signedIP');
         // validate and sanitize signed protocol
         $signedProtocol = $this->validateAndSanitizeSignedProtocol($signedProtocol);
         // check that signed identifier is valid
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($signedIdentifier, 'signedIdentifier');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\strlen($signedIdentifier) <= 64, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_STRING_LENGTH, 'signedIdentifier', 'maximum 64'));
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($cacheControl, 'cacheControl');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($contentDisposition, 'contentDisposition');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($contentEncoding, 'contentEncoding');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($contentLanguage, 'contentLanguage');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($contentType, 'contentType');
+        Validate::canCastAsString($signedIdentifier, 'signedIdentifier');
+        Validate::isTrue(\strlen($signedIdentifier) <= 64, \sprintf(Resources::INVALID_STRING_LENGTH, 'signedIdentifier', 'maximum 64'));
+        Validate::canCastAsString($cacheControl, 'cacheControl');
+        Validate::canCastAsString($contentDisposition, 'contentDisposition');
+        Validate::canCastAsString($contentEncoding, 'contentEncoding');
+        Validate::canCastAsString($contentLanguage, 'contentLanguage');
+        Validate::canCastAsString($contentType, 'contentType');
         // construct an array with the parameters to generate the shared access signature at the account level
         $parameters = array();
         $parameters[] = $signedPermissions;
         $parameters[] = $signedStart;
         $parameters[] = $signedExpiry;
-        $parameters[] = static::generateCanonicalResource($this->accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_BLOB, $resourceName);
+        $parameters[] = static::generateCanonicalResource($this->accountName, Resources::RESOURCE_TYPE_BLOB, $resourceName);
         $parameters[] = $signedIdentifier;
         $parameters[] = $signedIP;
         $parameters[] = $signedProtocol;
-        $parameters[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STORAGE_API_LATEST_VERSION;
+        $parameters[] = Resources::STORAGE_API_LATEST_VERSION;
         $parameters[] = $cacheControl;
         $parameters[] = $contentDisposition;
         $parameters[] = $contentEncoding;
@@ -146,7 +146,7 @@ class BlobSharedAccessSignatureHelper extends \Dekode\GravityForms\Vendor\Micros
             return $string === '' ? '' : $abrv . $string;
         };
         //adding all the components for account SAS together.
-        $sas = 'sv=' . \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STORAGE_API_LATEST_VERSION;
+        $sas = 'sv=' . Resources::STORAGE_API_LATEST_VERSION;
         $sas .= '&sr=' . $signedResource;
         $sas .= $buildOptQueryStr($cacheControl, '&rscc=');
         $sas .= $buildOptQueryStr($contentDisposition, '&rscd=');

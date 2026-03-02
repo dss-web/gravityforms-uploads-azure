@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class FileResources extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources
+class FileResources extends Resources
 {
     // @codingStandardsIgnoreStart
     const FILE_SDK_VERSION = '1.2.5';
@@ -54,6 +54,6 @@ class FileResources extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
     // Common used XML tags
     const XTAG_SHARE_USAGE = 'ShareUsage';
     // Resource permissions
-    const ACCESS_PERMISSIONS = [\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_FILE => ['r', 'c', 'w', 'd'], \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RESOURCE_TYPE_SHARE => ['r', 'c', 'w', 'd', 'l']];
+    const ACCESS_PERMISSIONS = [Resources::RESOURCE_TYPE_FILE => ['r', 'c', 'w', 'd'], Resources::RESOURCE_TYPE_SHARE => ['r', 'c', 'w', 'd', 'l']];
     // @codingStandardsIgnoreEnd
 }

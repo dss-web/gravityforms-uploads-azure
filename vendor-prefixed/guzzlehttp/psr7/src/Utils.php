@@ -39,7 +39,7 @@ final class Utils
      *
      * @throws \RuntimeException on error.
      */
-    public static function copyToStream(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $source, \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $dest, $maxLen = -1)
+    public static function copyToStream(StreamInterface $source, StreamInterface $dest, $maxLen = -1)
     {
         $bufferSize = 8192;
         if ($maxLen === -1) {
@@ -73,7 +73,7 @@ final class Utils
      *
      * @throws \RuntimeException on error.
      */
-    public static function copyToString(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, $maxLen = -1)
+    public static function copyToString(StreamInterface $stream, $maxLen = -1)
     {
         $buffer = '';
         if ($maxLen === -1) {
@@ -113,7 +113,7 @@ final class Utils
      *
      * @throws \RuntimeException on error.
      */
-    public static function hash(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, $algo, $rawOutput = \false)
+    public static function hash(StreamInterface $stream, $algo, $rawOutput = \false)
     {
         $pos = $stream->tell();
         if ($pos > 0) {
@@ -147,7 +147,7 @@ final class Utils
      *
      * @return RequestInterface
      */
-    public static function modifyRequest(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $changes)
+    public static function modifyRequest(RequestInterface $request, array $changes)
     {
         if (!$changes) {
             return $request;
@@ -179,14 +179,14 @@ final class Utils
         if (isset($changes['query'])) {
             $uri = $uri->withQuery($changes['query']);
         }
-        if ($request instanceof \Dekode\GravityForms\Vendor\Psr\Http\Message\ServerRequestInterface) {
-            $new = (new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\ServerRequest(isset($changes['method']) ? $changes['method'] : $request->getMethod(), $uri, $headers, isset($changes['body']) ? $changes['body'] : $request->getBody(), isset($changes['version']) ? $changes['version'] : $request->getProtocolVersion(), $request->getServerParams()))->withParsedBody($request->getParsedBody())->withQueryParams($request->getQueryParams())->withCookieParams($request->getCookieParams())->withUploadedFiles($request->getUploadedFiles());
+        if ($request instanceof ServerRequestInterface) {
+            $new = (new ServerRequest(isset($changes['method']) ? $changes['method'] : $request->getMethod(), $uri, $headers, isset($changes['body']) ? $changes['body'] : $request->getBody(), isset($changes['version']) ? $changes['version'] : $request->getProtocolVersion(), $request->getServerParams()))->withParsedBody($request->getParsedBody())->withQueryParams($request->getQueryParams())->withCookieParams($request->getCookieParams())->withUploadedFiles($request->getUploadedFiles());
             foreach ($request->getAttributes() as $key => $value) {
                 $new = $new->withAttribute($key, $value);
             }
             return $new;
         }
-        return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Request(isset($changes['method']) ? $changes['method'] : $request->getMethod(), $uri, $headers, isset($changes['body']) ? $changes['body'] : $request->getBody(), isset($changes['version']) ? $changes['version'] : $request->getProtocolVersion());
+        return new Request(isset($changes['method']) ? $changes['method'] : $request->getMethod(), $uri, $headers, isset($changes['body']) ? $changes['body'] : $request->getBody(), isset($changes['version']) ? $changes['version'] : $request->getProtocolVersion());
     }
     /**
      * Read a line from the stream up to the maximum allowed buffer length.
@@ -196,7 +196,7 @@ final class Utils
      *
      * @return string
      */
-    public static function readLine(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, $maxLength = null)
+    public static function readLine(StreamInterface $stream, $maxLength = null)
     {
         $buffer = '';
         $size = 0;
@@ -257,7 +257,7 @@ final class Utils
                 \fwrite($stream, $resource);
                 \fseek($stream, 0);
             }
-            return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Stream($stream, $options);
+            return new Stream($stream, $options);
         }
         switch (\gettype($resource)) {
             case 'resource':
@@ -272,12 +272,12 @@ final class Utils
                     \fseek($stream, 0);
                     $resource = $stream;
                 }
-                return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Stream($resource, $options);
+                return new Stream($resource, $options);
             case 'object':
-                if ($resource instanceof \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface) {
+                if ($resource instanceof StreamInterface) {
                     return $resource;
                 } elseif ($resource instanceof \Iterator) {
-                    return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\PumpStream(function () use($resource) {
+                    return new PumpStream(function () use($resource) {
                         if (!$resource->valid()) {
                             return \false;
                         }
@@ -286,14 +286,14 @@ final class Utils
                         return $result;
                     }, $options);
                 } elseif (\method_exists($resource, '__toString')) {
-                    return \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor((string) $resource, $options);
+                    return Utils::streamFor((string) $resource, $options);
                 }
                 break;
             case 'NULL':
-                return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Stream(self::tryFopen('php://temp', 'r+'), $options);
+                return new Stream(self::tryFopen('php://temp', 'r+'), $options);
         }
         if (\is_callable($resource)) {
-            return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\PumpStream($resource, $options);
+            return new PumpStream($resource, $options);
         }
         throw new \InvalidArgumentException('Invalid resource type: ' . \gettype($resource));
     }
@@ -344,11 +344,11 @@ final class Utils
      */
     public static function uriFor($uri)
     {
-        if ($uri instanceof \Dekode\GravityForms\Vendor\Psr\Http\Message\UriInterface) {
+        if ($uri instanceof UriInterface) {
             return $uri;
         }
         if (\is_string($uri)) {
-            return new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Uri($uri);
+            return new Uri($uri);
         }
         throw new \InvalidArgumentException('URI must be a string or UriInterface');
     }

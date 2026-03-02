@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateBlobSnapshotOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class CreateBlobSnapshotOptions extends BlobServiceOptions
 {
     private $_metadata;
     /**

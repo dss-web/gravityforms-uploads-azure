@@ -6,7 +6,7 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\Utils;
 /**
  * Persists non-session cookies using a JSON formatted file
  */
-class FileCookieJar extends \Dekode\GravityForms\Vendor\GuzzleHttp\Cookie\CookieJar
+class FileCookieJar extends CookieJar
 {
     /**
      * @var string filename
@@ -53,11 +53,11 @@ class FileCookieJar extends \Dekode\GravityForms\Vendor\GuzzleHttp\Cookie\Cookie
         $json = [];
         /** @var SetCookie $cookie */
         foreach ($this as $cookie) {
-            if (\Dekode\GravityForms\Vendor\GuzzleHttp\Cookie\CookieJar::shouldPersist($cookie, $this->storeSessionCookies)) {
+            if (CookieJar::shouldPersist($cookie, $this->storeSessionCookies)) {
                 $json[] = $cookie->toArray();
             }
         }
-        $jsonStr = \Dekode\GravityForms\Vendor\GuzzleHttp\Utils::jsonEncode($json);
+        $jsonStr = Utils::jsonEncode($json);
         if (\false === \file_put_contents($filename, $jsonStr, \LOCK_EX)) {
             throw new \RuntimeException("Unable to save file {$filename}");
         }
@@ -80,10 +80,10 @@ class FileCookieJar extends \Dekode\GravityForms\Vendor\GuzzleHttp\Cookie\Cookie
         if ($json === '') {
             return;
         }
-        $data = \Dekode\GravityForms\Vendor\GuzzleHttp\Utils::jsonDecode($json, \true);
+        $data = Utils::jsonDecode($json, \true);
         if (\is_array($data)) {
             foreach ($data as $cookie) {
-                $this->setCookie(new \Dekode\GravityForms\Vendor\GuzzleHttp\Cookie\SetCookie($cookie));
+                $this->setCookie(new SetCookie($cookie));
             }
         } elseif (\is_scalar($data) && !empty($data)) {
             throw new \RuntimeException("Invalid cookie file: {$filename}");

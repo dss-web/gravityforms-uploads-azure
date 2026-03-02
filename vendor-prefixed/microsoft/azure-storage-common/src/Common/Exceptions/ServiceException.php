@@ -51,9 +51,9 @@ class ServiceException extends \LogicException
      *
      * @return ServiceException
      */
-    public function __construct(\Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response)
+    public function __construct(ResponseInterface $response)
     {
-        parent::__construct(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::AZURE_ERROR_MSG, $response->getStatusCode(), $response->getReasonPhrase(), $response->getBody()));
+        parent::__construct(\sprintf(Resources::AZURE_ERROR_MSG, $response->getStatusCode(), $response->getReasonPhrase(), $response->getBody()));
         $this->code = $response->getStatusCode();
         $this->response = $response;
         $this->errorText = $response->getReasonPhrase();
@@ -68,11 +68,11 @@ class ServiceException extends \LogicException
      *
      * @return string
      */
-    protected static function parseErrorMessage(\Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response)
+    protected static function parseErrorMessage(ResponseInterface $response)
     {
         //try to parse using xml serializer, if failed, return the whole body
         //as the error message.
-        $serializer = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer();
+        $serializer = new XmlSerializer();
         $errorMessage = '';
         try {
             $internalErrors = \libxml_use_internal_errors(\true);
@@ -82,11 +82,11 @@ class ServiceException extends \LogicException
                 $messages[] = $error->message;
             }
             if (!empty($messages)) {
-                throw new \Exception(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_CANNOT_PARSE_XML, \implode('; ', $messages)));
+                throw new \Exception(\sprintf(Resources::ERROR_CANNOT_PARSE_XML, \implode('; ', $messages)));
             }
             \libxml_use_internal_errors($internalErrors);
-            if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MESSAGE, $parsedArray)) {
-                $errorMessage = $parsedArray[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MESSAGE];
+            if (\array_key_exists(Resources::XTAG_MESSAGE, $parsedArray)) {
+                $errorMessage = $parsedArray[Resources::XTAG_MESSAGE];
             } else {
                 $errorMessage = $response->getBody();
             }
@@ -121,8 +121,8 @@ class ServiceException extends \LogicException
     public function getRequestID()
     {
         $requestID = '';
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_REQUEST_ID, $this->getResponse()->getHeaders())) {
-            $requestID = $this->getResponse()->getHeaders()[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_REQUEST_ID][0];
+        if (\array_key_exists(Resources::X_MS_REQUEST_ID, $this->getResponse()->getHeaders())) {
+            $requestID = $this->getResponse()->getHeaders()[Resources::X_MS_REQUEST_ID][0];
         }
         return $requestID;
     }
@@ -134,8 +134,8 @@ class ServiceException extends \LogicException
     public function getDate()
     {
         $date = '';
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DATE, $this->getResponse()->getHeaders())) {
-            $date = $this->getResponse()->getHeaders()[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DATE][0];
+        if (\array_key_exists(Resources::DATE, $this->getResponse()->getHeaders())) {
+            $date = $this->getResponse()->getHeaders()[Resources::DATE][0];
         }
         return $date;
     }

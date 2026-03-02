@@ -60,7 +60,7 @@ class ConnectionStringSource
      */
     public static function environmentSource($key)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($key, 'key');
+        Validate::canCastAsString($key, 'key');
         return \getenv($key);
     }
     /**

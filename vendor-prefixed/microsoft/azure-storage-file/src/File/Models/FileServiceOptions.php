@@ -37,12 +37,12 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResource
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class FileServiceOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions
+class FileServiceOptions extends ServiceOptions
 {
     public function setLocationMode($locationMode)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($locationMode, 'locationMode');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($locationMode == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::FILE_LOCATION_IS_PRIMARY_ONLY);
+        Validate::canCastAsString($locationMode, 'locationMode');
+        Validate::isTrue($locationMode == LocationMode::PRIMARY_ONLY, Resources::FILE_LOCATION_IS_PRIMARY_ONLY);
         $this->locationMode = $locationMode;
     }
 }

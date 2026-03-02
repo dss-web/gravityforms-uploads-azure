@@ -50,7 +50,7 @@ class RestProxy
      *
      * @param Serialization\ISerializer $dataSerializer The data serializer.
      */
-    public function __construct(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\ISerializer $dataSerializer = null)
+    public function __construct(Serialization\ISerializer $dataSerializer = null)
     {
         $this->middlewares = array();
         $this->dataSerializer = $dataSerializer;
@@ -91,10 +91,10 @@ class RestProxy
      */
     protected function addOptionalQueryParam(array &$queryParameters, $key, $value)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($queryParameters, 'queryParameters');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($key, 'key');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
-        if (!\is_null($value) && \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING !== $value) {
+        Validate::isArray($queryParameters, 'queryParameters');
+        Validate::canCastAsString($key, 'key');
+        Validate::canCastAsString($value, 'value');
+        if (!\is_null($value) && Resources::EMPTY_STRING !== $value) {
             $queryParameters[$key] = $value;
         }
     }
@@ -111,10 +111,10 @@ class RestProxy
      */
     protected function addOptionalHeader(array &$headers, $key, $value)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($headers, 'headers');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($key, 'key');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'value');
-        if (!\is_null($value) && \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING !== $value) {
+        Validate::isArray($headers, 'headers');
+        Validate::canCastAsString($key, 'key');
+        Validate::canCastAsString($value, 'value');
+        if (!\is_null($value) && Resources::EMPTY_STRING !== $value) {
             $headers[$key] = $value;
         }
     }

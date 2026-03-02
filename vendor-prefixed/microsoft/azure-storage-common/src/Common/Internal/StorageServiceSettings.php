@@ -36,7 +36,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ServiceSettings
+class StorageServiceSettings extends ServiceSettings
 {
     private $name;
     private $key;
@@ -78,39 +78,39 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
      */
     protected static function init()
     {
-        self::$useDevelopmentStorageSetting = self::setting(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::USE_DEVELOPMENT_STORAGE_NAME, 'true');
-        self::$developmentStorageProxyUriSetting = self::settingWithFunc(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEVELOPMENT_STORAGE_PROXY_URI_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::getIsValidUri());
-        self::$defaultEndpointsProtocolSetting = self::setting(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME, 'http', 'https');
-        self::$accountNameSetting = self::setting(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_NAME_NAME);
+        self::$useDevelopmentStorageSetting = self::setting(Resources::USE_DEVELOPMENT_STORAGE_NAME, 'true');
+        self::$developmentStorageProxyUriSetting = self::settingWithFunc(Resources::DEVELOPMENT_STORAGE_PROXY_URI_NAME, Validate::getIsValidUri());
+        self::$defaultEndpointsProtocolSetting = self::setting(Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME, 'http', 'https');
+        self::$accountNameSetting = self::setting(Resources::ACCOUNT_NAME_NAME);
         self::$accountKeySetting = self::settingWithFunc(
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_KEY_NAME,
+            Resources::ACCOUNT_KEY_NAME,
             // base64_decode will return false if the $key is not in base64 format.
             function ($key) {
                 $isValidBase64String = \base64_decode($key, \true);
                 if ($isValidBase64String) {
                     return \true;
                 } else {
-                    throw new \RuntimeException(\sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_ACCOUNT_KEY_FORMAT, $key));
+                    throw new \RuntimeException(\sprintf(Resources::INVALID_ACCOUNT_KEY_FORMAT, $key));
                 }
             }
         );
-        self::$sasTokenSetting = self::setting(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SAS_TOKEN_NAME);
-        self::$blobEndpointSetting = self::settingWithFunc(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_ENDPOINT_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::getIsValidUri());
-        self::$queueEndpointSetting = self::settingWithFunc(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_ENDPOINT_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::getIsValidUri());
-        self::$tableEndpointSetting = self::settingWithFunc(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_ENDPOINT_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::getIsValidUri());
-        self::$fileEndpointSetting = self::settingWithFunc(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_ENDPOINT_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::getIsValidUri());
-        self::$endpointSuffixSetting = self::settingWithFunc(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ENDPOINT_SUFFIX_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::getIsValidHostname());
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::USE_DEVELOPMENT_STORAGE_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEVELOPMENT_STORAGE_PROXY_URI_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_NAME_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_KEY_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SAS_TOKEN_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_ENDPOINT_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_ENDPOINT_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_ENDPOINT_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_ENDPOINT_NAME;
-        self::$validSettingKeys[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ENDPOINT_SUFFIX_NAME;
+        self::$sasTokenSetting = self::setting(Resources::SAS_TOKEN_NAME);
+        self::$blobEndpointSetting = self::settingWithFunc(Resources::BLOB_ENDPOINT_NAME, Validate::getIsValidUri());
+        self::$queueEndpointSetting = self::settingWithFunc(Resources::QUEUE_ENDPOINT_NAME, Validate::getIsValidUri());
+        self::$tableEndpointSetting = self::settingWithFunc(Resources::TABLE_ENDPOINT_NAME, Validate::getIsValidUri());
+        self::$fileEndpointSetting = self::settingWithFunc(Resources::FILE_ENDPOINT_NAME, Validate::getIsValidUri());
+        self::$endpointSuffixSetting = self::settingWithFunc(Resources::ENDPOINT_SUFFIX_NAME, Validate::getIsValidHostname());
+        self::$validSettingKeys[] = Resources::USE_DEVELOPMENT_STORAGE_NAME;
+        self::$validSettingKeys[] = Resources::DEVELOPMENT_STORAGE_PROXY_URI_NAME;
+        self::$validSettingKeys[] = Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME;
+        self::$validSettingKeys[] = Resources::ACCOUNT_NAME_NAME;
+        self::$validSettingKeys[] = Resources::ACCOUNT_KEY_NAME;
+        self::$validSettingKeys[] = Resources::SAS_TOKEN_NAME;
+        self::$validSettingKeys[] = Resources::BLOB_ENDPOINT_NAME;
+        self::$validSettingKeys[] = Resources::QUEUE_ENDPOINT_NAME;
+        self::$validSettingKeys[] = Resources::TABLE_ENDPOINT_NAME;
+        self::$validSettingKeys[] = Resources::FILE_ENDPOINT_NAME;
+        self::$validSettingKeys[] = Resources::ENDPOINT_SUFFIX_NAME;
     }
     /**
      * Creates new storage service settings instance.
@@ -165,7 +165,7 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
         $scheme = \parse_url($proxyUri, \PHP_URL_SCHEME);
         $host = \parse_url($proxyUri, \PHP_URL_HOST);
         $prefix = $scheme . "://" . $host;
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\StorageServiceSettings(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEV_STORE_NAME, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEV_STORE_KEY, $prefix . ':10000/devstoreaccount1/', $prefix . ':10001/devstoreaccount1/', $prefix . ':10002/devstoreaccount1/', null);
+        return new StorageServiceSettings(Resources::DEV_STORE_NAME, Resources::DEV_STORE_KEY, $prefix . ':10000/devstoreaccount1/', $prefix . ':10001/devstoreaccount1/', $prefix . ':10002/devstoreaccount1/', null);
     }
     /**
      * Gets a StorageServiceSettings object that references the development storage
@@ -176,7 +176,7 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
     public static function developmentStorageAccount()
     {
         if (\is_null(self::$devStoreAccount)) {
-            self::$devStoreAccount = self::getDevelopmentStorageAccount(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEV_STORE_URI);
+            self::$devStoreAccount = self::getDevelopmentStorageAccount(Resources::DEV_STORE_URI);
         }
         return self::$devStoreAccount;
     }
@@ -195,12 +195,12 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
     private static function getServiceEndpoint($scheme, $accountName, $dnsPrefix, $dnsSuffix = null, $isSecondary = \false)
     {
         if ($isSecondary) {
-            $accountName .= \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SECONDARY_STRING;
+            $accountName .= Resources::SECONDARY_STRING;
         }
         if ($dnsSuffix === null) {
-            $dnsSuffix = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_ENDPOINT_SUFFIX;
+            $dnsSuffix = Resources::DEFAULT_ENDPOINT_SUFFIX;
         }
-        return \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SERVICE_URI_FORMAT, $scheme, $accountName, $dnsPrefix . $dnsSuffix);
+        return \sprintf(Resources::SERVICE_URI_FORMAT, $scheme, $accountName, $dnsPrefix . $dnsSuffix);
     }
     /**
      * Creates StorageServiceSettings object given endpoints uri.
@@ -219,14 +219,14 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
      */
     private static function createStorageServiceSettings(array $settings, $blobEndpointUri = null, $queueEndpointUri = null, $tableEndpointUri = null, $fileEndpointUri = null, $blobSecondaryEndpointUri = null, $queueSecondaryEndpointUri = null, $tableSecondaryEndpointUri = null, $fileSecondaryEndpointUri = null)
     {
-        $blobEndpointUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_ENDPOINT_NAME, $settings, $blobEndpointUri);
-        $queueEndpointUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_ENDPOINT_NAME, $settings, $queueEndpointUri);
-        $tableEndpointUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_ENDPOINT_NAME, $settings, $tableEndpointUri);
-        $fileEndpointUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_ENDPOINT_NAME, $settings, $fileEndpointUri);
-        $accountName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_NAME_NAME, $settings);
-        $accountKey = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_KEY_NAME, $settings);
-        $sasToken = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SAS_TOKEN_NAME, $settings);
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\StorageServiceSettings($accountName, $accountKey, $blobEndpointUri, $queueEndpointUri, $tableEndpointUri, $fileEndpointUri, $blobSecondaryEndpointUri, $queueSecondaryEndpointUri, $tableSecondaryEndpointUri, $fileSecondaryEndpointUri, $sasToken);
+        $blobEndpointUri = Utilities::tryGetValueInsensitive(Resources::BLOB_ENDPOINT_NAME, $settings, $blobEndpointUri);
+        $queueEndpointUri = Utilities::tryGetValueInsensitive(Resources::QUEUE_ENDPOINT_NAME, $settings, $queueEndpointUri);
+        $tableEndpointUri = Utilities::tryGetValueInsensitive(Resources::TABLE_ENDPOINT_NAME, $settings, $tableEndpointUri);
+        $fileEndpointUri = Utilities::tryGetValueInsensitive(Resources::FILE_ENDPOINT_NAME, $settings, $fileEndpointUri);
+        $accountName = Utilities::tryGetValueInsensitive(Resources::ACCOUNT_NAME_NAME, $settings);
+        $accountKey = Utilities::tryGetValueInsensitive(Resources::ACCOUNT_KEY_NAME, $settings);
+        $sasToken = Utilities::tryGetValueInsensitive(Resources::SAS_TOKEN_NAME, $settings);
+        return new StorageServiceSettings($accountName, $accountKey, $blobEndpointUri, $queueEndpointUri, $tableEndpointUri, $fileEndpointUri, $blobSecondaryEndpointUri, $queueSecondaryEndpointUri, $tableSecondaryEndpointUri, $fileSecondaryEndpointUri, $sasToken);
     }
     /**
      * Creates a StorageServiceSettings object from the given connection string.
@@ -241,16 +241,16 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
         // Devstore case
         $matchedSpecs = self::matchedSpecification($tokenizedSettings, self::allRequired(self::$useDevelopmentStorageSetting), self::optional(self::$developmentStorageProxyUriSetting));
         if ($matchedSpecs) {
-            $proxyUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEVELOPMENT_STORAGE_PROXY_URI_NAME, $tokenizedSettings);
+            $proxyUri = Utilities::tryGetValueInsensitive(Resources::DEVELOPMENT_STORAGE_PROXY_URI_NAME, $tokenizedSettings);
             return self::getDevelopmentStorageAccount($proxyUri);
         }
         // Automatic case
         $matchedSpecs = self::matchedSpecification($tokenizedSettings, self::allRequired(self::$defaultEndpointsProtocolSetting, self::$accountNameSetting, self::$accountKeySetting), self::optional(self::$blobEndpointSetting, self::$queueEndpointSetting, self::$tableEndpointSetting, self::$fileEndpointSetting, self::$endpointSuffixSetting));
         if ($matchedSpecs) {
-            $scheme = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME, $tokenizedSettings);
-            $accountName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_NAME_NAME, $tokenizedSettings);
-            $endpointSuffix = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ENDPOINT_SUFFIX_NAME, $tokenizedSettings);
-            return self::createStorageServiceSettings($tokenizedSettings, self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_DNS_PREFIX, $endpointSuffix, \true));
+            $scheme = Utilities::tryGetValueInsensitive(Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME, $tokenizedSettings);
+            $accountName = Utilities::tryGetValueInsensitive(Resources::ACCOUNT_NAME_NAME, $tokenizedSettings);
+            $endpointSuffix = Utilities::tryGetValueInsensitive(Resources::ENDPOINT_SUFFIX_NAME, $tokenizedSettings);
+            return self::createStorageServiceSettings($tokenizedSettings, self::getServiceEndpoint($scheme, $accountName, Resources::BLOB_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::QUEUE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::TABLE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::FILE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::BLOB_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, Resources::QUEUE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, Resources::TABLE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, Resources::FILE_DNS_PREFIX, $endpointSuffix, \true));
         }
         // Explicit case for AccountName/AccountKey combination
         $matchedSpecs = self::matchedSpecification($tokenizedSettings, self::atLeastOne(self::$blobEndpointSetting, self::$queueEndpointSetting, self::$tableEndpointSetting, self::$fileEndpointSetting), self::allRequired(self::$accountNameSetting, self::$accountKeySetting));
@@ -278,10 +278,10 @@ class StorageServiceSettings extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
         // Explicit case for AAD token, Connection string could only have account
         // name.
         $tokenizedSettings = self::parseAndValidateKeys($connectionString);
-        $scheme = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME, $tokenizedSettings);
-        $accountName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ACCOUNT_NAME_NAME, $tokenizedSettings);
-        $endpointSuffix = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ENDPOINT_SUFFIX_NAME, $tokenizedSettings);
-        return self::createStorageServiceSettings($tokenizedSettings, self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::BLOB_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QUEUE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::TABLE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::FILE_DNS_PREFIX, $endpointSuffix, \true));
+        $scheme = Utilities::tryGetValueInsensitive(Resources::DEFAULT_ENDPOINTS_PROTOCOL_NAME, $tokenizedSettings);
+        $accountName = Utilities::tryGetValueInsensitive(Resources::ACCOUNT_NAME_NAME, $tokenizedSettings);
+        $endpointSuffix = Utilities::tryGetValueInsensitive(Resources::ENDPOINT_SUFFIX_NAME, $tokenizedSettings);
+        return self::createStorageServiceSettings($tokenizedSettings, self::getServiceEndpoint($scheme, $accountName, Resources::BLOB_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::QUEUE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::TABLE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::FILE_DNS_PREFIX, $endpointSuffix), self::getServiceEndpoint($scheme, $accountName, Resources::BLOB_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, Resources::QUEUE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, Resources::TABLE_DNS_PREFIX, $endpointSuffix, \true), self::getServiceEndpoint($scheme, $accountName, Resources::FILE_DNS_PREFIX, $endpointSuffix, \true));
     }
     /**
      * Gets storage service name.

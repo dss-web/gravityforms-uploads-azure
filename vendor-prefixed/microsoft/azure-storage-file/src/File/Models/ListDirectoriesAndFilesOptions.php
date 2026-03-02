@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\MarkerContinuationT
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ListDirectoriesAndFilesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions
+class ListDirectoriesAndFilesOptions extends FileServiceOptions
 {
     use MarkerContinuationTokenTrait;
     private $maxResults;
@@ -68,7 +68,7 @@ class ListDirectoriesAndFilesOptions extends \Dekode\GravityForms\Vendor\Microso
      */
     public function setMaxResults($maxResults)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($maxResults, 'maxResults');
+        Validate::canCastAsString($maxResults, 'maxResults');
         $this->maxResults = $maxResults;
     }
     /**

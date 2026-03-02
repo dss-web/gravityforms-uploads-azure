@@ -58,24 +58,24 @@ class ListSharesResult
      */
     public static function create(array $parsedResponse, $location = '')
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ListSharesResult();
-        $serviceEndpoint = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetKeysChainValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::XTAG_ATTRIBUTES, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::XTAG_SERVICE_ENDPOINT);
-        $result->setAccountName(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryParseAccountNameFromUrl($serviceEndpoint));
-        $result->setPrefix(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_PREFIX));
-        $result->setMarker(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MARKER));
-        $nextMarker = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NEXT_MARKER);
+        $result = new ListSharesResult();
+        $serviceEndpoint = Utilities::tryGetKeysChainValue($parsedResponse, Resources::XTAG_ATTRIBUTES, Resources::XTAG_SERVICE_ENDPOINT);
+        $result->setAccountName(Utilities::tryParseAccountNameFromUrl($serviceEndpoint));
+        $result->setPrefix(Utilities::tryGetValue($parsedResponse, Resources::QP_PREFIX));
+        $result->setMarker(Utilities::tryGetValue($parsedResponse, Resources::QP_MARKER));
+        $nextMarker = Utilities::tryGetValue($parsedResponse, Resources::QP_NEXT_MARKER);
         if ($nextMarker != null) {
-            $result->setContinuationToken(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\MarkerContinuationToken($nextMarker, $location));
+            $result->setContinuationToken(new MarkerContinuationToken($nextMarker, $location));
         }
-        $result->setMaxResults(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_MAX_RESULTS));
+        $result->setMaxResults(Utilities::tryGetValue($parsedResponse, Resources::QP_MAX_RESULTS));
         $shares = array();
         $shareArrays = array();
-        if (!empty($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_SHARES])) {
-            $array = $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_SHARES][\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_SHARE];
-            $shareArrays = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($array);
+        if (!empty($parsedResponse[Resources::QP_SHARES])) {
+            $array = $parsedResponse[Resources::QP_SHARES][Resources::QP_SHARE];
+            $shareArrays = Utilities::getArray($array);
         }
         foreach ($shareArrays as $shareArray) {
-            $shares[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\Share::create($shareArray);
+            $shares[] = Share::create($shareArray);
         }
         $result->setShares($shares);
         return $result;

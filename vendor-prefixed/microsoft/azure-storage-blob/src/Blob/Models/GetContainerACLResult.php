@@ -53,10 +53,10 @@ class GetContainerACLResult
      */
     public static function create($publicAccess, $etag, \DateTime $lastModified, array $parsed = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetContainerAclResult();
+        $result = new GetContainerAclResult();
         $result->setETag($etag);
         $result->setLastModified($lastModified);
-        $acl = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL::create($publicAccess, $parsed);
+        $acl = ContainerACL::create($publicAccess, $parsed);
         $result->setContainerAcl($acl);
         return $result;
     }
@@ -76,7 +76,7 @@ class GetContainerACLResult
      *
      * @return void
      */
-    protected function setContainerAcl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL $containerACL)
+    protected function setContainerAcl(ContainerACL $containerACL)
     {
         $this->containerACL = $containerACL;
     }

@@ -49,12 +49,12 @@ class ShareProperties
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareProperties();
-        $date = $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_LAST_MODIFIED];
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
+        $result = new ShareProperties();
+        $date = $parsedResponse[Resources::QP_LAST_MODIFIED];
+        $date = Utilities::rfc1123ToDateTime($date);
         $result->setLastModified($date);
-        $result->setETag($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_ETAG]);
-        $result->setQuota($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_QUOTA]);
+        $result->setETag($parsedResponse[Resources::QP_ETAG]);
+        $result->setQuota($parsedResponse[Resources::QP_QUOTA]);
         return $result;
     }
     /**

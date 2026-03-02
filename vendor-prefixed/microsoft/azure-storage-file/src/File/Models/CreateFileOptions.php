@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateFileOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileServiceOptions
+class CreateFileOptions extends FileServiceOptions
 {
     private $contentType;
     private $contentEncoding;
@@ -202,7 +202,7 @@ class CreateFileOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function setContentLength($contentLength)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($contentLength, 'contentLength');
+        Validate::isInteger($contentLength, 'contentLength');
         $this->contentLength = $contentLength;
     }
 }

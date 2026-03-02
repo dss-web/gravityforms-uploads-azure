@@ -47,8 +47,8 @@ class BreakLeaseResult
      */
     public static function create($headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BreakLeaseResult();
-        $result->setLeaseTime(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_TIME));
+        $result = new BreakLeaseResult();
+        $result->setLeaseTime(Utilities::tryGetValue($headers, Resources::X_MS_LEASE_TIME));
         return $result;
     }
     /**

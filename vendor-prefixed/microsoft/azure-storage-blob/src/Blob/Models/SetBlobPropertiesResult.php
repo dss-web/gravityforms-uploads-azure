@@ -52,11 +52,11 @@ class SetBlobPropertiesResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesResult();
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED, $headers);
-        $result->setLastModified(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date));
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG, $headers));
-        $result->setSequenceNumber(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_SEQUENCE_NUMBER, $headers));
+        $result = new SetBlobPropertiesResult();
+        $date = Utilities::tryGetValueInsensitive(Resources::LAST_MODIFIED, $headers);
+        $result->setLastModified(Utilities::rfc1123ToDateTime($date));
+        $result->setETag(Utilities::tryGetValueInsensitive(Resources::ETAG, $headers));
+        $result->setSequenceNumber(Utilities::tryGetValueInsensitive(Resources::X_MS_BLOB_SEQUENCE_NUMBER, $headers));
         return $result;
     }
     /**
@@ -77,7 +77,7 @@ class SetBlobPropertiesResult
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->_lastModified = $lastModified;
     }
     /**
@@ -98,7 +98,7 @@ class SetBlobPropertiesResult
      */
     protected function setETag($etag)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($etag, 'etag');
+        Validate::canCastAsString($etag, 'etag');
         $this->_etag = $etag;
     }
     /**
@@ -119,7 +119,7 @@ class SetBlobPropertiesResult
      */
     protected function setSequenceNumber($sequenceNumber)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($sequenceNumber, 'sequenceNumber');
+        Validate::isInteger($sequenceNumber, 'sequenceNumber');
         $this->_sequenceNumber = $sequenceNumber;
     }
 }

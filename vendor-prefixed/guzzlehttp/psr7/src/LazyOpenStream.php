@@ -9,7 +9,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class LazyOpenStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class LazyOpenStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     /** @var string File to open */
@@ -32,6 +32,6 @@ class LazyOpenStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\Str
      */
     protected function createStream()
     {
-        return \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::tryFopen($this->filename, $this->mode));
+        return Utils::streamFor(Utils::tryFopen($this->filename, $this->mode));
     }
 }

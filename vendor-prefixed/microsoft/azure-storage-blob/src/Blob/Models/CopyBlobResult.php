@@ -52,13 +52,13 @@ class CopyBlobResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobResult();
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG, $headers));
-        $result->setCopyId(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_ID, $headers));
-        $result->setCopyStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_STATUS, $headers));
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::arrayKeyExistsInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED, $headers)) {
-            $lastModified = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED, $headers);
-            $result->setLastModified(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($lastModified));
+        $result = new CopyBlobResult();
+        $result->setETag(Utilities::tryGetValueInsensitive(Resources::ETAG, $headers));
+        $result->setCopyId(Utilities::tryGetValueInsensitive(Resources::X_MS_COPY_ID, $headers));
+        $result->setCopyStatus(Utilities::tryGetValueInsensitive(Resources::X_MS_COPY_STATUS, $headers));
+        if (Utilities::arrayKeyExistsInsensitive(Resources::LAST_MODIFIED, $headers)) {
+            $lastModified = Utilities::tryGetValueInsensitive(Resources::LAST_MODIFIED, $headers);
+            $result->setLastModified(Utilities::rfc1123ToDateTime($lastModified));
         }
         return $result;
     }

@@ -81,18 +81,18 @@ class CORS
      */
     public static function create(array $parsedResponse)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::hasKey(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_ORIGINS, 'parsedResponse', $parsedResponse);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::hasKey(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_METHODS, 'parsedResponse', $parsedResponse);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::hasKey(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_HEADERS, 'parsedResponse', $parsedResponse);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::hasKey(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_EXPOSED_HEADERS, 'parsedResponse', $parsedResponse);
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::hasKey(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MAX_AGE_IN_SECONDS, 'parsedResponse', $parsedResponse);
+        Validate::hasKey(Resources::XTAG_ALLOWED_ORIGINS, 'parsedResponse', $parsedResponse);
+        Validate::hasKey(Resources::XTAG_ALLOWED_METHODS, 'parsedResponse', $parsedResponse);
+        Validate::hasKey(Resources::XTAG_ALLOWED_HEADERS, 'parsedResponse', $parsedResponse);
+        Validate::hasKey(Resources::XTAG_EXPOSED_HEADERS, 'parsedResponse', $parsedResponse);
+        Validate::hasKey(Resources::XTAG_MAX_AGE_IN_SECONDS, 'parsedResponse', $parsedResponse);
         // Get the values from the parsed response.
-        $allowedOrigins = \array_filter(\explode(',', $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_ORIGINS]));
-        $allowedMethods = \array_filter(\explode(',', $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_METHODS]));
-        $allowedHeaders = \array_filter(\explode(',', $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_HEADERS]));
-        $exposedHeaders = \array_filter(\explode(',', $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_EXPOSED_HEADERS]));
-        $maxAgeInSeconds = \intval($parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MAX_AGE_IN_SECONDS]);
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\CORS($allowedOrigins, $allowedMethods, $allowedHeaders, $exposedHeaders, $maxAgeInSeconds);
+        $allowedOrigins = \array_filter(\explode(',', $parsedResponse[Resources::XTAG_ALLOWED_ORIGINS]));
+        $allowedMethods = \array_filter(\explode(',', $parsedResponse[Resources::XTAG_ALLOWED_METHODS]));
+        $allowedHeaders = \array_filter(\explode(',', $parsedResponse[Resources::XTAG_ALLOWED_HEADERS]));
+        $exposedHeaders = \array_filter(\explode(',', $parsedResponse[Resources::XTAG_EXPOSED_HEADERS]));
+        $maxAgeInSeconds = \intval($parsedResponse[Resources::XTAG_MAX_AGE_IN_SECONDS]);
+        return new CORS($allowedOrigins, $allowedMethods, $allowedHeaders, $exposedHeaders, $maxAgeInSeconds);
     }
     /**
      * Converts this object to array with XML tags
@@ -101,7 +101,7 @@ class CORS
      */
     public function toArray()
     {
-        return array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_ORIGINS => \implode(',', $this->getAllowedOrigins()), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_METHODS => \implode(',', $this->getAllowedMethods()), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ALLOWED_HEADERS => \implode(',', $this->getAllowedHeaders()), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_EXPOSED_HEADERS => \implode(',', $this->getExposedHeaders()), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_MAX_AGE_IN_SECONDS => $this->getMaxedAgeInSeconds());
+        return array(Resources::XTAG_ALLOWED_ORIGINS => \implode(',', $this->getAllowedOrigins()), Resources::XTAG_ALLOWED_METHODS => \implode(',', $this->getAllowedMethods()), Resources::XTAG_ALLOWED_HEADERS => \implode(',', $this->getAllowedHeaders()), Resources::XTAG_EXPOSED_HEADERS => \implode(',', $this->getExposedHeaders()), Resources::XTAG_MAX_AGE_IN_SECONDS => $this->getMaxedAgeInSeconds());
     }
     /**
      * Setter for allowedOrigins

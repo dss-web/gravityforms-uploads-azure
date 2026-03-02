@@ -33,7 +33,7 @@ namespace Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateBlobBlockOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class CreateBlobBlockOptions extends BlobServiceOptions
 {
     private $_contentMD5;
     private $_numberOfConcurrency;
@@ -82,9 +82,9 @@ class CreateBlobBlockOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
      *
      * @return CreateBlobBlockOptions
      */
-    public static function create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $createBlobOptions)
+    public static function create(CreateBlobOptions $createBlobOptions)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions();
+        $result = new CreateBlobBlockOptions();
         $result->setTimeout($createBlobOptions->getTimeout());
         $result->setLeaseId($createBlobOptions->getLeaseId());
         $result->setNumberOfConcurrency($createBlobOptions->getNumberOfConcurrency());

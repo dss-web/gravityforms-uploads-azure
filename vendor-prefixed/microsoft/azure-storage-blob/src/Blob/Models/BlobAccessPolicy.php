@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\AccessPolicy
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class BlobAccessPolicy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\AccessPolicy
+class BlobAccessPolicy extends AccessPolicy
 {
     /**
      * Get the valid permissions for the given resource.
@@ -44,13 +44,13 @@ class BlobAccessPolicy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public static function getResourceValidPermissions()
     {
-        return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ACCESS_PERMISSIONS[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_BLOB];
+        return BlobResources::ACCESS_PERMISSIONS[BlobResources::RESOURCE_TYPE_BLOB];
     }
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RESOURCE_TYPE_BLOB);
+        parent::__construct(BlobResources::RESOURCE_TYPE_BLOB);
     }
 }

@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptio
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class SetBlobTierOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions
+class SetBlobTierOptions extends ServiceOptions
 {
     use AccessTierTrait;
 }

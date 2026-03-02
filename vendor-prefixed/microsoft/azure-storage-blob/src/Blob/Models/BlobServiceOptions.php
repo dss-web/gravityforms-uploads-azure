@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptio
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class BlobServiceOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions
+class BlobServiceOptions extends ServiceOptions
 {
     private $_leaseId;
     private $_accessConditions;

@@ -71,19 +71,19 @@ class RetryMiddlewareFactory
      *                                     the logic of how the request should be
      *                                     handled after a response.
      */
-    public static function create($type = self::GENERAL_RETRY_TYPE, $numberOfRetries = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_NUMBER_OF_RETRIES, $interval = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DEFAULT_RETRY_INTERVAL, $accumulationMethod = self::LINEAR_INTERVAL_ACCUMULATION, $retryConnect = \false)
+    public static function create($type = self::GENERAL_RETRY_TYPE, $numberOfRetries = Resources::DEFAULT_NUMBER_OF_RETRIES, $interval = Resources::DEFAULT_RETRY_INTERVAL, $accumulationMethod = self::LINEAR_INTERVAL_ACCUMULATION, $retryConnect = \false)
     {
         //Validate the input parameters
         //type
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($type == self::GENERAL_RETRY_TYPE || $type == self::APPEND_BLOB_RETRY_TYPE, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_PARAM_GENERAL, 'type'));
+        Validate::isTrue($type == self::GENERAL_RETRY_TYPE || $type == self::APPEND_BLOB_RETRY_TYPE, \sprintf(Resources::INVALID_PARAM_GENERAL, 'type'));
         //numberOfRetries
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($numberOfRetries > 0, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_NEGATIVE_PARAM, 'numberOfRetries'));
+        Validate::isTrue($numberOfRetries > 0, \sprintf(Resources::INVALID_NEGATIVE_PARAM, 'numberOfRetries'));
         //interval
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($interval > 0, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_NEGATIVE_PARAM, 'interval'));
+        Validate::isTrue($interval > 0, \sprintf(Resources::INVALID_NEGATIVE_PARAM, 'interval'));
         //accumulationMethod
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($accumulationMethod == self::LINEAR_INTERVAL_ACCUMULATION || $accumulationMethod == self::EXPONENTIAL_INTERVAL_ACCUMULATION, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_PARAM_GENERAL, 'accumulationMethod'));
+        Validate::isTrue($accumulationMethod == self::LINEAR_INTERVAL_ACCUMULATION || $accumulationMethod == self::EXPONENTIAL_INTERVAL_ACCUMULATION, \sprintf(Resources::INVALID_PARAM_GENERAL, 'accumulationMethod'));
         //retryConnect
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($retryConnect);
+        Validate::isBoolean($retryConnect);
         //Get the interval calculator according to the type of the
         //accumulation method.
         $intervalCalculator = $accumulationMethod == self::LINEAR_INTERVAL_ACCUMULATION ? static::createLinearDelayCalculator($interval) : static::createExponentialDelayCalculator($interval);
@@ -91,7 +91,7 @@ class RetryMiddlewareFactory
         //the number of retries.
         $retryDecider = static::createRetryDecider($type, $numberOfRetries, $retryConnect);
         //construct the retry middle ware.
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\RetryMiddleware($intervalCalculator, $retryDecider);
+        return new RetryMiddleware($intervalCalculator, $retryDecider);
     }
     /**
      * Create the retry decider for the retry handler. It will return a callable
@@ -113,9 +113,9 @@ class RetryMiddlewareFactory
                 return \false;
             }
             if (!$response) {
-                if (!$exception || !$exception instanceof \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\RequestException) {
+                if (!$exception || !$exception instanceof RequestException) {
                     return \false;
-                } elseif ($exception instanceof \Dekode\GravityForms\Vendor\GuzzleHttp\Exception\ConnectException) {
+                } elseif ($exception instanceof ConnectException) {
                     return $retryConnect;
                 } else {
                     $response = $exception->getResponse();

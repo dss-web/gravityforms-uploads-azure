@@ -53,7 +53,7 @@ trait ServiceRestTrait
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452239.aspx
      */
-    public function getServiceProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function getServiceProperties(ServiceOptions $options = null)
     {
         return $this->getServicePropertiesAsync($options)->wait();
     }
@@ -66,22 +66,22 @@ trait ServiceRestTrait
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452239.aspx
      */
-    public function getServicePropertiesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function getServicePropertiesAsync(ServiceOptions $options = null)
     {
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::HTTP_GET;
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
-        $path = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING;
+        $path = Resources::EMPTY_STRING;
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions();
+            $options = new ServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_REST_TYPE, 'service');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_COMP, 'properties');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'service');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'properties');
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\GetServicePropertiesResult::create($parsed);
+            return GetServicePropertiesResult::create($parsed);
         }, null);
     }
     /**
@@ -97,7 +97,7 @@ trait ServiceRestTrait
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452235.aspx
      */
-    public function setServiceProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties $serviceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function setServiceProperties(ServiceProperties $serviceProperties, ServiceOptions $options = null)
     {
         $this->setServicePropertiesAsync($serviceProperties, $options)->wait();
     }
@@ -114,23 +114,23 @@ trait ServiceRestTrait
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh452235.aspx
      */
-    public function setServicePropertiesAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties $serviceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function setServicePropertiesAsync(ServiceProperties $serviceProperties, ServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($serviceProperties instanceof \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceProperties, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_SVC_PROP_MSG);
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::HTTP_PUT;
+        Validate::isTrue($serviceProperties instanceof ServiceProperties, Resources::INVALID_SVC_PROP_MSG);
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $queryParams = array();
         $postParams = array();
-        $path = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING;
+        $path = Resources::EMPTY_STRING;
         $body = $serviceProperties->toXml($this->dataSerializer);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions();
+            $options = new ServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_REST_TYPE, 'service');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_COMP, 'properties');
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::CONTENT_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::URL_ENCODED_CONTENT_TYPE);
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::STATUS_ACCEPTED, $body, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'service');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'properties');
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, Resources::URL_ENCODED_CONTENT_TYPE);
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, $body, $options);
     }
     /**
      * Retrieves statistics related to replication for the service. The operation
@@ -140,7 +140,7 @@ trait ServiceRestTrait
      *
      * @return GetServiceStatsResult
      */
-    public function getServiceStats(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function getServiceStats(ServiceOptions $options = null)
     {
         return $this->getServiceStatsAsync($options)->wait();
     }
@@ -152,23 +152,23 @@ trait ServiceRestTrait
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getServiceStatsAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions $options = null)
+    public function getServiceStatsAsync(ServiceOptions $options = null)
     {
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::HTTP_GET;
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
-        $path = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING;
+        $path = Resources::EMPTY_STRING;
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\ServiceOptions();
+            $options = new ServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_REST_TYPE, 'service');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_COMP, 'stats');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'service');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'stats');
         $dataSerializer = $this->dataSerializer;
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::SECONDARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        $options->setLocationMode(LocationMode::SECONDARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\GetServiceStatsResult::create($parsed);
+            return GetServiceStatsResult::create($parsed);
         }, null);
     }
 }

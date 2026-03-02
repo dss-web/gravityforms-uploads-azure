@@ -122,7 +122,7 @@ class GetContainerPropertiesResult
      */
     public function setPublicAccess($publicAccess)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType::isValid($publicAccess), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_BLOB_PAT_MSG);
+        Validate::isTrue(PublicAccessType::isValid($publicAccess), Resources::INVALID_BLOB_PAT_MSG);
         $this->publicAccess = $publicAccess;
     }
     /**
@@ -137,10 +137,10 @@ class GetContainerPropertiesResult
     public static function create(array $responseHeaders)
     {
         $result = static::createMetadataResult($responseHeaders);
-        $result->setLeaseStatus(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_STATUS, $responseHeaders));
-        $result->setLeaseState(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_STATE, $responseHeaders));
-        $result->setLeaseDuration(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_DURATION, $responseHeaders));
-        $result->setPublicAccess(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_PUBLIC_ACCESS, $responseHeaders));
+        $result->setLeaseStatus(Utilities::tryGetValueInsensitive(Resources::X_MS_LEASE_STATUS, $responseHeaders));
+        $result->setLeaseState(Utilities::tryGetValueInsensitive(Resources::X_MS_LEASE_STATE, $responseHeaders));
+        $result->setLeaseDuration(Utilities::tryGetValueInsensitive(Resources::X_MS_LEASE_DURATION, $responseHeaders));
+        $result->setPublicAccess(Utilities::tryGetValueInsensitive(Resources::X_MS_BLOB_PUBLIC_ACCESS, $responseHeaders));
         return $result;
     }
 }

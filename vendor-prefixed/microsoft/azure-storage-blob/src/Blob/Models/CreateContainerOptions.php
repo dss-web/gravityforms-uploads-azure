@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateContainerOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class CreateContainerOptions extends BlobServiceOptions
 {
     private $_publicAccess;
     private $_metadata;
@@ -66,7 +66,7 @@ class CreateContainerOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\
      */
     public function setPublicAccess($publicAccess)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($publicAccess, 'publicAccess');
+        Validate::canCastAsString($publicAccess, 'publicAccess');
         $this->_publicAccess = $publicAccess;
     }
     /**

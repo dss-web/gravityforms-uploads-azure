@@ -116,10 +116,10 @@ trait MetadataTrait
     public static function createMetadataResult(array $responseHeaders)
     {
         $result = new static();
-        $metadata = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getMetadataArray($responseHeaders);
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::LAST_MODIFIED, $responseHeaders);
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $result->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ETAG, $responseHeaders));
+        $metadata = Utilities::getMetadataArray($responseHeaders);
+        $date = Utilities::tryGetValueInsensitive(Resources::LAST_MODIFIED, $responseHeaders);
+        $date = Utilities::rfc1123ToDateTime($date);
+        $result->setETag(Utilities::tryGetValueInsensitive(Resources::ETAG, $responseHeaders));
         $result->setMetadata($metadata);
         $result->setLastModified($date);
         return $result;

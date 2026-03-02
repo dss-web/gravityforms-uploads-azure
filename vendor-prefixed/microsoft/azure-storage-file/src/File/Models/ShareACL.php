@@ -36,7 +36,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResource
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ShareACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ACLBase
+class ShareACL extends ACLBase
 {
     /**
      * Constructor.
@@ -44,7 +44,7 @@ class ShareACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common
     public function __construct()
     {
         //setting the resource type to a default value.
-        $this->setResourceType(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::RESOURCE_TYPE_SHARE);
+        $this->setResourceType(Resources::RESOURCE_TYPE_SHARE);
     }
     /**
      * Parses the given array into signed identifiers and create an instance of
@@ -58,7 +58,7 @@ class ShareACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common
      */
     public static function create(array $parsed = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareACL();
+        $result = new ShareACL();
         $result->fromXmlArray($parsed);
         return $result;
     }
@@ -75,7 +75,7 @@ class ShareACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common
      */
     protected static function validateResourceType($resourceType)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::RESOURCE_TYPE_SHARE || $resourceType == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::RESOURCE_TYPE_FILE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::INVALID_RESOURCE_TYPE);
+        Validate::isTrue($resourceType == Resources::RESOURCE_TYPE_SHARE || $resourceType == Resources::RESOURCE_TYPE_FILE, Resources::INVALID_RESOURCE_TYPE);
     }
     /**
      * Create a ShareAccessPolicy object.
@@ -84,6 +84,6 @@ class ShareACL extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common
      */
     protected static function createAccessPolicy()
     {
-        return new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\ShareAccessPolicy();
+        return new ShareAccessPolicy();
     }
 }

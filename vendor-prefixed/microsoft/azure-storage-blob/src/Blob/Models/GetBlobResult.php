@@ -50,11 +50,11 @@ class GetBlobResult
      *
      * @return GetBlobResult
      */
-    public static function create(array $headers, \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $body, array $metadata)
+    public static function create(array $headers, StreamInterface $body, array $metadata)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobResult();
+        $result = new GetBlobResult();
         $result->setContentStream($body->detach());
-        $result->setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties::createFromHttpHeaders($headers));
+        $result->setProperties(BlobProperties::createFromHttpHeaders($headers));
         $result->setMetadata(\is_null($metadata) ? array() : $metadata);
         return $result;
     }
@@ -94,7 +94,7 @@ class GetBlobResult
      *
      * @return void
      */
-    protected function setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobProperties $properties)
+    protected function setProperties(BlobProperties $properties)
     {
         $this->properties = $properties;
     }

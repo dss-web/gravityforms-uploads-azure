@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Transactiona
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreatePageBlobFromContentOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobOptions
+class CreatePageBlobFromContentOptions extends CreatePageBlobOptions
 {
     use TransactionalMD5Trait;
 }

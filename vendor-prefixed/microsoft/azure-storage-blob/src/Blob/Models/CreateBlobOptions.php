@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class CreateBlobOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class CreateBlobOptions extends BlobServiceOptions
 {
     private $_contentType;
     private $_contentEncoding;
@@ -203,7 +203,7 @@ class CreateBlobOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function setSequenceNumber($sequenceNumber)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($sequenceNumber, 'sequenceNumber');
+        Validate::isInteger($sequenceNumber, 'sequenceNumber');
         $this->_sequenceNumber = $sequenceNumber;
     }
     /**

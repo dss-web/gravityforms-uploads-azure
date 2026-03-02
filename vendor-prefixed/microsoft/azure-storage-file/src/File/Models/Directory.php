@@ -67,8 +67,8 @@ class Directory
      */
     public static function create(array $parsed)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\Directory();
-        $name = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::QP_NAME);
+        $result = new Directory();
+        $name = Utilities::tryGetValue($parsed, Resources::QP_NAME);
         $result->setName($name);
         return $result;
     }

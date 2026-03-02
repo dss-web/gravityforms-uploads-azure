@@ -9,7 +9,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class DroppingStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class DroppingStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     private $maxLength;
@@ -17,7 +17,7 @@ class DroppingStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\Str
      * @param StreamInterface $stream    Underlying stream to decorate.
      * @param int             $maxLength Maximum size before dropping data.
      */
-    public function __construct(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, $maxLength)
+    public function __construct(StreamInterface $stream, $maxLength)
     {
         $this->stream = $stream;
         $this->maxLength = $maxLength;

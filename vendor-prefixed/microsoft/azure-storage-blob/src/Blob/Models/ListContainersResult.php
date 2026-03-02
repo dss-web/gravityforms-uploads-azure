@@ -58,32 +58,32 @@ class ListContainersResult
      */
     public static function create(array $parsedResponse, $location = '')
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersResult();
-        $serviceEndpoint = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetKeysChainValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_ATTRIBUTES, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_SERVICE_ENDPOINT);
-        $result->setAccountName(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryParseAccountNameFromUrl($serviceEndpoint));
-        $result->setPrefix(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_PREFIX));
-        $result->setMarker(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MARKER));
-        $nextMarker = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_NEXT_MARKER);
+        $result = new ListContainersResult();
+        $serviceEndpoint = Utilities::tryGetKeysChainValue($parsedResponse, Resources::XTAG_ATTRIBUTES, Resources::XTAG_SERVICE_ENDPOINT);
+        $result->setAccountName(Utilities::tryParseAccountNameFromUrl($serviceEndpoint));
+        $result->setPrefix(Utilities::tryGetValue($parsedResponse, Resources::QP_PREFIX));
+        $result->setMarker(Utilities::tryGetValue($parsedResponse, Resources::QP_MARKER));
+        $nextMarker = Utilities::tryGetValue($parsedResponse, Resources::QP_NEXT_MARKER);
         if ($nextMarker != null) {
-            $result->setContinuationToken(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\MarkerContinuationToken($nextMarker, $location));
+            $result->setContinuationToken(new MarkerContinuationToken($nextMarker, $location));
         }
-        $result->setMaxResults(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($parsedResponse, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MAX_RESULTS));
+        $result->setMaxResults(Utilities::tryGetValue($parsedResponse, Resources::QP_MAX_RESULTS));
         $containers = array();
         $rawContainer = array();
         if (!empty($parsedResponse['Containers'])) {
             $containersArray = $parsedResponse['Containers']['Container'];
-            $rawContainer = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($containersArray);
+            $rawContainer = Utilities::getArray($containersArray);
         }
         foreach ($rawContainer as $value) {
-            $container = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\Container();
+            $container = new Container();
             $container->setName($value['Name']);
             $container->setUrl($serviceEndpoint . $value['Name']);
-            $container->setMetadata(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($value, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_METADATA, array()));
-            $properties = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerProperties();
+            $container->setMetadata(Utilities::tryGetValue($value, Resources::QP_METADATA, array()));
+            $properties = new ContainerProperties();
             $date = $value['Properties']['Last-Modified'];
-            $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
+            $date = Utilities::rfc1123ToDateTime($date);
             $properties->setLastModified($date);
-            $properties->setETag(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG, $value['Properties']));
+            $properties->setETag(Utilities::tryGetValueInsensitive(Resources::ETAG, $value['Properties']));
             if (\array_key_exists('LeaseStatus', $value['Properties'])) {
                 $properties->setLeaseStatus($value['Properties']['LeaseStatus']);
             }

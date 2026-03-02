@@ -50,11 +50,11 @@ class GetFileResult
      *
      * @return GetFileResult
      */
-    public static function create(array $headers, \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $body, array $metadata)
+    public static function create(array $headers, StreamInterface $body, array $metadata)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\GetFileResult();
+        $result = new GetFileResult();
         $result->setContentStream($body->detach());
-        $result->setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties::createFromHttpHeaders($headers));
+        $result->setProperties(FileProperties::createFromHttpHeaders($headers));
         $result->setMetadata(\is_null($metadata) ? array() : $metadata);
         return $result;
     }
@@ -94,7 +94,7 @@ class GetFileResult
      *
      * @return void
      */
-    protected function setProperties(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\FileProperties $properties)
+    protected function setProperties(FileProperties $properties)
     {
         $this->properties = $properties;
     }

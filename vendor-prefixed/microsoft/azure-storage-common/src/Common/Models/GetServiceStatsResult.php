@@ -49,15 +49,15 @@ class GetServiceStatsResult
      */
     public static function create(array $parsedResponse)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\GetServiceStatsResult();
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::arrayKeyExistsInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_GEO_REPLICATION, $parsedResponse)) {
-            $geoReplication = $parsedResponse[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_GEO_REPLICATION];
-            if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::arrayKeyExistsInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_STATUS, $geoReplication)) {
-                $result->setStatus($geoReplication[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_STATUS]);
+        $result = new GetServiceStatsResult();
+        if (Utilities::arrayKeyExistsInsensitive(Resources::XTAG_GEO_REPLICATION, $parsedResponse)) {
+            $geoReplication = $parsedResponse[Resources::XTAG_GEO_REPLICATION];
+            if (Utilities::arrayKeyExistsInsensitive(Resources::XTAG_STATUS, $geoReplication)) {
+                $result->setStatus($geoReplication[Resources::XTAG_STATUS]);
             }
-            if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::arrayKeyExistsInsensitive(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_LAST_SYNC_TIME, $geoReplication)) {
-                $lastSyncTime = $geoReplication[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_LAST_SYNC_TIME];
-                $result->setLastSyncTime(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToDateTime($lastSyncTime));
+            if (Utilities::arrayKeyExistsInsensitive(Resources::XTAG_LAST_SYNC_TIME, $geoReplication)) {
+                $lastSyncTime = $geoReplication[Resources::XTAG_LAST_SYNC_TIME];
+                $result->setLastSyncTime(Utilities::convertToDateTime($lastSyncTime));
             }
         }
         return $result;

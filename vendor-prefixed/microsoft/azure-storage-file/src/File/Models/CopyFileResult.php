@@ -53,13 +53,13 @@ class CopyFileResult
      */
     public static function create(array $headers)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Models\CopyFileResult();
+        $result = new CopyFileResult();
         $headers = \array_change_key_case($headers);
-        $date = $headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::LAST_MODIFIED];
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $result->setCopyStatus($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_STATUS]);
-        $result->setCopyID($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::X_MS_COPY_ID]);
-        $result->setETag($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\File\Internal\FileResources::ETAG]);
+        $date = $headers[Resources::LAST_MODIFIED];
+        $date = Utilities::rfc1123ToDateTime($date);
+        $result->setCopyStatus($headers[Resources::X_MS_COPY_STATUS]);
+        $result->setCopyID($headers[Resources::X_MS_COPY_ID]);
+        $result->setETag($headers[Resources::ETAG]);
         $result->setLastModified($date);
         return $result;
     }
@@ -81,7 +81,7 @@ class CopyFileResult
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->lastModified = $lastModified;
     }
     /**
@@ -102,7 +102,7 @@ class CopyFileResult
      */
     protected function setETag($etag)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($etag, 'etag');
+        Validate::canCastAsString($etag, 'etag');
         $this->etag = $etag;
     }
     /**
@@ -123,7 +123,7 @@ class CopyFileResult
      */
     protected function setCopyID($copyID)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($copyID, 'copyID');
+        Validate::canCastAsString($copyID, 'copyID');
         $this->copyID = $copyID;
     }
     /**
@@ -144,7 +144,7 @@ class CopyFileResult
      */
     protected function setCopyStatus($copyStatus)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($copyStatus, 'copyStatus');
+        Validate::canCastAsString($copyStatus, 'copyStatus');
         $this->copyStatus = $copyStatus;
     }
 }

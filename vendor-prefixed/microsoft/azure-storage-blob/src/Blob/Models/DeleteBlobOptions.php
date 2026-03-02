@@ -34,7 +34,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class DeleteBlobOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class DeleteBlobOptions extends BlobServiceOptions
 {
     private $_snapshot;
     private $_deleteSnaphotsOnly;
@@ -76,7 +76,7 @@ class DeleteBlobOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      */
     public function setDeleteSnaphotsOnly($deleteSnaphotsOnly)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($deleteSnaphotsOnly);
+        Validate::isBoolean($deleteSnaphotsOnly);
         $this->_deleteSnaphotsOnly = $deleteSnaphotsOnly;
     }
 }

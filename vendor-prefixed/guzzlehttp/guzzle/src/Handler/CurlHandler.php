@@ -28,9 +28,9 @@ class CurlHandler
      */
     public function __construct(array $options = [])
     {
-        $this->factory = $options['handle_factory'] ?? new \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\CurlFactory(3);
+        $this->factory = $options['handle_factory'] ?? new CurlFactory(3);
     }
-    public function __invoke(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options) : \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\PromiseInterface
+    public function __invoke(RequestInterface $request, array $options) : PromiseInterface
     {
         if (isset($options['delay'])) {
             \usleep($options['delay'] * 1000);
@@ -38,6 +38,6 @@ class CurlHandler
         $easy = $this->factory->create($request, $options);
         \curl_exec($easy->handle);
         $easy->errno = \curl_errno($easy->handle);
-        return \Dekode\GravityForms\Vendor\GuzzleHttp\Handler\CurlFactory::finish($this, $easy, $this->factory);
+        return CurlFactory::finish($this, $easy, $this->factory);
     }
 }

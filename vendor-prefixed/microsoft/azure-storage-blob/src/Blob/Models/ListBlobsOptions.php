@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\MarkerContinuationT
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class ListBlobsOptions extends BlobServiceOptions
 {
     use MarkerContinuationTokenTrait;
     private $_prefix;
@@ -64,7 +64,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setPrefix($prefix)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($prefix, 'prefix');
+        Validate::canCastAsString($prefix, 'prefix');
         $this->_prefix = $prefix;
     }
     /**
@@ -85,7 +85,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setDelimiter($delimiter)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($delimiter, 'delimiter');
+        Validate::canCastAsString($delimiter, 'delimiter');
         $this->_delimiter = $delimiter;
     }
     /**
@@ -106,7 +106,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setMaxResults($maxResults)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($maxResults, 'maxResults');
+        Validate::isInteger($maxResults, 'maxResults');
         $this->_maxResults = $maxResults;
     }
     /**
@@ -127,7 +127,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setIncludeMetadata($includeMetadata)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeMetadata);
+        Validate::isBoolean($includeMetadata);
         $this->_includeMetadata = $includeMetadata;
     }
     /**
@@ -148,7 +148,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setIncludeSnapshots($includeSnapshots)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeSnapshots);
+        Validate::isBoolean($includeSnapshots);
         $this->_includeSnapshots = $includeSnapshots;
     }
     /**
@@ -169,7 +169,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setIncludeUncommittedBlobs($includeUncommittedBlobs)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeUncommittedBlobs);
+        Validate::isBoolean($includeUncommittedBlobs);
         $this->_includeUncommittedBlobs = $includeUncommittedBlobs;
     }
     /**
@@ -190,7 +190,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setIncludeCopy($includeCopy)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeCopy);
+        Validate::isBoolean($includeCopy);
         $this->_includeCopy = $includeCopy;
     }
     /**
@@ -211,7 +211,7 @@ class ListBlobsOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public function setIncludeDeleted($includeDeleted)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isBoolean($includeDeleted);
+        Validate::isBoolean($includeDeleted);
         $this->_includeDeleted = $includeDeleted;
     }
 }

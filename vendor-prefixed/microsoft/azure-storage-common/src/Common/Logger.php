@@ -48,7 +48,7 @@ class Logger
      *
      * @return void
      */
-    public static function log($var, $tip = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING)
+    public static function log($var, $tip = Resources::EMPTY_STRING)
     {
         if (!empty($tip)) {
             \error_log($tip . "\n", 3, self::$_filePath);

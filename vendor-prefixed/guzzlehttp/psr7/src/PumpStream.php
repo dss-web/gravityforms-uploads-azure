@@ -15,7 +15,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface;
  *
  * @final
  */
-class PumpStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface
+class PumpStream implements StreamInterface
 {
     /** @var callable */
     private $source;
@@ -42,12 +42,12 @@ class PumpStream implements \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamI
         $this->source = $source;
         $this->size = isset($options['size']) ? $options['size'] : null;
         $this->metadata = isset($options['metadata']) ? $options['metadata'] : [];
-        $this->buffer = new \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\BufferStream();
+        $this->buffer = new BufferStream();
     }
     public function __toString()
     {
         try {
-            return \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::copyToString($this);
+            return Utils::copyToString($this);
         } catch (\Exception $e) {
             return '';
         }

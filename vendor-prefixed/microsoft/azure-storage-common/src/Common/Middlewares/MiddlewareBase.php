@@ -38,7 +38,7 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\Promise\RejectedPromise;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class MiddlewareBase implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Middlewares\IMiddleware
+class MiddlewareBase implements IMiddleware
 {
     /**
      * Middleware augments the functionality of handlers by invoking them
@@ -66,7 +66,7 @@ class MiddlewareBase implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      *
      * @return RequestInterface          the request after altered.
      */
-    protected function onRequest(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request)
+    protected function onRequest(RequestInterface $request)
     {
         //do nothing
         return $request;
@@ -80,9 +80,9 @@ class MiddlewareBase implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      *
      * @return callable
      */
-    protected function onFulfilled(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
+    protected function onFulfilled(RequestInterface $request, array $options)
     {
-        return function (\Dekode\GravityForms\Vendor\Psr\Http\Message\ResponseInterface $response) {
+        return function (ResponseInterface $response) {
             //do nothing
             return $response;
         };
@@ -96,11 +96,11 @@ class MiddlewareBase implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Stora
      *
      * @return callable
      */
-    protected function onRejected(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
+    protected function onRejected(RequestInterface $request, array $options)
     {
         return function ($reason) {
             //do nothing
-            return new \Dekode\GravityForms\Vendor\GuzzleHttp\Promise\RejectedPromise($reason);
+            return new RejectedPromise($reason);
         };
     }
 }

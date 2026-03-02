@@ -55,23 +55,23 @@ class ListPageBlobRangesResult
      */
     public static function create(array $headers, array $parsed = null)
     {
-        $result = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesResult();
+        $result = new ListPageBlobRangesResult();
         $headers = \array_change_key_case($headers);
-        $date = $headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED];
-        $date = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::rfc1123ToDateTime($date);
-        $blobLength = \intval($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LENGTH]);
+        $date = $headers[Resources::LAST_MODIFIED];
+        $date = Utilities::rfc1123ToDateTime($date);
+        $blobLength = \intval($headers[Resources::X_MS_BLOB_CONTENT_LENGTH]);
         $rawRanges = array();
-        if (!empty($parsed[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_PAGE_RANGE])) {
+        if (!empty($parsed[Resources::XTAG_PAGE_RANGE])) {
             $parsed = \array_change_key_case($parsed);
-            $rawRanges = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray($parsed[\strtolower(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_PAGE_RANGE)]);
+            $rawRanges = Utilities::getArray($parsed[\strtolower(RESOURCES::XTAG_PAGE_RANGE)]);
         }
         $pageRanges = array();
         foreach ($rawRanges as $value) {
-            $pageRanges[] = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range(\intval($value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_RANGE_START]), \intval($value[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::XTAG_RANGE_END]));
+            $pageRanges[] = new Range(\intval($value[Resources::XTAG_RANGE_START]), \intval($value[Resources::XTAG_RANGE_END]));
         }
         $result->setRanges($pageRanges);
         $result->setContentLength($blobLength);
-        $result->setETag($headers[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG]);
+        $result->setETag($headers[Resources::ETAG]);
         $result->setLastModified($date);
         return $result;
     }
@@ -93,7 +93,7 @@ class ListPageBlobRangesResult
      */
     protected function setLastModified(\DateTime $lastModified)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($lastModified);
+        Validate::isDate($lastModified);
         $this->_lastModified = $lastModified;
     }
     /**
@@ -114,7 +114,7 @@ class ListPageBlobRangesResult
      */
     protected function setETag($etag)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($etag, 'etag');
+        Validate::canCastAsString($etag, 'etag');
         $this->_etag = $etag;
     }
     /**
@@ -135,7 +135,7 @@ class ListPageBlobRangesResult
      */
     protected function setContentLength($contentLength)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($contentLength, 'contentLength');
+        Validate::isInteger($contentLength, 'contentLength');
         $this->_contentLength = $contentLength;
     }
     /**

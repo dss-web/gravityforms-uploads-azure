@@ -40,7 +40,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\IAuthScheme
+class SharedKeyAuthScheme implements IAuthScheme
 {
     /**
      * The account name
@@ -67,17 +67,17 @@ class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\
         $this->accountKey = $accountKey;
         $this->accountName = $accountName;
         $this->includedHeaders = array();
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::CONTENT_ENCODING;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::CONTENT_LANGUAGE;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::CONTENT_LENGTH;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::CONTENT_MD5;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::CONTENT_TYPE;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::DATE;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::IF_MODIFIED_SINCE;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::IF_MATCH;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::IF_NONE_MATCH;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::IF_UNMODIFIED_SINCE;
-        $this->includedHeaders[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::RANGE;
+        $this->includedHeaders[] = Resources::CONTENT_ENCODING;
+        $this->includedHeaders[] = Resources::CONTENT_LANGUAGE;
+        $this->includedHeaders[] = Resources::CONTENT_LENGTH;
+        $this->includedHeaders[] = Resources::CONTENT_MD5;
+        $this->includedHeaders[] = Resources::CONTENT_TYPE;
+        $this->includedHeaders[] = Resources::DATE;
+        $this->includedHeaders[] = Resources::IF_MODIFIED_SINCE;
+        $this->includedHeaders[] = Resources::IF_MATCH;
+        $this->includedHeaders[] = Resources::IF_NONE_MATCH;
+        $this->includedHeaders[] = Resources::IF_UNMODIFIED_SINCE;
+        $this->includedHeaders[] = Resources::RANGE;
     }
     /**
      * Computes the authorization signature for blob and queue shared key.
@@ -99,7 +99,7 @@ class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\
         $stringToSign = array();
         $stringToSign[] = \strtoupper($httpMethod);
         foreach ($this->includedHeaders as $header) {
-            $stringToSign[] = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValueInsensitive($header, $headers);
+            $stringToSign[] = Utilities::tryGetValueInsensitive($header, $headers);
         }
         if (\count($canonicalizedHeaders) > 0) {
             $stringToSign[] = \implode("\n", $canonicalizedHeaders);
@@ -140,7 +140,7 @@ class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\
     {
         $canonicalizedHeaders = array();
         $normalizedHeaders = array();
-        $validPrefix = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_HEADER_PREFIX;
+        $validPrefix = Resources::X_MS_HEADER_PREFIX;
         if (\is_null($normalizedHeaders)) {
             return $canonicalizedHeaders;
         }
@@ -149,7 +149,7 @@ class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\
             $header = \strtolower($header);
             // Retrieve all headers for the resource that begin with x-ms-,
             // including the x-ms-date header.
-            if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::startsWith($header, $validPrefix)) {
+            if (Utilities::startsWith($header, $validPrefix)) {
                 // Unfold the string by replacing any breaking white space
                 // (meaning what splits the headers, which is \r\n) with a single
                 // space.
@@ -190,9 +190,9 @@ class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\
         // 3. The query string should include the question mark and the comp
         //    parameter (for example, ?comp=metadata). No other parameters should
         //    be included on the query string.
-        if (\array_key_exists(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_COMP, $queryParams)) {
-            $canonicalizedResource .= '?' . \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_COMP . '=';
-            $canonicalizedResource .= $queryParams[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::QP_COMP];
+        if (\array_key_exists(Resources::QP_COMP, $queryParams)) {
+            $canonicalizedResource .= '?' . Resources::QP_COMP . '=';
+            $canonicalizedResource .= $queryParams[Resources::QP_COMP];
         }
         return $canonicalizedResource;
     }
@@ -245,10 +245,10 @@ class SharedKeyAuthScheme implements \Dekode\GravityForms\Vendor\MicrosoftAzure\
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function signRequest(\Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Request $request)
+    public function signRequest(Request $request)
     {
-        $requestHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($request->getHeaders());
-        $signedKey = $this->getAuthorizationHeader($requestHeaders, $request->getUri(), \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Query::parse($request->getUri()->getQuery()), $request->getMethod());
-        return $request->withHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::AUTHENTICATION, $signedKey);
+        $requestHeaders = HttpFormatter::formatHeaders($request->getHeaders());
+        $signedKey = $this->getAuthorizationHeader($requestHeaders, $request->getUri(), Query::parse($request->getUri()->getQuery()), $request->getMethod());
+        return $request->withHeader(Resources::AUTHENTICATION, $signedKey);
     }
 }

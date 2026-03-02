@@ -100,11 +100,11 @@ use Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\IBlob
+class BlobRestProxy extends ServiceRestProxy implements IBlob
 {
     use ServiceRestTrait;
-    private $singleBlobUploadThresholdInBytes = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_32;
-    private $blockSize = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_4;
+    private $singleBlobUploadThresholdInBytes = Resources::MB_IN_BYTES_32;
+    private $blockSize = Resources::MB_IN_BYTES_4;
     /**
      * Builds a blob service object, it accepts the following
      * options:
@@ -126,18 +126,18 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      */
     public static function createBlobService($connectionString, array $options = [])
     {
-        $settings = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\StorageServiceSettings::createFromConnectionString($connectionString);
-        $primaryUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryAddUrlScheme($settings->getBlobEndpointUri());
-        $secondaryUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryAddUrlScheme($settings->getBlobSecondaryEndpointUri());
-        $blobWrapper = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\BlobRestProxy($primaryUri, $secondaryUri, $settings->getName(), $options);
+        $settings = StorageServiceSettings::createFromConnectionString($connectionString);
+        $primaryUri = Utilities::tryAddUrlScheme($settings->getBlobEndpointUri());
+        $secondaryUri = Utilities::tryAddUrlScheme($settings->getBlobSecondaryEndpointUri());
+        $blobWrapper = new BlobRestProxy($primaryUri, $secondaryUri, $settings->getName(), $options);
         // Getting authentication scheme
         if ($settings->hasSasToken()) {
-            $authScheme = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\SharedAccessSignatureAuthScheme($settings->getSasToken());
+            $authScheme = new SharedAccessSignatureAuthScheme($settings->getSasToken());
         } else {
-            $authScheme = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\SharedKeyAuthScheme($settings->getName(), $settings->getKey());
+            $authScheme = new SharedKeyAuthScheme($settings->getName(), $settings->getKey());
         }
         // Adding common request middleware
-        $commonRequestMiddleware = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Middlewares\CommonRequestMiddleware($authScheme, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STORAGE_API_LATEST_VERSION, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::BLOB_SDK_VERSION);
+        $commonRequestMiddleware = new CommonRequestMiddleware($authScheme, Resources::STORAGE_API_LATEST_VERSION, Resources::BLOB_SDK_VERSION);
         $blobWrapper->pushMiddleware($commonRequestMiddleware);
         return $blobWrapper;
     }
@@ -163,14 +163,14 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      */
     public static function createBlobServiceWithTokenCredential(&$token, $connectionString, array $options = [])
     {
-        $settings = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\StorageServiceSettings::createFromConnectionStringForTokenCredential($connectionString);
-        $primaryUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryAddUrlScheme($settings->getBlobEndpointUri());
-        $secondaryUri = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryAddUrlScheme($settings->getBlobSecondaryEndpointUri());
-        $blobWrapper = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\BlobRestProxy($primaryUri, $secondaryUri, $settings->getName(), $options);
+        $settings = StorageServiceSettings::createFromConnectionStringForTokenCredential($connectionString);
+        $primaryUri = Utilities::tryAddUrlScheme($settings->getBlobEndpointUri());
+        $secondaryUri = Utilities::tryAddUrlScheme($settings->getBlobSecondaryEndpointUri());
+        $blobWrapper = new BlobRestProxy($primaryUri, $secondaryUri, $settings->getName(), $options);
         // Getting authentication scheme
-        $authScheme = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Authentication\TokenAuthScheme($token);
+        $authScheme = new TokenAuthScheme($token);
         // Adding common request middleware
-        $commonRequestMiddleware = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Middlewares\CommonRequestMiddleware($authScheme, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STORAGE_API_LATEST_VERSION, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::BLOB_SDK_VERSION);
+        $commonRequestMiddleware = new CommonRequestMiddleware($authScheme, Resources::STORAGE_API_LATEST_VERSION, Resources::BLOB_SDK_VERSION);
         $blobWrapper->pushMiddleware($commonRequestMiddleware);
         return $blobWrapper;
     }
@@ -187,10 +187,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      */
     public static function createContainerAnonymousAccess($primaryServiceEndpoint, array $options = [])
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($primaryServiceEndpoint, '$primaryServiceEndpoint');
-        $secondaryServiceEndpoint = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetSecondaryEndpointFromPrimaryEndpoint($primaryServiceEndpoint);
-        $blobWrapper = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\BlobRestProxy($primaryServiceEndpoint, $secondaryServiceEndpoint, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryParseAccountNameFromUrl($primaryServiceEndpoint), $options);
-        $blobWrapper->pushMiddleware(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Middlewares\CommonRequestMiddleware(null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STORAGE_API_LATEST_VERSION, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::BLOB_SDK_VERSION));
+        Validate::canCastAsString($primaryServiceEndpoint, '$primaryServiceEndpoint');
+        $secondaryServiceEndpoint = Utilities::tryGetSecondaryEndpointFromPrimaryEndpoint($primaryServiceEndpoint);
+        $blobWrapper = new BlobRestProxy($primaryServiceEndpoint, $secondaryServiceEndpoint, Utilities::tryParseAccountNameFromUrl($primaryServiceEndpoint), $options);
+        $blobWrapper->pushMiddleware(new CommonRequestMiddleware(null, Resources::STORAGE_API_LATEST_VERSION, Resources::BLOB_SDK_VERSION));
         return $blobWrapper;
     }
     /**
@@ -220,12 +220,12 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      */
     public function setSingleBlobUploadThresholdInBytes($val)
     {
-        if ($val > \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_256) {
+        if ($val > Resources::MB_IN_BYTES_256) {
             // What should the proper action here be?
-            $val = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_256;
+            $val = Resources::MB_IN_BYTES_256;
         } elseif ($val < 1) {
             // another spot that could use looking at
-            $val = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_32;
+            $val = Resources::MB_IN_BYTES_32;
         }
         $this->singleBlobUploadThresholdInBytes = $val;
         //If block size is larger than singleBlobUploadThresholdInBytes, honor
@@ -241,12 +241,12 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      */
     public function setBlockSize($val)
     {
-        if ($val > \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_100) {
+        if ($val > Resources::MB_IN_BYTES_100) {
             // What should the proper action here be?
-            $val = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_100;
+            $val = Resources::MB_IN_BYTES_100;
         } elseif ($val < 1) {
             // another spot that could use looking at
-            $val = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_4;
+            $val = Resources::MB_IN_BYTES_4;
         }
         //If block size is larger than singleBlobUploadThresholdInBytes, honor
         //threshold.
@@ -264,10 +264,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
     private function getMultipleUploadBlockSizeUsingContent($content)
     {
         //Default value is 100 MB.
-        $result = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_100;
+        $result = Resources::MB_IN_BYTES_100;
         //PHP must be ran in 64bit environment so content->getSize() could
         //return a guaranteed accurate size.
-        if (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::is64BitPHP()) {
+        if (Utilities::is64BitPHP()) {
             //Content must be seekable to determine the size.
             if ($content->isSeekable()) {
                 $size = $content->getSize();
@@ -277,7 +277,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
                 //be hornored, otherwise the blocks count will exceed maximum
                 //value allowed.
                 if ($this->blockSize < $result) {
-                    $assumedSize = \ceil((float) $size / (float) \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MAX_BLOB_BLOCKS);
+                    $assumedSize = \ceil((float) $size / (float) Resources::MAX_BLOB_BLOCKS);
                     if ($this->blockSize <= $assumedSize) {
                         $result = $assumedSize;
                     } else {
@@ -301,7 +301,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return string
      */
-    private function getCopyBlobSourceName($containerName, $blobName, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobOptions $options)
+    private function getCopyBlobSourceName($containerName, $blobName, Models\CopyBlobOptions $options)
     {
         $sourceName = $this->getBlobUrl($containerName, $blobName);
         if (!\is_null($options->getSourceSnapshot())) {
@@ -364,24 +364,24 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    private function getContainerPropertiesAsyncImpl($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null, $operation = null)
+    private function getContainerPropertiesAsyncImpl($container, Models\BlobServiceOptions $options = null, $operation = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        Validate::canCastAsString($container, 'container');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($container);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, $operation);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, $operation);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
         $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            $responseHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetContainerPropertiesResult::create($responseHeaders);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $responseHeaders = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetContainerPropertiesResult::create($responseHeaders);
         }, null);
     }
     /**
@@ -392,22 +392,22 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return array
      */
-    private function addCreateBlobOptionalHeaders(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $options, array $headers)
+    private function addCreateBlobOptionalHeaders(CreateBlobOptions $options, array $headers)
     {
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
         $headers = $this->addMetadataHeaders($headers, $options->getMetadata());
         $contentType = $options->getContentType();
         if (\is_null($contentType)) {
-            $contentType = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::BINARY_FILE_TYPE;
+            $contentType = Resources::BINARY_FILE_TYPE;
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_TYPE, $contentType);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_ENCODING, $options->getContentEncoding());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LANGUAGE, $options->getContentLanguage());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_MD5, $options->getContentMD5());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CACHE_CONTROL, $options->getCacheControl());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_DISPOSITION, $options->getContentDisposition());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::URL_ENCODED_CONTENT_TYPE);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_TYPE, $contentType);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_ENCODING, $options->getContentEncoding());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_LANGUAGE, $options->getContentLanguage());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_MD5, $options->getContentMD5());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CACHE_CONTROL, $options->getCacheControl());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_DISPOSITION, $options->getContentDisposition());
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, Resources::URL_ENCODED_CONTENT_TYPE);
         return $headers;
     }
     /**
@@ -424,7 +424,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
         if (!\is_null($start) || !\is_null($end)) {
             $range = $start . '-' . $end;
             $rangeValue = 'bytes=' . $range;
-            $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::RANGE, $rangeValue);
+            $this->addOptionalHeader($headers, Resources::RANGE, $rangeValue);
         }
         return $headers;
     }
@@ -438,20 +438,20 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
     private static function getStatusCodeOfLeaseAction($leaseAction)
     {
         switch ($leaseAction) {
-            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::ACQUIRE_ACTION:
-                $statusCode = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED;
+            case LeaseMode::ACQUIRE_ACTION:
+                $statusCode = Resources::STATUS_CREATED;
                 break;
-            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RENEW_ACTION:
-                $statusCode = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK;
+            case LeaseMode::RENEW_ACTION:
+                $statusCode = Resources::STATUS_OK;
                 break;
-            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RELEASE_ACTION:
-                $statusCode = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK;
+            case LeaseMode::RELEASE_ACTION:
+                $statusCode = Resources::STATUS_OK;
                 break;
-            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::BREAK_ACTION:
-                $statusCode = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_ACCEPTED;
+            case LeaseMode::BREAK_ACTION:
+                $statusCode = Resources::STATUS_ACCEPTED;
                 break;
             default:
-                throw new \Exception(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::NOT_IMPLEMENTED_MSG);
+                throw new \Exception(Resources::NOT_IMPLEMENTED_MSG);
         }
         return $statusCode;
     }
@@ -471,34 +471,34 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    private function putLeaseAsyncImpl($leaseAction, $container, $blob, $proposedLeaseId, $leaseDuration, $leaseId, $breakPeriod, $expectedStatusCode, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AccessCondition $accessCondition = null)
+    private function putLeaseAsyncImpl($leaseAction, $container, $blob, $proposedLeaseId, $leaseDuration, $leaseId, $breakPeriod, $expectedStatusCode, Models\BlobServiceOptions $options, Models\AccessCondition $accessCondition = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($blob, 'blob');
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($container, 'container');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         if (empty($blob)) {
             $path = $this->createPath($container);
-            $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
+            $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
         } else {
             $path = $this->createPath($container, $blob);
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'lease');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $leaseId);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ACTION, $leaseAction);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_BREAK_PERIOD, $breakPeriod);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_DURATION, $leaseDuration);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_PROPOSED_LEASE_ID, $proposedLeaseId);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'lease');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $leaseId);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ACTION, $leaseAction);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_BREAK_PERIOD, $breakPeriod);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_DURATION, $leaseDuration);
+        $this->addOptionalHeader($headers, Resources::X_MS_PROPOSED_LEASE_ID, $proposedLeaseId);
         $this->addOptionalAccessConditionHeader($headers, $accessCondition);
         if (!\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, $expectedStatusCode, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, $expectedStatusCode, Resources::EMPTY_STRING, $options);
     }
     /**
      * Creates promise that does actual work for create and clear blob pages.
@@ -512,32 +512,32 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    private function updatePageBlobPagesAsyncImpl($action, $container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null)
+    private function updatePageBlobPagesAsyncImpl($action, $container, $blob, Range $range, $content, CreateBlobPagesOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($content, 'content');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($range instanceof \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_PARAM_MSG, 'range', \get_class(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range(0))));
-        $body = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($content, 'content');
+        Validate::isTrue($range instanceof Range, \sprintf(Resources::INVALID_PARAM_MSG, 'range', \get_class(new Range(0))));
+        $body = Utils::streamFor($content);
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions();
+            $options = new CreateBlobPagesOptions();
         }
         $headers = $this->addOptionalRangeHeader($headers, $range->getStart(), $range->getEnd());
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $options->getContentMD5());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_PAGE_WRITE, $action);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::URL_ENCODED_CONTENT_TYPE);
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'page');
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $body, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::CONTENT_MD5, $options->getContentMD5());
+        $this->addOptionalHeader($headers, Resources::X_MS_PAGE_WRITE, $action);
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, Resources::URL_ENCODED_CONTENT_TYPE);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'page');
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, $body, $options)->then(function ($response) {
+            return CreateBlobPagesResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -549,7 +549,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179352.aspx
      */
-    public function listContainers(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersOptions $options = null)
+    public function listContainers(ListContainersOptions $options = null)
     {
         return $this->listContainersAsync($options)->wait();
     }
@@ -561,27 +561,27 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function listContainersAsync(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersOptions $options = null)
+    public function listContainersAsync(ListContainersOptions $options = null)
     {
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
-        $path = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING;
+        $path = Resources::EMPTY_STRING;
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersOptions();
+            $options = new ListContainersOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'list');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_PREFIX_LOWERCASE, $options->getPrefix());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MARKER_LOWERCASE, $options->getNextMarker());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'list');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_PREFIX_LOWERCASE, $options->getPrefix());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MARKER_LOWERCASE, $options->getNextMarker());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
         $isInclude = $options->getIncludeMetadata();
         $isInclude = $isInclude ? 'metadata' : null;
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_INCLUDE, $isInclude);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_INCLUDE, $isInclude);
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $this->dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListContainersResult::create($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getLocationFromHeaders($response->getHeaders()));
+            return ListContainersResult::create($parsed, Utilities::getLocationFromHeaders($response->getHeaders()));
         });
     }
     /**
@@ -594,7 +594,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179468.aspx
      */
-    public function createContainer($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions $options = null)
+    public function createContainer($container, Models\CreateContainerOptions $options = null)
     {
         $this->createContainerAsync($container, $options)->wait();
     }
@@ -608,22 +608,22 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179468.aspx
      */
-    public function createContainerAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions $options = null)
+    public function createContainerAsync($container, Models\CreateContainerOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($container, 'container');
+        $method = Resources::HTTP_PUT;
         $postParams = array();
-        $queryParams = array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE => 'container');
+        $queryParams = array(Resources::QP_REST_TYPE => 'container');
         $path = $this->createPath($container);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions();
+            $options = new CreateContainerOptions();
         }
         $metadata = $options->getMetadata();
         $headers = $this->generateMetadataHeaders($metadata);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_PUBLIC_ACCESS, $options->getPublicAccess());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_PUBLIC_ACCESS, $options->getPublicAccess());
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Deletes a container in the given storage account.
@@ -635,7 +635,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179408.aspx
      */
-    public function deleteContainer($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function deleteContainer($container, Models\BlobServiceOptions $options = null)
     {
         $this->deleteContainerAsync($container, $options)->wait();
     }
@@ -647,23 +647,23 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteContainerAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function deleteContainerAsync($container, Models\BlobServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_DELETE;
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($container, 'container');
+        $method = Resources::HTTP_DELETE;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Returns all properties and metadata on the container.
@@ -675,7 +675,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179370.aspx
      */
-    public function getContainerProperties($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function getContainerProperties($container, Models\BlobServiceOptions $options = null)
     {
         return $this->getContainerPropertiesAsync($container, $options)->wait();
     }
@@ -689,7 +689,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179370.aspx
      */
-    public function getContainerPropertiesAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function getContainerPropertiesAsync($container, Models\BlobServiceOptions $options = null)
     {
         return $this->getContainerPropertiesAsyncImpl($container, $options);
     }
@@ -703,7 +703,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691976.aspx
      */
-    public function getContainerMetadata($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function getContainerMetadata($container, Models\BlobServiceOptions $options = null)
     {
         return $this->getContainerMetadataAsync($container, $options)->wait();
     }
@@ -718,7 +718,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691976.aspx
      */
-    public function getContainerMetadataAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function getContainerMetadataAsync($container, Models\BlobServiceOptions $options = null)
     {
         return $this->getContainerPropertiesAsyncImpl($container, $options, 'metadata');
     }
@@ -733,7 +733,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179469.aspx
      */
-    public function getContainerAcl($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function getContainerAcl($container, Models\BlobServiceOptions $options = null)
     {
         return $this->getContainerAclAsync($container, $options)->wait();
     }
@@ -748,31 +748,31 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179469.aspx
      */
-    public function getContainerAclAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function getContainerAclAsync($container, Models\BlobServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        Validate::canCastAsString($container, 'container');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'acl');
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'acl');
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
         $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
         $dataSerializer = $this->dataSerializer;
-        $promise = $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $promise = $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
         return $promise->then(function ($response) use($dataSerializer) {
-            $responseHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            $access = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($responseHeaders, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_PUBLIC_ACCESS);
-            $etag = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($responseHeaders, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ETAG);
-            $modified = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($responseHeaders, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::LAST_MODIFIED);
-            $modifiedDate = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::convertToDateTime($modified);
+            $responseHeaders = HttpFormatter::formatHeaders($response->getHeaders());
+            $access = Utilities::tryGetValue($responseHeaders, Resources::X_MS_BLOB_PUBLIC_ACCESS);
+            $etag = Utilities::tryGetValue($responseHeaders, Resources::ETAG);
+            $modified = Utilities::tryGetValue($responseHeaders, Resources::LAST_MODIFIED);
+            $modifiedDate = Utilities::convertToDateTime($modified);
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetContainerACLResult::create($access, $etag, $modifiedDate, $parsed);
+            return GetContainerAclResult::create($access, $etag, $modifiedDate, $parsed);
         }, null);
     }
     /**
@@ -786,7 +786,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179391.aspx
      */
-    public function setContainerAcl($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function setContainerAcl($container, Models\ContainerACL $acl, Models\BlobServiceOptions $options = null)
     {
         $this->setContainerAclAsync($container, $acl, $options)->wait();
     }
@@ -802,27 +802,27 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179391.aspx
      */
-    public function setContainerAclAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ContainerACL $acl, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function setContainerAclAsync($container, Models\ContainerACL $acl, Models\BlobServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($acl, 'acl');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($acl, 'acl');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container);
         $body = $acl->toXml($this->dataSerializer);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'acl');
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_PUBLIC_ACCESS, $acl->getPublicAccess());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::URL_ENCODED_CONTENT_TYPE);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'acl');
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_PUBLIC_ACCESS, $acl->getPublicAccess());
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, Resources::URL_ENCODED_CONTENT_TYPE);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
         $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, $body, $options);
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, $body, $options);
     }
     /**
      * Sets metadata headers on the container.
@@ -835,7 +835,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179362.aspx
      */
-    public function setContainerMetadata($container, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function setContainerMetadata($container, array $metadata, Models\BlobServiceOptions $options = null)
     {
         $this->setContainerMetadataAsync($container, $metadata, $options)->wait();
     }
@@ -850,24 +850,24 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179362.aspx
      */
-    public function setContainerMetadataAsync($container, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function setContainerMetadataAsync($container, array $metadata, Models\BlobServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($metadata);
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Utilities::validateMetadata($metadata);
+        $method = Resources::HTTP_PUT;
         $headers = $this->generateMetadataHeaders($metadata);
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'metadata');
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
     }
     /**
      * Sets blob tier on the blob.
@@ -880,7 +880,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tier
      */
-    public function setBlobTier($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobTierOptions $options = null)
+    public function setBlobTier($container, $blob, Models\SetBlobTierOptions $options = null)
     {
         $this->setBlobTierAsync($container, $blob, $options)->wait();
     }
@@ -895,23 +895,23 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tier
      */
-    public function setBlobTierAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobTierOptions $options = null)
+    public function setBlobTierAsync($container, $blob, Models\SetBlobTierOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobTierOptions();
+            $options = new SetBlobTierOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'tier');
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ACCESS_TIER, $options->getAccessTier());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_ACCEPTED), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'tier');
+        $this->addOptionalHeader($headers, Resources::X_MS_ACCESS_TIER, $options->getAccessTier());
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, array(Resources::STATUS_OK, Resources::STATUS_ACCEPTED), Resources::EMPTY_STRING, $options);
     }
     /**
      * Lists all of the blobs in the given container.
@@ -923,7 +923,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135734.aspx
      */
-    public function listBlobs($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions $options = null)
+    public function listBlobs($container, Models\ListBlobsOptions $options = null)
     {
         return $this->listBlobsAsync($container, $options)->wait();
     }
@@ -937,35 +937,35 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135734.aspx
      */
-    public function listBlobsAsync($container, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions $options = null)
+    public function listBlobsAsync($container, Models\ListBlobsOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        Validate::notNull($container, 'container');
+        Validate::canCastAsString($container, 'container');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions();
+            $options = new ListBlobsOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_REST_TYPE, 'container');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'list');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_PREFIX_LOWERCASE, \str_replace('\\', '/', $options->getPrefix()));
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MARKER_LOWERCASE, $options->getNextMarker());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_DELIMITER, $options->getDelimiter());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_REST_TYPE, 'container');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'list');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_PREFIX_LOWERCASE, \str_replace('\\', '/', $options->getPrefix()));
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MARKER_LOWERCASE, $options->getNextMarker());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_DELIMITER, $options->getDelimiter());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_MAX_RESULTS_LOWERCASE, $options->getMaxResults());
         $includeMetadata = $options->getIncludeMetadata();
         $includeSnapshots = $options->getIncludeSnapshots();
         $includeUncommittedBlobs = $options->getIncludeUncommittedBlobs();
         $includecopy = $options->getIncludeCopy();
         $includeDeleted = $options->getIncludeDeleted();
         $includeValue = static::groupQueryValues(array($includeMetadata ? 'metadata' : null, $includeSnapshots ? 'snapshots' : null, $includeUncommittedBlobs ? 'uncommittedblobs' : null, $includecopy ? 'copy' : null, $includeDeleted ? 'deleted' : null));
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_INCLUDE, $includeValue);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_INCLUDE, $includeValue);
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer) {
             $parsed = $dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobsResult::create($parsed, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getLocationFromHeaders($response->getHeaders()));
+            return ListBlobsResult::create($parsed, Utilities::getLocationFromHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -986,7 +986,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createPageBlob($container, $blob, $length, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobOptions $options = null)
+    public function createPageBlob($container, $blob, $length, Models\CreatePageBlobOptions $options = null)
     {
         return $this->createPageBlobAsync($container, $blob, $length, $options)->wait();
     }
@@ -1008,29 +1008,29 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createPageBlobAsync($container, $blob, $length, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobOptions $options = null)
+    public function createPageBlobAsync($container, $blob, $length, Models\CreatePageBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($length, 'length');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($length, 'length');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Validate::isInteger($length, 'length');
+        Validate::notNull($length, 'length');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobOptions();
+            $options = new CreatePageBlobOptions();
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobType::PAGE_BLOB);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LENGTH, $length);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_SEQUENCE_NUMBER, $options->getSequenceNumber());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ACCESS_TIER, $options->getAccessTier());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_TYPE, BlobType::PAGE_BLOB);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_LENGTH, $length);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_SEQUENCE_NUMBER, $options->getSequenceNumber());
+        $this->addOptionalHeader($headers, Resources::X_MS_ACCESS_TIER, $options->getAccessTier());
         $headers = $this->addCreateBlobOptionalHeaders($options, $headers);
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PutBlobResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            return PutBlobResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -1045,7 +1045,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createAppendBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $options = null)
+    public function createAppendBlob($container, $blob, Models\CreateBlobOptions $options = null)
     {
         return $this->createAppendBlobAsync($container, $blob, $options)->wait();
     }
@@ -1061,25 +1061,25 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createAppendBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $options = null)
+    public function createAppendBlobAsync($container, $blob, Models\CreateBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions();
+            $options = new CreateBlobOptions();
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobType::APPEND_BLOB);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_TYPE, BlobType::APPEND_BLOB);
         $headers = $this->addCreateBlobOptionalHeaders($options, $headers);
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PutBlobResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            return PutBlobResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -1101,7 +1101,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createBlockBlob($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions $options = null)
+    public function createBlockBlob($container, $blob, $content, Models\CreateBlockBlobOptions $options = null)
     {
         return $this->createBlockBlobAsync($container, $blob, $content, $options)->wait();
     }
@@ -1124,13 +1124,13 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    public function createBlockBlobAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions $options = null)
+    public function createBlockBlobAsync($container, $blob, $content, Models\CreateBlockBlobOptions $options = null)
     {
-        $body = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
+        $body = Utils::streamFor($content);
         //If the size of the stream is not seekable or larger than the single
         //upload threshold then call concurrent upload. Otherwise call putBlob.
         $promise = null;
-        if (!\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::isStreamLargerThanSizeOrNotSeekable($body, $this->singleBlobUploadThresholdInBytes)) {
+        if (!Utilities::isStreamLargerThanSizeOrNotSeekable($body, $this->singleBlobUploadThresholdInBytes)) {
             $promise = $this->createBlockBlobBySingleUploadAsync($container, $blob, $body, $options);
         } else {
             // This is for large or failsafe upload
@@ -1153,7 +1153,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-properties
      */
-    public function createPageBlobFromContent($container, $blob, $length, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions $options = null)
+    public function createPageBlobFromContent($container, $blob, $length, $content, Models\CreatePageBlobFromContentOptions $options = null)
     {
         return $this->createPageBlobFromContentAsync($container, $blob, $length, $content, $options)->wait();
     }
@@ -1172,12 +1172,12 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-properties
      */
-    public function createPageBlobFromContentAsync($container, $blob, $length, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions $options = null)
+    public function createPageBlobFromContentAsync($container, $blob, $length, $content, Models\CreatePageBlobFromContentOptions $options = null)
     {
-        $body = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
+        $body = Utils::streamFor($content);
         $self = $this;
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions();
+            $options = new Models\CreatePageBlobFromContentOptions();
         }
         $createBlobPromise = $this->createPageBlobAsync($container, $blob, $length, $options);
         $uploadBlobPromise = $createBlobPromise->then(function ($value) use($self, $container, $blob, $body, $options) {
@@ -1185,7 +1185,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
             return $self->uploadPageBlobAsync($container, $blob, $body, $options);
         }, null);
         return $uploadBlobPromise->then(function ($value) use($self, $container, $blob, $options) {
-            $getBlobPropertiesOptions = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesOptions();
+            $getBlobPropertiesOptions = new GetBlobPropertiesOptions();
             $getBlobPropertiesOptions->setLeaseId($options->getLeaseId());
             return $self->getBlobPropertiesAsync($container, $blob, $getBlobPropertiesOptions);
         }, null);
@@ -1207,25 +1207,25 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179451.aspx
      */
-    protected function createBlockBlobBySingleUploadAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions $options = null)
+    protected function createBlockBlobBySingleUploadAsync($container, $blob, $content, Models\CreateBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($options == null || $options instanceof \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_PARAM_MSG, 'options', \get_class(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions())));
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Validate::isTrue($options == null || $options instanceof CreateBlobOptions, \sprintf(Resources::INVALID_PARAM_MSG, 'options', \get_class(new CreateBlobOptions())));
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions();
+            $options = new CreateBlobOptions();
         }
         $headers = $this->addCreateBlobOptionalHeaders($options, $headers);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobType::BLOCK_BLOB);
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $content, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PutBlobResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_TYPE, BlobType::BLOCK_BLOB);
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, $content, $options)->then(function ($response) {
+            return PutBlobResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -1240,19 +1240,19 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    protected function createBlockBlobByMultipleUploadAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions $options = null)
+    protected function createBlockBlobByMultipleUploadAsync($container, $blob, $content, Models\CreateBlockBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        if ($content->isSeekable() && \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::is64BitPHP()) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($content->getSize() <= \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MAX_BLOCK_BLOB_SIZE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_SIZE_TOO_LARGE);
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        if ($content->isSeekable() && Utilities::is64BitPHP()) {
+            Validate::isTrue($content->getSize() <= Resources::MAX_BLOCK_BLOB_SIZE, Resources::CONTENT_SIZE_TOO_LARGE);
         }
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlockBlobOptions();
+            $options = new Models\CreateBlockBlobOptions();
         }
-        $createBlobBlockOptions = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions::create($options);
+        $createBlobBlockOptions = CreateBlobBlockOptions::create($options);
         $selfInstance = $this;
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $headers = $this->createBlobBlockHeader($createBlobBlockOptions);
         $postParams = array();
         $path = $this->createPath($container, $blob);
@@ -1274,20 +1274,20 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
             }
             if ($useTransactionalMD5) {
                 $contentMD5 = \base64_encode(\md5($blockContent, \true));
-                $selfInstance->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $contentMD5);
+                $selfInstance->addOptionalHeader($headers, Resources::CONTENT_MD5, $contentMD5);
             }
             //add the id to array.
-            \array_push($blockIds, new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\Block($blockId, 'Uncommitted'));
+            \array_push($blockIds, new Block($blockId, 'Uncommitted'));
             $queryParams = $selfInstance->createBlobBlockQueryParams($createBlobBlockOptions, $blockId, \true);
             //return the array of requests.
-            return $selfInstance->createRequest($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY, $blockContent);
+            return $selfInstance->createRequest($method, $headers, $queryParams, $postParams, $path, LocationMode::PRIMARY_ONLY, $blockContent);
         };
         //Send the request concurrently.
         //Does not need to evaluate the results. If operation not successful,
         //exception will be thrown.
-        $putBlobPromise = $this->sendConcurrentAsync($generator, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $options);
+        $putBlobPromise = $this->sendConcurrentAsync($generator, Resources::STATUS_CREATED, $options);
         $commitBlobPromise = $putBlobPromise->then(function ($value) use($selfInstance, $container, $blob, &$blockIds, $putBlobPromise, $options) {
-            return $selfInstance->commitBlobBlocksAsync($container, $blob, $blockIds, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions::create($options));
+            return $selfInstance->commitBlobBlocksAsync($container, $blob, $blockIds, CommitBlobBlocksOptions::create($options));
         }, null);
         return $commitBlobPromise;
     }
@@ -1304,23 +1304,23 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    private function uploadPageBlobAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions $options = null)
+    private function uploadPageBlobAsync($container, $blob, $content, Models\CreatePageBlobFromContentOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreatePageBlobFromContentOptions();
+            $options = new Models\CreatePageBlobFromContentOptions();
         }
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         $useTransactionalMD5 = $options->getUseTransactionalMD5();
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'page');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_TIMEOUT, $options->getTimeout());
-        $pageSize = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_4;
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'page');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $pageSize = Resources::MB_IN_BYTES_4;
         $start = 0;
         $end = -1;
         //create the generator for requests.
@@ -1335,23 +1335,23 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
                 $end += $size;
                 $start = $end - $size + 1;
                 // If all Zero, skip this range
-            } while (\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::allZero($pageContent));
+            } while (Utilities::allZero($pageContent));
             $headers = array();
             $headers = $this->addOptionalRangeHeader($headers, $start, $end);
             $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-            $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-            $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_PAGE_WRITE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PageWriteOption::UPDATE_OPTION);
+            $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+            $this->addOptionalHeader($headers, Resources::X_MS_PAGE_WRITE, PageWriteOption::UPDATE_OPTION);
             if ($useTransactionalMD5) {
                 $contentMD5 = \base64_encode(\md5($pageContent, \true));
-                $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $contentMD5);
+                $this->addOptionalHeader($headers, Resources::CONTENT_MD5, $contentMD5);
             }
             //return the array of requests.
-            return $this->createRequest($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY, $pageContent);
+            return $this->createRequest($method, $headers, $queryParams, $postParams, $path, LocationMode::PRIMARY_ONLY, $pageContent);
         };
         //Send the request concurrently.
         //Does not need to evaluate the results. If operation is not successful,
         //exception will be thrown.
-        return $this->sendConcurrentAsync($generator, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $options);
+        return $this->sendConcurrentAsync($generator, Resources::STATUS_CREATED, $options);
     }
     /**
      * Clears a range of pages from the blob.
@@ -1369,7 +1369,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function clearBlobPages($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null)
+    public function clearBlobPages($container, $blob, Range $range, Models\CreateBlobPagesOptions $options = null)
     {
         return $this->clearBlobPagesAsync($container, $blob, $range, $options)->wait();
     }
@@ -1389,9 +1389,9 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function clearBlobPagesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null)
+    public function clearBlobPagesAsync($container, $blob, Range $range, Models\CreateBlobPagesOptions $options = null)
     {
-        return $this->updatePageBlobPagesAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PageWriteOption::CLEAR_OPTION, $container, $blob, $range, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        return $this->updatePageBlobPagesAsyncImpl(PageWriteOption::CLEAR_OPTION, $container, $blob, $range, Resources::EMPTY_STRING, $options);
     }
     /**
      * Creates a range of pages to a page blob.
@@ -1409,7 +1409,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function createBlobPages($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null)
+    public function createBlobPages($container, $blob, Range $range, $content, Models\CreateBlobPagesOptions $options = null)
     {
         return $this->createBlobPagesAsync($container, $blob, $range, $content, $options)->wait();
     }
@@ -1429,18 +1429,18 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691975.aspx
      */
-    public function createBlobPagesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobPagesOptions $options = null)
+    public function createBlobPagesAsync($container, $blob, Range $range, $content, Models\CreateBlobPagesOptions $options = null)
     {
-        $contentStream = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
+        $contentStream = Utils::streamFor($content);
         //because the content is at most 4MB long, can retrieve all the data
         //here at once.
         $body = $contentStream->getContents();
         //if the range is not align to 512, throw exception.
         $chunks = (int) ($range->getLength() / 512);
         if ($chunks * 512 != $range->getLength()) {
-            throw new \RuntimeException(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ERROR_RANGE_NOT_ALIGN_TO_512);
+            throw new \RuntimeException(Resources::ERROR_RANGE_NOT_ALIGN_TO_512);
         }
-        return $this->updatePageBlobPagesAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PageWriteOption::UPDATE_OPTION, $container, $blob, $range, $body, $options);
+        return $this->updatePageBlobPagesAsyncImpl(PageWriteOption::UPDATE_OPTION, $container, $blob, $range, $body, $options);
     }
     /**
      * Creates a new block to be committed as part of a block blob.
@@ -1462,7 +1462,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx
      */
-    public function createBlobBlock($container, $blob, $blockId, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions $options = null)
+    public function createBlobBlock($container, $blob, $blockId, $content, Models\CreateBlobBlockOptions $options = null)
     {
         return $this->createBlobBlockAsync($container, $blob, $blockId, $content, $options)->wait();
     }
@@ -1486,26 +1486,26 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx
      */
-    public function createBlobBlockAsync($container, $blob, $blockId, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions $options = null)
+    public function createBlobBlockAsync($container, $blob, $blockId, $content, Models\CreateBlobBlockOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blockId, 'blockId');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blockId, 'blockId');
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Validate::canCastAsString($blockId, 'blockId');
+        Validate::notNullOrEmpty($blockId, 'blockId');
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions();
+            $options = new CreateBlobBlockOptions();
         }
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $headers = $this->createBlobBlockHeader($options);
         $postParams = array();
         $queryParams = $this->createBlobBlockQueryParams($options, $blockId);
         $path = $this->createPath($container, $blob);
-        $contentStream = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
+        $contentStream = Utils::streamFor($content);
         $body = $contentStream->getContents();
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $body, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PutBlockResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, $body, $options)->then(function ($response) {
+            return PutBlockResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         });
     }
     /**
@@ -1520,7 +1520,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/append-block
      */
-    public function appendBlock($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockOptions $options = null)
+    public function appendBlock($container, $blob, $content, Models\AppendBlockOptions $options = null)
     {
         return $this->appendBlockAsync($container, $blob, $content, $options)->wait();
     }
@@ -1536,33 +1536,33 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/append-block
      */
-    public function appendBlockAsync($container, $blob, $content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockOptions $options = null)
+    public function appendBlockAsync($container, $blob, $content, Models\AppendBlockOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
+        Validate::canCastAsString($container, 'container');
+        Validate::notNullOrEmpty($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockOptions();
+            $options = new AppendBlockOptions();
         }
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
-        $contentStream = \Dekode\GravityForms\Vendor\GuzzleHttp\Psr7\Utils::streamFor($content);
+        $contentStream = Utils::streamFor($content);
         $length = $contentStream->getSize();
         $body = $contentStream->getContents();
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'appendblock');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'appendblock');
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_LENGTH, $length);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $options->getContentMD5());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONDITION_MAXSIZE, $options->getMaxBlobSize());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONDITION_APPENDPOS, $options->getAppendPosition());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $body, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\AppendBlockResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::CONTENT_LENGTH, $length);
+        $this->addOptionalHeader($headers, Resources::CONTENT_MD5, $options->getContentMD5());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONDITION_MAXSIZE, $options->getMaxBlobSize());
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONDITION_APPENDPOS, $options->getAppendPosition());
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, $body, $options)->then(function ($response) {
+            return AppendBlockResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         });
     }
     /**
@@ -1571,12 +1571,12 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return array
      */
-    protected function createBlobBlockHeader(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions $options = null)
+    protected function createBlobBlockHeader(Models\CreateBlobBlockOptions $options = null)
     {
         $headers = array();
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_MD5, $options->getContentMD5());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::URL_ENCODED_CONTENT_TYPE);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::CONTENT_MD5, $options->getContentMD5());
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, Resources::URL_ENCODED_CONTENT_TYPE);
         return $headers;
     }
     /**
@@ -1591,13 +1591,13 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @return array  the constructed query parameters.
      */
-    protected function createBlobBlockQueryParams(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobBlockOptions $options, $blockId, $isConcurrent = \false)
+    protected function createBlobBlockQueryParams(Models\CreateBlobBlockOptions $options, $blockId, $isConcurrent = \false)
     {
         $queryParams = array();
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'block');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_BLOCKID, $blockId);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'block');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_BLOCKID, $blockId);
         if ($isConcurrent) {
-            $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_TIMEOUT, $options->getTimeout());
+            $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
         }
         return $queryParams;
     }
@@ -1621,7 +1621,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179467.aspx
      */
-    public function commitBlobBlocks($container, $blob, $blockList, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions $options = null)
+    public function commitBlobBlocks($container, $blob, $blockList, Models\CommitBlobBlocksOptions $options = null)
     {
         return $this->commitBlobBlocksAsync($container, $blob, $blockList, $options)->wait();
     }
@@ -1645,21 +1645,21 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179467.aspx
      */
-    public function commitBlobBlocksAsync($container, $blob, $blockList, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions $options = null)
+    public function commitBlobBlocksAsync($container, $blob, $blockList, Models\CommitBlobBlocksOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($blockList instanceof \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlockList || \is_array($blockList), \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_PARAM_MSG, 'blockList', \get_class(new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlockList())));
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Validate::isTrue($blockList instanceof BlockList || \is_array($blockList), \sprintf(Resources::INVALID_PARAM_MSG, 'blockList', \get_class(new BlockList())));
+        $method = Resources::HTTP_PUT;
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         $isArray = \is_array($blockList);
-        $blockList = $isArray ? \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlockList::create($blockList) : $blockList;
+        $blockList = $isArray ? BlockList::create($blockList) : $blockList;
         $body = $blockList->toXml($this->dataSerializer);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CommitBlobBlocksOptions();
+            $options = new CommitBlobBlocksOptions();
         }
         $blobContentType = $options->getContentType();
         $blobContentEncoding = $options->getContentEncoding();
@@ -1668,22 +1668,22 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
         $blobCacheControl = $options->getCacheControl();
         $blobCcontentDisposition = $options->getContentDisposition();
         $leaseId = $options->getLeaseId();
-        $contentType = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::URL_ENCODED_CONTENT_TYPE;
+        $contentType = Resources::URL_ENCODED_CONTENT_TYPE;
         $metadata = $options->getMetadata();
         $headers = $this->generateMetadataHeaders($metadata);
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $leaseId);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CACHE_CONTROL, $blobCacheControl);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_DISPOSITION, $blobCcontentDisposition);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_TYPE, $blobContentType);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_ENCODING, $blobContentEncoding);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LANGUAGE, $blobContentLanguage);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_MD5, $blobContentMD5);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::CONTENT_TYPE, $contentType);
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'blocklist');
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, $body, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PutBlobResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $leaseId);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CACHE_CONTROL, $blobCacheControl);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_DISPOSITION, $blobCcontentDisposition);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_TYPE, $blobContentType);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_ENCODING, $blobContentEncoding);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_LANGUAGE, $blobContentLanguage);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_MD5, $blobContentMD5);
+        $this->addOptionalHeader($headers, Resources::CONTENT_TYPE, $contentType);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'blocklist');
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, $body, $options)->then(function ($response) {
+            return PutBlobResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -1705,7 +1705,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179400.aspx
      */
-    public function listBlobBlocks($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksOptions $options = null)
+    public function listBlobBlocks($container, $blob, Models\ListBlobBlocksOptions $options = null)
     {
         return $this->listBlobBlocksAsync($container, $blob, $options)->wait();
     }
@@ -1729,26 +1729,26 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179400.aspx
      */
-    public function listBlobBlocksAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksOptions $options = null)
+    public function listBlobBlocksAsync($container, $blob, Models\ListBlobBlocksOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksOptions();
+            $options = new ListBlobBlocksOptions();
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_BLOCK_LIST_TYPE, $options->getBlockListType());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_SNAPSHOT, $options->getSnapshot());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'blocklist');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_BLOCK_LIST_TYPE, $options->getBlockListType());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_SNAPSHOT, $options->getSnapshot());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'blocklist');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
             $parsed = $this->dataSerializer->unserialize($response->getBody());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListBlobBlocksResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()), $parsed);
+            return ListBlobBlocksResult::create(HttpFormatter::formatHeaders($response->getHeaders()), $parsed);
         }, null);
     }
     /**
@@ -1762,7 +1762,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179394.aspx
      */
-    public function getBlobProperties($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesOptions $options = null)
+    public function getBlobProperties($container, $blob, Models\GetBlobPropertiesOptions $options = null)
     {
         return $this->getBlobPropertiesAsync($container, $blob, $options)->wait();
     }
@@ -1777,25 +1777,25 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179394.aspx
      */
-    public function getBlobPropertiesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesOptions $options = null)
+    public function getBlobPropertiesAsync($container, $blob, Models\GetBlobPropertiesOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_HEAD;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_HEAD;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesOptions();
+            $options = new GetBlobPropertiesOptions();
         }
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_SNAPSHOT, $options->getSnapshot());
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            $formattedHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobPropertiesResult::create($formattedHeaders);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_SNAPSHOT, $options->getSnapshot());
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $formattedHeaders = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetBlobPropertiesResult::create($formattedHeaders);
         }, null);
     }
     /**
@@ -1809,7 +1809,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179350.aspx
      */
-    public function getBlobMetadata($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobMetadataOptions $options = null)
+    public function getBlobMetadata($container, $blob, Models\GetBlobMetadataOptions $options = null)
     {
         return $this->getBlobMetadataAsync($container, $blob, $options)->wait();
     }
@@ -1824,26 +1824,26 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179350.aspx
      */
-    public function getBlobMetadataAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobMetadataOptions $options = null)
+    public function getBlobMetadataAsync($container, $blob, Models\GetBlobMetadataOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_HEAD;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_HEAD;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobMetadataOptions();
+            $options = new GetBlobMetadataOptions();
         }
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_SNAPSHOT, $options->getSnapshot());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'metadata');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            $responseHeaders = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders());
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobMetadataResult::create($responseHeaders);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_SNAPSHOT, $options->getSnapshot());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $responseHeaders = HttpFormatter::formatHeaders($response->getHeaders());
+            return GetBlobMetadataResult::create($responseHeaders);
         });
     }
     /**
@@ -1858,7 +1858,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    public function listPageBlobRanges($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null)
+    public function listPageBlobRanges($container, $blob, Models\ListPageBlobRangesOptions $options = null)
     {
         return $this->listPageBlobRangesAsync($container, $blob, $options)->wait();
     }
@@ -1874,7 +1874,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    public function listPageBlobRangesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null)
+    public function listPageBlobRangesAsync($container, $blob, Models\ListPageBlobRangesOptions $options = null)
     {
         return $this->listPageBlobRangesAsyncImpl($container, $blob, null, $options);
     }
@@ -1899,7 +1899,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/version-2015-07-08
      */
-    public function listPageBlobRangesDiff($container, $blob, $previousSnapshotTime, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null)
+    public function listPageBlobRangesDiff($container, $blob, $previousSnapshotTime, Models\ListPageBlobRangesOptions $options = null)
     {
         return $this->listPageBlobRangesDiffAsync($container, $blob, $previousSnapshotTime, $options)->wait();
     }
@@ -1925,7 +1925,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    public function listPageBlobRangesDiffAsync($container, $blob, $previousSnapshotTime, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null)
+    public function listPageBlobRangesDiffAsync($container, $blob, $previousSnapshotTime, Models\ListPageBlobRangesOptions $options = null)
     {
         return $this->listPageBlobRangesAsyncImpl($container, $blob, $previousSnapshotTime, $options);
     }
@@ -1948,35 +1948,35 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691973.aspx
      */
-    private function listPageBlobRangesAsyncImpl($container, $blob, $previousSnapshotTime = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions $options = null)
+    private function listPageBlobRangesAsyncImpl($container, $blob, $previousSnapshotTime = null, Models\ListPageBlobRangesOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $queryParams = array();
         $postParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesOptions();
+            $options = new ListPageBlobRangesOptions();
         }
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
         $range = $options->getRange();
         if ($range) {
             $headers = $this->addOptionalRangeHeader($headers, $range->getStart(), $range->getEnd());
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_SNAPSHOT, $options->getSnapshot());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'pagelist');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_PRE_SNAPSHOT, $previousSnapshotTime);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_SNAPSHOT, $options->getSnapshot());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'pagelist');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_PRE_SNAPSHOT, $previousSnapshotTime);
         $dataSerializer = $this->dataSerializer;
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer, $previousSnapshotTime) {
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) use($dataSerializer, $previousSnapshotTime) {
             $parsed = $dataSerializer->unserialize($response->getBody());
             if (\is_null($previousSnapshotTime)) {
-                return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()), $parsed);
+                return ListPageBlobRangesResult::create(HttpFormatter::formatHeaders($response->getHeaders()), $parsed);
             } else {
-                return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\ListPageBlobRangesDiffResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()), $parsed);
+                return ListPageBlobRangesDiffResult::create(HttpFormatter::formatHeaders($response->getHeaders()), $parsed);
             }
         }, null);
     }
@@ -1991,7 +1991,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691966.aspx
      */
-    public function setBlobProperties($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesOptions $options = null)
+    public function setBlobProperties($container, $blob, Models\SetBlobPropertiesOptions $options = null)
     {
         return $this->setBlobPropertiesAsync($container, $blob, $options)->wait();
     }
@@ -2006,18 +2006,18 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691966.aspx
      */
-    public function setBlobPropertiesAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesOptions $options = null)
+    public function setBlobPropertiesAsync($container, $blob, Models\SetBlobPropertiesOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesOptions();
+            $options = new SetBlobPropertiesOptions();
         }
         $blobContentType = $options->getContentType();
         $blobContentEncoding = $options->getContentEncoding();
@@ -2030,20 +2030,20 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
         $sNumberAction = $options->getSequenceNumberAction();
         $sNumber = $options->getSequenceNumber();
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $leaseId);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CACHE_CONTROL, $blobCacheControl);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_DISPOSITION, $blobContentDisposition);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_TYPE, $blobContentType);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_ENCODING, $blobContentEncoding);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LANGUAGE, $blobContentLanguage);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_LENGTH, $blobContentLength);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_CONTENT_MD5, $blobContentMD5);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_SEQUENCE_NUMBER_ACTION, $sNumberAction);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_BLOB_SEQUENCE_NUMBER, $sNumber);
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'properties');
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $leaseId);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CACHE_CONTROL, $blobCacheControl);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_DISPOSITION, $blobContentDisposition);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_TYPE, $blobContentType);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_ENCODING, $blobContentEncoding);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_LANGUAGE, $blobContentLanguage);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_LENGTH, $blobContentLength);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_CONTENT_MD5, $blobContentMD5);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_SEQUENCE_NUMBER_ACTION, $sNumberAction);
+        $this->addOptionalHeader($headers, Resources::X_MS_BLOB_SEQUENCE_NUMBER, $sNumber);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'properties');
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            return SetBlobPropertiesResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2058,7 +2058,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179414.aspx
      */
-    public function setBlobMetadata($container, $blob, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function setBlobMetadata($container, $blob, array $metadata, Models\BlobServiceOptions $options = null)
     {
         return $this->setBlobMetadataAsync($container, $blob, $metadata, $options)->wait();
     }
@@ -2074,27 +2074,27 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179414.aspx
      */
-    public function setBlobMetadataAsync($container, $blob, array $metadata, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function setBlobMetadataAsync($container, $blob, array $metadata, Models\BlobServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::validateMetadata($metadata);
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Utilities::validateMetadata($metadata);
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
         $headers = $this->addMetadataHeaders($headers, $metadata);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'metadata');
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\SetBlobMetadataResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'metadata');
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            return SetBlobMetadataResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2111,7 +2111,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function saveBlobToFile($path, $container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null)
+    public function saveBlobToFile($path, $container, $blob, Models\GetBlobOptions $options = null)
     {
         return $this->saveBlobToFileAsync($path, $container, $blob, $options)->wait();
     }
@@ -2129,16 +2129,16 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      * @throws \Exception
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function saveBlobToFileAsync($path, $container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null)
+    public function saveBlobToFileAsync($path, $container, $blob, Models\GetBlobOptions $options = null)
     {
         $resource = \fopen($path, 'w+');
         if ($resource == null) {
-            throw new \Exception(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::ERROR_FILE_COULD_NOT_BE_OPENED);
+            throw new \Exception(Resources::ERROR_FILE_COULD_NOT_BE_OPENED);
         }
         return $this->getBlobAsync($container, $blob, $options)->then(function ($result) use($path, $resource) {
             $content = $result->getContentStream();
             while (!\feof($content)) {
-                \fwrite($resource, \stream_get_contents($content, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::MB_IN_BYTES_4));
+                \fwrite($resource, \stream_get_contents($content, Resources::MB_IN_BYTES_4));
             }
             $content = null;
             \fclose($resource);
@@ -2157,7 +2157,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function getBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null)
+    public function getBlob($container, $blob, Models\GetBlobOptions $options = null)
     {
         return $this->getBlobAsync($container, $blob, $options)->wait();
     }
@@ -2173,17 +2173,17 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179440.aspx
      */
-    public function getBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions $options = null)
+    public function getBlobAsync($container, $blob, Models\GetBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_GET;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        $method = Resources::HTTP_GET;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobOptions();
+            $options = new GetBlobOptions();
         }
         $getMD5 = $options->getRangeGetContentMD5();
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
@@ -2191,13 +2191,13 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
         if ($range) {
             $headers = $this->addOptionalRangeHeader($headers, $range->getStart(), $range->getEnd());
         }
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_RANGE_GET_CONTENT_MD5, $getMD5 ? 'true' : null);
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_SNAPSHOT, $options->getSnapshot());
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::X_MS_RANGE_GET_CONTENT_MD5, $getMD5 ? 'true' : null);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_SNAPSHOT, $options->getSnapshot());
         $options->setIsStreaming(\true);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, array(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_PARTIAL_CONTENT), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            $metadata = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getMetadataArray(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\GetBlobResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()), $response->getBody(), $metadata);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, array(Resources::STATUS_OK, Resources::STATUS_PARTIAL_CONTENT), Resources::EMPTY_STRING, $options)->then(function ($response) {
+            $metadata = Utilities::getMetadataArray(HttpFormatter::formatHeaders($response->getHeaders()));
+            return GetBlobResult::create(HttpFormatter::formatHeaders($response->getHeaders()), $response->getBody(), $metadata);
         });
     }
     /**
@@ -2211,7 +2211,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/undelete-blob
      */
-    public function undeleteBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\UndeleteBlobOptions $options = null)
+    public function undeleteBlob($container, $blob, Models\UndeleteBlobOptions $options = null)
     {
         $this->undeleteBlobAsync($container, $blob, $options)->wait();
     }
@@ -2226,25 +2226,25 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/undelete-blob
      */
-    public function undeleteBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\UndeleteBlobOptions $options = null)
+    public function undeleteBlobAsync($container, $blob, Models\UndeleteBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\UndeleteBlobOptions();
+            $options = new UndeleteBlobOptions();
         }
         $leaseId = $options->getLeaseId();
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $leaseId);
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'undelete');
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_OK, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $leaseId);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'undelete');
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_OK, Resources::EMPTY_STRING, $options);
     }
     /**
      * Deletes a blob or blob snapshot.
@@ -2261,7 +2261,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179413.aspx
      */
-    public function deleteBlob($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\DeleteBlobOptions $options = null)
+    public function deleteBlob($container, $blob, Models\DeleteBlobOptions $options = null)
     {
         $this->deleteBlobAsync($container, $blob, $options)->wait();
     }
@@ -2280,29 +2280,29 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd179413.aspx
      */
-    public function deleteBlobAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\DeleteBlobOptions $options = null)
+    public function deleteBlobAsync($container, $blob, Models\DeleteBlobOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_DELETE;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_DELETE;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\DeleteBlobOptions();
+            $options = new DeleteBlobOptions();
         }
         if (\is_null($options->getSnapshot())) {
             $delSnapshots = $options->getDeleteSnaphotsOnly() ? 'only' : 'include';
-            $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_DELETE_SNAPSHOTS, $delSnapshots);
+            $this->addOptionalHeader($headers, Resources::X_MS_DELETE_SNAPSHOTS, $delSnapshots);
         } else {
-            $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_SNAPSHOT, $options->getSnapshot());
+            $this->addOptionalQueryParam($queryParams, Resources::QP_SNAPSHOT, $options->getSnapshot());
         }
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options);
     }
     /**
      * Creates a snapshot of a blob.
@@ -2315,7 +2315,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691971.aspx
      */
-    public function createBlobSnapshot($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotOptions $options = null)
+    public function createBlobSnapshot($container, $blob, Models\CreateBlobSnapshotOptions $options = null)
     {
         return $this->createBlobSnapshotAsync($container, $blob, $options)->wait();
     }
@@ -2330,26 +2330,26 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691971.aspx
      */
-    public function createBlobSnapshotAsync($container, $blob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotOptions $options = null)
+    public function createBlobSnapshotAsync($container, $blob, Models\CreateBlobSnapshotOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::notNullOrEmpty($blob, 'blob');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $path = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotOptions();
+            $options = new CreateBlobSnapshotOptions();
         }
-        $queryParams[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP] = 'snapshot';
+        $queryParams[Resources::QP_COMP] = 'snapshot';
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
         $headers = $this->addMetadataHeaders($headers, $options->getMetadata());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_CREATED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CreateBlobSnapshotResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $path, Resources::STATUS_CREATED, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            return CreateBlobSnapshotResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2369,7 +2369,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlob($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobOptions $options = null)
+    public function copyBlob($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, Models\CopyBlobOptions $options = null)
     {
         return $this->copyBlobAsync($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, $options)->wait();
     }
@@ -2391,10 +2391,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlobAsync($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobOptions $options = null)
+    public function copyBlobAsync($destinationContainer, $destinationBlob, $sourceContainer, $sourceBlob, Models\CopyBlobOptions $options = null)
     {
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobOptions();
+            $options = new CopyBlobOptions();
         }
         $sourceBlobPath = $this->getCopyBlobSourceName($sourceContainer, $sourceBlob, $options);
         return $this->copyBlobFromURLAsync($destinationContainer, $destinationBlob, $sourceBlobPath, $options);
@@ -2418,7 +2418,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlobFromURL($destinationContainer, $destinationBlob, $sourceURL, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobFromURLOptions $options = null)
+    public function copyBlobFromURL($destinationContainer, $destinationBlob, $sourceURL, Models\CopyBlobFromURLOptions $options = null)
     {
         return $this->copyBlobFromURLAsync($destinationContainer, $destinationBlob, $sourceURL, $options)->wait();
     }
@@ -2441,29 +2441,29 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/dd894037.aspx
      */
-    public function copyBlobFromURLAsync($destinationContainer, $destinationBlob, $sourceURL, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobFromURLOptions $options = null)
+    public function copyBlobFromURLAsync($destinationContainer, $destinationBlob, $sourceURL, Models\CopyBlobFromURLOptions $options = null)
     {
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $destinationBlobPath = $this->createPath($destinationContainer, $destinationBlob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobFromURLOptions();
+            $options = new CopyBlobFromURLOptions();
         }
         if ($options->getIsIncrementalCopy()) {
-            $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'incrementalcopy');
+            $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'incrementalcopy');
         }
         $headers = $this->addOptionalAccessConditionHeader($headers, $options->getAccessConditions());
         $headers = $this->addOptionalSourceAccessConditionHeader($headers, $options->getSourceAccessConditions());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_SOURCE, $sourceURL);
+        $this->addOptionalHeader($headers, Resources::X_MS_COPY_SOURCE, $sourceURL);
         $headers = $this->addMetadataHeaders($headers, $options->getMetadata());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SOURCE_LEASE_ID, $options->getSourceLeaseId());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_ACCESS_TIER, $options->getAccessTier());
-        $options->setLocationMode(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\LocationMode::PRIMARY_ONLY);
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $destinationBlobPath, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_ACCEPTED, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\CopyBlobResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::X_MS_SOURCE_LEASE_ID, $options->getSourceLeaseId());
+        $this->addOptionalHeader($headers, Resources::X_MS_ACCESS_TIER, $options->getAccessTier());
+        $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $destinationBlobPath, Resources::STATUS_ACCEPTED, Resources::EMPTY_STRING, $options)->then(function ($response) {
+            return CopyBlobResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2478,7 +2478,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
      */
-    public function abortCopy($container, $blob, $copyId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function abortCopy($container, $blob, $copyId, Models\BlobServiceOptions $options = null)
     {
         return $this->abortCopyAsync($container, $blob, $copyId, $options)->wait();
     }
@@ -2494,28 +2494,28 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
      */
-    public function abortCopyAsync($container, $blob, $copyId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function abortCopyAsync($container, $blob, $copyId, Models\BlobServiceOptions $options = null)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($copyId, 'copyId');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($container, 'container');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($blob, 'blob');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($copyId, 'copyId');
-        $method = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::HTTP_PUT;
+        Validate::canCastAsString($container, 'container');
+        Validate::canCastAsString($blob, 'blob');
+        Validate::canCastAsString($copyId, 'copyId');
+        Validate::notNullOrEmpty($container, 'container');
+        Validate::notNullOrEmpty($blob, 'blob');
+        Validate::notNullOrEmpty($copyId, 'copyId');
+        $method = Resources::HTTP_PUT;
         $headers = array();
         $postParams = array();
         $queryParams = array();
         $destinationBlobPath = $this->createPath($container, $blob);
         if (\is_null($options)) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_TIMEOUT, $options->getTimeout());
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COMP, 'copy');
-        $this->addOptionalQueryParam($queryParams, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::QP_COPY_ID, $copyId);
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_LEASE_ID, $options->getLeaseId());
-        $this->addOptionalHeader($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_COPY_ACTION, 'abort');
-        return $this->sendAsync($method, $headers, $queryParams, $postParams, $destinationBlobPath, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::STATUS_NO_CONTENT, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING, $options);
+        $this->addOptionalQueryParam($queryParams, Resources::QP_TIMEOUT, $options->getTimeout());
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COMP, 'copy');
+        $this->addOptionalQueryParam($queryParams, Resources::QP_COPY_ID, $copyId);
+        $this->addOptionalHeader($headers, Resources::X_MS_LEASE_ID, $options->getLeaseId());
+        $this->addOptionalHeader($headers, Resources::X_MS_COPY_ACTION, 'abort');
+        return $this->sendAsync($method, $headers, $queryParams, $postParams, $destinationBlobPath, Resources::STATUS_NO_CONTENT, Resources::EMPTY_STRING, $options);
     }
     /**
      * Establishes an exclusive write lock on a blob. To write to a locked
@@ -2536,7 +2536,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function acquireLease($container, $blob, $proposedLeaseId = null, $leaseDuration = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function acquireLease($container, $blob, $proposedLeaseId = null, $leaseDuration = null, Models\BlobServiceOptions $options = null)
     {
         return $this->acquireLeaseAsync($container, $blob, $proposedLeaseId, $leaseDuration, $options)->wait();
     }
@@ -2559,16 +2559,16 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see http://msdn.microsoft.com/en-us/library/windowsazure/ee691972.aspx
      */
-    public function acquireLeaseAsync($container, $blob, $proposedLeaseId = null, $leaseDuration = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function acquireLeaseAsync($container, $blob, $proposedLeaseId = null, $leaseDuration = null, Models\BlobServiceOptions $options = null)
     {
         if ($options === null) {
-            $options = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions();
+            $options = new BlobServiceOptions();
         }
         if ($leaseDuration === null) {
             $leaseDuration = -1;
         }
-        return $this->putLeaseAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::ACQUIRE_ACTION, $container, $blob, $proposedLeaseId, $leaseDuration, null, null, self::getStatusCodeOfLeaseAction(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::ACQUIRE_ACTION), $options, $options->getAccessConditions())->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        return $this->putLeaseAsyncImpl(LeaseMode::ACQUIRE_ACTION, $container, $blob, $proposedLeaseId, $leaseDuration, null, null, self::getStatusCodeOfLeaseAction(LeaseMode::ACQUIRE_ACTION), $options, $options->getAccessConditions())->then(function ($response) {
+            return LeaseResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2584,7 +2584,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function changeLease($container, $blob, $leaseId, $proposedLeaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function changeLease($container, $blob, $leaseId, $proposedLeaseId, Models\BlobServiceOptions $options = null)
     {
         return $this->changeLeaseAsync($container, $blob, $leaseId, $proposedLeaseId, $options)->wait();
     }
@@ -2601,10 +2601,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function changeLeaseAsync($container, $blob, $leaseId, $proposedLeaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function changeLeaseAsync($container, $blob, $leaseId, $proposedLeaseId, Models\BlobServiceOptions $options = null)
     {
-        return $this->putLeaseAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::CHANGE_ACTION, $container, $blob, $proposedLeaseId, null, $leaseId, null, self::getStatusCodeOfLeaseAction(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RENEW_ACTION), \is_null($options) ? new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions() : $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        return $this->putLeaseAsyncImpl(LeaseMode::CHANGE_ACTION, $container, $blob, $proposedLeaseId, null, $leaseId, null, self::getStatusCodeOfLeaseAction(LeaseMode::RENEW_ACTION), \is_null($options) ? new BlobServiceOptions() : $options)->then(function ($response) {
+            return LeaseResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2619,7 +2619,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function renewLease($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function renewLease($container, $blob, $leaseId, Models\BlobServiceOptions $options = null)
     {
         return $this->renewLeaseAsync($container, $blob, $leaseId, $options)->wait();
     }
@@ -2635,10 +2635,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function renewLeaseAsync($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function renewLeaseAsync($container, $blob, $leaseId, Models\BlobServiceOptions $options = null)
     {
-        return $this->putLeaseAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RENEW_ACTION, $container, $blob, null, null, $leaseId, null, self::getStatusCodeOfLeaseAction(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RENEW_ACTION), \is_null($options) ? new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions() : $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        return $this->putLeaseAsyncImpl(LeaseMode::RENEW_ACTION, $container, $blob, null, null, $leaseId, null, self::getStatusCodeOfLeaseAction(LeaseMode::RENEW_ACTION), \is_null($options) ? new BlobServiceOptions() : $options)->then(function ($response) {
+            return LeaseResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2654,7 +2654,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function releaseLease($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function releaseLease($container, $blob, $leaseId, Models\BlobServiceOptions $options = null)
     {
         $this->releaseLeaseAsync($container, $blob, $leaseId, $options)->wait();
     }
@@ -2671,9 +2671,9 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function releaseLeaseAsync($container, $blob, $leaseId, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function releaseLeaseAsync($container, $blob, $leaseId, Models\BlobServiceOptions $options = null)
     {
-        return $this->putLeaseAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RELEASE_ACTION, $container, $blob, null, null, $leaseId, null, self::getStatusCodeOfLeaseAction(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::RELEASE_ACTION), \is_null($options) ? new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions() : $options);
+        return $this->putLeaseAsyncImpl(LeaseMode::RELEASE_ACTION, $container, $blob, null, null, $leaseId, null, self::getStatusCodeOfLeaseAction(LeaseMode::RELEASE_ACTION), \is_null($options) ? new BlobServiceOptions() : $options);
     }
     /**
      * Ends the lease but ensure that another client cannot acquire a new lease until
@@ -2690,7 +2690,7 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function breakLease($container, $blob, $breakPeriod = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function breakLease($container, $blob, $breakPeriod = null, Models\BlobServiceOptions $options = null)
     {
         return $this->breakLeaseAsync($container, $blob, $breakPeriod, $options)->wait();
     }
@@ -2707,10 +2707,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
      */
-    public function breakLeaseAsync($container, $blob, $breakPeriod = null, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions $options = null)
+    public function breakLeaseAsync($container, $blob, $breakPeriod = null, Models\BlobServiceOptions $options = null)
     {
-        return $this->putLeaseAsyncImpl(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::BREAK_ACTION, $container, $blob, null, null, null, $breakPeriod, self::getStatusCodeOfLeaseAction(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\LeaseMode::BREAK_ACTION), \is_null($options) ? new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions() : $options)->then(function ($response) {
-            return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BreakLeaseResult::create(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter::formatHeaders($response->getHeaders()));
+        return $this->putLeaseAsyncImpl(LeaseMode::BREAK_ACTION, $container, $blob, null, null, null, $breakPeriod, self::getStatusCodeOfLeaseAction(LeaseMode::BREAK_ACTION), \is_null($options) ? new BlobServiceOptions() : $options)->then(function ($response) {
+            return BreakLeaseResult::create(HttpFormatter::formatHeaders($response->getHeaders()));
         }, null);
     }
     /**
@@ -2727,10 +2727,10 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
             foreach ($accessConditions as $accessCondition) {
                 if (!\is_null($accessCondition)) {
                     $header = $accessCondition->getHeader();
-                    if ($header != \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::EMPTY_STRING) {
+                    if ($header != Resources::EMPTY_STRING) {
                         $value = $accessCondition->getValue();
                         if ($value instanceof \DateTime) {
-                            $value = \gmdate(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::AZURE_DATE_FORMAT, $value->getTimestamp());
+                            $value = \gmdate(Resources::AZURE_DATE_FORMAT, $value->getTimestamp());
                         }
                         $headers[$header] = $value;
                     }
@@ -2756,26 +2756,26 @@ class BlobRestProxy extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\C
                     $headerName = null;
                     if (!empty($header)) {
                         switch ($header) {
-                            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_MATCH:
-                                $headerName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SOURCE_IF_MATCH;
+                            case Resources::IF_MATCH:
+                                $headerName = Resources::X_MS_SOURCE_IF_MATCH;
                                 break;
-                            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_UNMODIFIED_SINCE:
-                                $headerName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SOURCE_IF_UNMODIFIED_SINCE;
+                            case Resources::IF_UNMODIFIED_SINCE:
+                                $headerName = Resources::X_MS_SOURCE_IF_UNMODIFIED_SINCE;
                                 break;
-                            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_MODIFIED_SINCE:
-                                $headerName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SOURCE_IF_MODIFIED_SINCE;
+                            case Resources::IF_MODIFIED_SINCE:
+                                $headerName = Resources::X_MS_SOURCE_IF_MODIFIED_SINCE;
                                 break;
-                            case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::IF_NONE_MATCH:
-                                $headerName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::X_MS_SOURCE_IF_NONE_MATCH;
+                            case Resources::IF_NONE_MATCH:
+                                $headerName = Resources::X_MS_SOURCE_IF_NONE_MATCH;
                                 break;
                             default:
-                                throw new \Exception(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_ACH_MSG);
+                                throw new \Exception(Resources::INVALID_ACH_MSG);
                                 break;
                         }
                     }
                     $value = $accessCondition->getValue();
                     if ($value instanceof \DateTime) {
-                        $value = \gmdate(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::AZURE_DATE_FORMAT, $value->getTimestamp());
+                        $value = \gmdate(Resources::AZURE_DATE_FORMAT, $value->getTimestamp());
                     }
                     $this->addOptionalHeader($headers, $headerName, $value);
                 }

@@ -10,7 +10,7 @@ use Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface;
  *
  * Example: the target host name can not be resolved or the connection failed.
  */
-interface NetworkExceptionInterface extends \Dekode\GravityForms\Vendor\Psr\Http\Client\ClientExceptionInterface
+interface NetworkExceptionInterface extends ClientExceptionInterface
 {
     /**
      * Returns the request.
@@ -19,5 +19,5 @@ interface NetworkExceptionInterface extends \Dekode\GravityForms\Vendor\Psr\Http
      *
      * @return RequestInterface
      */
-    public function getRequest() : \Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface;
+    public function getRequest() : RequestInterface;
 }

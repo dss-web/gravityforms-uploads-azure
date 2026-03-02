@@ -161,7 +161,7 @@ class ContainerProperties
      */
     public function setPublicAccess($publicAccess)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\PublicAccessType::isValid($publicAccess), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Internal\BlobResources::INVALID_BLOB_PAT_MSG);
+        Validate::isTrue(PublicAccessType::isValid($publicAccess), Resources::INVALID_BLOB_PAT_MSG);
         $this->publicAccess = $publicAccess;
     }
 }

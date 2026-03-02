@@ -100,7 +100,7 @@ class Utilities
             $schemaAccountSplitTokens = \explode('/', $schemaAccountToken);
             if (\count($schemaAccountSplitTokens) > 0 && $schemaAccountSplitTokens[0] != '') {
                 $accountName = $schemaAccountSplitTokens[\count($schemaAccountSplitTokens) - 1];
-                $schemaAccountSplitTokens[\count($schemaAccountSplitTokens) - 1] = $accountName . \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::SECONDARY_STRING;
+                $schemaAccountSplitTokens[\count($schemaAccountSplitTokens) - 1] = $accountName . Resources::SECONDARY_STRING;
                 $splitTokens[0] = \implode('/', $schemaAccountSplitTokens);
                 $secondaryUri = \implode('.', $splitTokens);
                 return $secondaryUri;
@@ -120,7 +120,7 @@ class Utilities
      */
     public static function tryGetArray($key, array $array)
     {
-        return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::getArray(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($array, $key));
+        return Utilities::getArray(Utilities::tryGetValue($array, $key));
     }
     /**
      * Adds the given key/value pair into array if the value doesn't satisfy empty().
@@ -137,7 +137,7 @@ class Utilities
     public static function addIfNotEmpty($key, $value, array &$array)
     {
         if (!\is_null($array)) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($array, 'array');
+            Validate::isArray($array, 'array');
         }
         if (!empty($value)) {
             $array[$key] = $value;
@@ -258,7 +258,7 @@ class Utilities
         if (!\is_array($array)) {
             return \false;
         }
-        $xmlw = new \Dekode\GravityForms\Vendor\XmlWriter();
+        $xmlw = new \XmlWriter();
         $xmlw->openMemory();
         $xmlw->startDocument($xmlVersion, $xmlEncoding, $standalone);
         $xmlw->startElement($rootName);
@@ -285,7 +285,7 @@ class Utilities
                 }
             } elseif (\is_array($value)) {
                 if (!\is_int($key)) {
-                    if ($key != \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING) {
+                    if ($key != Resources::EMPTY_STRING) {
                         $xmlw->startElement($key);
                     } else {
                         $xmlw->startElement($defaultTag);
@@ -338,7 +338,7 @@ class Utilities
     public static function rfc1123ToDateTime($date)
     {
         $timeZone = new \DateTimeZone('GMT');
-        $format = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::AZURE_DATE_FORMAT;
+        $format = Resources::AZURE_DATE_FORMAT;
         return \DateTime::createFromFormat($format, $date, $timeZone);
     }
     /**
@@ -370,7 +370,7 @@ class Utilities
         if (\is_string($value)) {
             $value = self::convertToDateTime($value);
         }
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isDate($value);
+        Validate::isDate($value);
         $cloned = clone $value;
         $cloned->setTimezone(new \DateTimeZone('UTC'));
         return \str_replace('+00:00', 'Z', $cloned->format("Y-m-d\\TH:i:s.u0P"));
@@ -461,7 +461,7 @@ class Utilities
     public static function tryGetValueInsensitive($key, $haystack, $default = null)
     {
         $array = \array_change_key_case($haystack);
-        return \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($array, \strtolower($key), $default);
+        return Utilities::tryGetValue($array, \strtolower($key), $default);
     }
     /**
      * Returns a string representation of a version 4 GUID, which uses random
@@ -559,8 +559,8 @@ class Utilities
         if (\is_string($entity)) {
             return $entity;
         } else {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isA($entity, $type, 'entity');
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::methodExists($entity, $method, $type);
+            Validate::isA($entity, $type, 'entity');
+            Validate::methodExists($entity, $method, $type);
             return $entity->{$method}();
         }
     }
@@ -586,7 +586,7 @@ class Utilities
      */
     public static function base256ToDec($number)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($number, 'number');
+        Validate::canCastAsString($number, 'number');
         $result = 0;
         $base = 1;
         for ($i = \strlen($number) - 1; $i >= 0; $i--) {
@@ -604,10 +604,10 @@ class Utilities
      *
      * @return boolean         true if the stream is larger than the given size.
      */
-    public static function isStreamLargerThanSizeOrNotSeekable(\Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface $stream, $size)
+    public static function isStreamLargerThanSizeOrNotSeekable(StreamInterface $stream, $size)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isInteger($size, 'size');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isTrue($stream instanceof \Dekode\GravityForms\Vendor\Psr\Http\Message\StreamInterface, \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_PARAM_MSG, 'stream', 'Dekode\\GravityForms\\Vendor\\Psr\\Http\\Message\\StreamInterface'));
+        Validate::isInteger($size, 'size');
+        Validate::isTrue($stream instanceof StreamInterface, \sprintf(Resources::INVALID_PARAM_MSG, 'stream', 'Dekode\\GravityForms\\Vendor\\Psr\\Http\\Message\\StreamInterface'));
         $result = \true;
         if ($stream->isSeekable()) {
             $position = $stream->tell();
@@ -640,10 +640,10 @@ class Utilities
     {
         $metadata = array();
         foreach ($headers as $key => $value) {
-            $isMetadataHeader = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::startsWith(\strtolower($key), \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_META_HEADER_PREFIX);
+            $isMetadataHeader = Utilities::startsWith(\strtolower($key), Resources::X_MS_META_HEADER_PREFIX);
             if ($isMetadataHeader) {
                 // Metadata name is case-presrved and case insensitive
-                $MetadataName = \str_ireplace(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_META_HEADER_PREFIX, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING, $key);
+                $MetadataName = \str_ireplace(Resources::X_MS_META_HEADER_PREFIX, Resources::EMPTY_STRING, $key);
                 $metadata[$MetadataName] = $value;
             }
         }
@@ -659,13 +659,13 @@ class Utilities
     public static function validateMetadata(array $metadata = null)
     {
         if (!\is_null($metadata)) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::isArray($metadata, 'metadata');
+            Validate::isArray($metadata, 'metadata');
         } else {
             $metadata = array();
         }
         foreach ($metadata as $key => $value) {
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($key, 'metadata key');
-            \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($value, 'metadata value');
+            Validate::canCastAsString($key, 'metadata key');
+            Validate::canCastAsString($value, 'metadata value');
         }
     }
     /**
@@ -730,7 +730,7 @@ class Utilities
     public static function requestSentToSecondary(\Dekode\GravityForms\Vendor\Psr\Http\Message\RequestInterface $request, array $options)
     {
         $uri = $request->getUri();
-        $secondaryUri = $options[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ROS_SECONDARY_URI];
+        $secondaryUri = $options[Resources::ROS_SECONDARY_URI];
         $isSecondary = \false;
         if (\strpos((string) $uri, (string) $secondaryUri) !== \false) {
             $isSecondary = \true;
@@ -746,7 +746,7 @@ class Utilities
      */
     public static function getLocationFromHeaders(array $headers)
     {
-        $value = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($headers, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::X_MS_CONTINUATION_LOCATION_MODE);
+        $value = Utilities::tryGetValue($headers, Resources::X_MS_CONTINUATION_LOCATION_MODE);
         $result = '';
         if (\is_string($value)) {
             $result = $value;
@@ -777,8 +777,8 @@ class Utilities
      */
     public static function calculateContentMD5($content)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($content, 'content');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($content, 'content');
+        Validate::notNull($content, 'content');
+        Validate::canCastAsString($content, 'content');
         return \base64_encode(\md5($content, \true));
     }
     /**

@@ -35,7 +35,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class ListPageBlobRangesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Blob\Models\BlobServiceOptions
+class ListPageBlobRangesOptions extends BlobServiceOptions
 {
     private $snapshot;
     private $range;
@@ -77,7 +77,7 @@ class ListPageBlobRangesOptions extends \Dekode\GravityForms\Vendor\MicrosoftAzu
      *
      * @return void
      */
-    public function setRange(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Models\Range $range)
+    public function setRange(Range $range)
     {
         $this->range = $range;
     }

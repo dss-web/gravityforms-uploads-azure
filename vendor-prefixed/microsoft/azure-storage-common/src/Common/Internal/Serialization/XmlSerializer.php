@@ -37,7 +37,7 @@ use Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate;
  * @license   https://github.com/azure/azure-storage-php/LICENSE
  * @link      https://github.com/azure/azure-storage-php
  */
-class XmlSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\ISerializer
+class XmlSerializer implements ISerializer
 {
     const STANDALONE = 'standalone';
     const ROOT_NAME = 'rootName';
@@ -75,13 +75,13 @@ class XmlSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
     private function arr2xml(\XMLWriter $xmlw, array $data, $defaultTag = null)
     {
         foreach ($data as $key => $value) {
-            if ($key === \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_ATTRIBUTES) {
+            if ($key === Resources::XTAG_ATTRIBUTES) {
                 foreach ($value as $attributeName => $attributeValue) {
                     $xmlw->writeAttribute($attributeName, $attributeValue);
                 }
             } elseif (\is_array($value)) {
                 if (!\is_int($key)) {
-                    if ($key != \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING) {
+                    if ($key != Resources::EMPTY_STRING) {
                         $xmlw->startElement($key);
                     } else {
                         $xmlw->startElement($defaultTag);
@@ -125,9 +125,9 @@ class XmlSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
      */
     public static function objectSerialize($targetObject, $rootName)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNull($targetObject, 'targetObject');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($rootName, 'rootName');
-        $xmlWriter = new \Dekode\GravityForms\Vendor\XmlWriter();
+        Validate::notNull($targetObject, 'targetObject');
+        Validate::canCastAsString($rootName, 'rootName');
+        $xmlWriter = new \XmlWriter();
         $xmlWriter->openMemory();
         $xmlWriter->setIndent(\true);
         $reflectionClass = new \ReflectionClass($targetObject);
@@ -145,7 +145,7 @@ class XmlSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
                 $variableValue = $method->invoke($targetObject);
                 if (!empty($variableValue)) {
                     if (\gettype($variableValue) === 'object') {
-                        $xmlWriter->writeRaw(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer::objectSerialize($variableValue, $variableName));
+                        $xmlWriter->writeRaw(XmlSerializer::objectSerialize($variableValue, $variableName));
                     } else {
                         $xmlWriter->writeElement($variableName, $variableValue);
                     }
@@ -168,14 +168,14 @@ class XmlSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
     {
         $xmlVersion = '1.0';
         $xmlEncoding = 'UTF-8';
-        $standalone = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($properties, self::STANDALONE);
-        $defaultTag = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($properties, self::DEFAULT_TAG);
-        $rootName = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($properties, self::ROOT_NAME);
-        $docNamespace = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Utilities::tryGetValue($array, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_NAMESPACE, null);
+        $standalone = Utilities::tryGetValue($properties, self::STANDALONE);
+        $defaultTag = Utilities::tryGetValue($properties, self::DEFAULT_TAG);
+        $rootName = Utilities::tryGetValue($properties, self::ROOT_NAME);
+        $docNamespace = Utilities::tryGetValue($array, Resources::XTAG_NAMESPACE, null);
         if (!\is_array($array)) {
             return \false;
         }
-        $xmlw = new \Dekode\GravityForms\Vendor\XmlWriter();
+        $xmlw = new \XmlWriter();
         $xmlw->openMemory();
         $xmlw->setIndent(\true);
         $xmlw->startDocument($xmlVersion, $xmlEncoding, $standalone);
@@ -187,7 +187,7 @@ class XmlSerializer implements \Dekode\GravityForms\Vendor\MicrosoftAzure\Storag
                 break;
             }
         }
-        unset($array[\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::XTAG_NAMESPACE]);
+        unset($array[Resources::XTAG_NAMESPACE]);
         self::arr2xml($xmlw, $array, $defaultTag);
         $xmlw->endElement();
         return $xmlw->outputMemory(\true);

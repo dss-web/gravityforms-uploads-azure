@@ -57,11 +57,11 @@ class ConnectionStringParser
      */
     public static function parseConnectionString($argumentName, $connectionString)
     {
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($argumentName, 'argumentName');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($argumentName, 'argumentName');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::canCastAsString($connectionString, 'connectionString');
-        \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Validate::notNullOrEmpty($connectionString, 'connectionString');
-        $parser = new \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser($argumentName, $connectionString);
+        Validate::canCastAsString($argumentName, 'argumentName');
+        Validate::notNullOrEmpty($argumentName, 'argumentName');
+        Validate::canCastAsString($connectionString, 'connectionString');
+        Validate::notNullOrEmpty($connectionString, 'connectionString');
+        $parser = new ConnectionStringParser($argumentName, $connectionString);
         return $parser->_parse();
     }
     /**
@@ -76,7 +76,7 @@ class ConnectionStringParser
         $this->_argumentName = $argumentName;
         $this->_value = $value;
         $this->_pos = 0;
-        $this->_state = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_KEY;
+        $this->_state = ConnectionStringParser::EXPECT_KEY;
     }
     /**
      * Parses the connection string.
@@ -92,36 +92,36 @@ class ConnectionStringParser
         $connectionStringValues = array();
         while (\true) {
             $this->_skipWhiteSpaces();
-            if ($this->_pos == \strlen($this->_value) && $this->_state != \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_VALUE) {
+            if ($this->_pos == \strlen($this->_value) && $this->_state != ConnectionStringParser::EXPECT_VALUE) {
                 // Not stopping after the end has been reached and a value is
                 // expected results in creating an empty value, which we expect.
                 break;
             }
             switch ($this->_state) {
-                case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_KEY:
+                case ConnectionStringParser::EXPECT_KEY:
                     $key = $this->_extractKey();
-                    $this->_state = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_ASSIGNMENT;
+                    $this->_state = ConnectionStringParser::EXPECT_ASSIGNMENT;
                     break;
-                case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_ASSIGNMENT:
+                case ConnectionStringParser::EXPECT_ASSIGNMENT:
                     $this->_skipOperator('=');
-                    $this->_state = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_VALUE;
+                    $this->_state = ConnectionStringParser::EXPECT_VALUE;
                     break;
-                case \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_VALUE:
+                case ConnectionStringParser::EXPECT_VALUE:
                     $value = $this->_extractValue();
-                    $this->_state = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_SEPARATOR;
+                    $this->_state = ConnectionStringParser::EXPECT_SEPARATOR;
                     $connectionStringValues[$key] = $value;
                     $key = null;
                     $value = null;
                     break;
                 default:
                     $this->_skipOperator(';');
-                    $this->_state = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_KEY;
+                    $this->_state = ConnectionStringParser::EXPECT_KEY;
                     break;
             }
         }
         // Must end parsing in the valid state (expected key or separator)
-        if ($this->_state == \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\ConnectionStringParser::EXPECT_ASSIGNMENT) {
-            throw $this->_createException($this->_pos, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::MISSING_CONNECTION_STRING_CHAR, '=');
+        if ($this->_state == ConnectionStringParser::EXPECT_ASSIGNMENT) {
+            throw $this->_createException($this->_pos, Resources::MISSING_CONNECTION_STRING_CHAR, '=');
         }
         return $connectionStringValues;
     }
@@ -142,9 +142,9 @@ class ConnectionStringParser
         // Create a short error message.
         $errorString = \vsprintf($errorString, $arguments);
         // Add position.
-        $errorString = \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_PARSING_STRING, $errorString, $position);
+        $errorString = \sprintf(Resources::ERROR_PARSING_STRING, $errorString, $position);
         // Create final error message.
-        $errorString = \sprintf(\Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::INVALID_CONNECTION_STRING, $this->_argumentName, $errorString);
+        $errorString = \sprintf(Resources::INVALID_CONNECTION_STRING, $this->_argumentName, $errorString);
         return new \RuntimeException($errorString);
     }
     /**
@@ -165,7 +165,7 @@ class ConnectionStringParser
      */
     private function _extractValue()
     {
-        $value = \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::EMPTY_STRING;
+        $value = Resources::EMPTY_STRING;
         if ($this->_pos < \strlen($this->_value)) {
             $ch = $this->_value[$this->_pos];
             if ($ch == '"' || $ch == '\'') {
@@ -203,7 +203,7 @@ class ConnectionStringParser
             $key = $this->_extractString($ch);
         } elseif ($ch == ';' || $ch == '=') {
             // Key name was expected.
-            throw $this->_createException($firstPos, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_CONNECTION_STRING_MISSING_KEY);
+            throw $this->_createException($firstPos, Resources::ERROR_CONNECTION_STRING_MISSING_KEY);
         } else {
             while ($this->_pos < \strlen($this->_value)) {
                 $ch = $this->_value[$this->_pos];
@@ -217,7 +217,7 @@ class ConnectionStringParser
         }
         if (\strlen($key) == 0) {
             // Empty key name.
-            throw $this->_createException($firstPos, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_CONNECTION_STRING_EMPTY_KEY);
+            throw $this->_createException($firstPos, Resources::ERROR_CONNECTION_STRING_EMPTY_KEY);
         }
         return $key;
     }
@@ -236,7 +236,7 @@ class ConnectionStringParser
         }
         if ($this->_pos == \strlen($this->_value)) {
             // Runaway string.
-            throw $this->_createException($this->_pos, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::ERROR_CONNECTION_STRING_MISSING_CHARACTER, $quote);
+            throw $this->_createException($this->_pos, Resources::ERROR_CONNECTION_STRING_MISSING_CHARACTER, $quote);
         }
         return \substr($this->_value, $firstPos, $this->_pos++ - $firstPos);
     }
@@ -253,7 +253,7 @@ class ConnectionStringParser
     {
         if ($this->_value[$this->_pos] != $operatorChar) {
             // Character was expected.
-            throw $this->_createException($this->_pos, \Dekode\GravityForms\Vendor\MicrosoftAzure\Storage\Common\Internal\Resources::MISSING_CONNECTION_STRING_CHAR, $operatorChar);
+            throw $this->_createException($this->_pos, Resources::MISSING_CONNECTION_STRING_CHAR, $operatorChar);
         }
         $this->_pos++;
     }
